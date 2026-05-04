@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 // CSS
+import '@/styles/tokens.css'
 import '@/styles/global.css'
 import Root from '@/route/Root.tsx'
 import FormPropostaComercial from '@/route/FormPropostaComercial.tsx'
