@@ -1,0 +1,670 @@
+.formShell {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+  color: #4a4a4a;
+}
+
+.pageTitle {
+  margin-bottom: 24px;
+}
+
+.pageTitle h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.pageTitle p {
+  max-width: 680px;
+  margin: 8px 0 0;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.sectionStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sectionCard {
+  width: 100%;
+  padding: 24px;
+  border: 1px solid rgba(74, 74, 74, 0.24);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  transition: margin-bottom 180ms ease;
+}
+
+.collapsedSectionHeader {
+  margin-bottom: 0;
+}
+
+.sectionHeaderContent {
+  min-width: 0;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.sectionHeader p {
+  margin: 4px 0 0;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.sectionHeaderActions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.completionSignal {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.08);
+}
+
+.empty {
+  background: #d92d20;
+}
+
+.partial {
+  background: #f0b429;
+}
+
+.complete {
+  background: #1f9d55;
+}
+
+.sectionToggle {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4a4a4a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sectionToggle:hover,
+.sectionToggle:focus-visible {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+.sectionToggleIcon {
+  display: inline-flex;
+  transform: rotate(180deg);
+  transition: transform 180ms ease;
+}
+
+.collapsedToggleIcon {
+  transform: rotate(0deg);
+}
+
+.sectionBody {
+  min-width: 0;
+}
+
+.collapsibleSectionBody {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 180ms ease,
+    visibility 0s linear 0s;
+  visibility: visible;
+}
+
+.collapsedSectionBody {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 160ms ease,
+    visibility 0s linear 220ms;
+  visibility: hidden;
+}
+
+.sectionBodyInner {
+  min-height: 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.productCarousel {
+  position: relative;
+}
+
+.carouselControls {
+  position: absolute;
+  z-index: 1;
+  top: -58px;
+  right: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.carouselButton {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4a4a4a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.carouselButton:hover,
+.carouselButton:focus-visible {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+.productTrack {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 0 0 8px;
+  scroll-padding-inline: 0;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.productTrack:focus-visible {
+  outline: 3px solid rgba(255, 0, 0, 0.16);
+  outline-offset: 4px;
+}
+
+.productSlide {
+  flex: 0 0 calc((100% - 32px) / 3);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.productCard {
+  display: grid;
+  grid-template-rows: 128px 1fr auto;
+  height: 100%;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 74, 74, 0.24);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.productImage,
+.productImagePlaceholder {
+  width: 100%;
+  height: 128px;
+}
+
+.productImage {
+  display: block;
+  object-fit: cover;
+}
+
+.productImagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 0, 0, 0.06);
+  color: #ff0000;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.productCardBody {
+  padding: 16px;
+}
+
+.productCardBody h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.productCardBody p {
+  margin: 8px 0 0;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.productCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid rgba(74, 74, 74, 0.16);
+}
+
+.productCardFooter > button,
+.splitControl button,
+.groupActions button {
+  min-height: 40px;
+  border: 1px solid #ff0000;
+  border-radius: 8px;
+  background: #ff0000;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.productCardFooter > button:disabled {
+  border-color: rgba(74, 74, 74, 0.2);
+  background: rgba(74, 74, 74, 0.08);
+  color: rgba(74, 74, 74, 0.52);
+  cursor: not-allowed;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 36px 56px 36px;
+  align-items: center;
+}
+
+.stepper button,
+.stepper input {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  background: #ffffff;
+  color: #4a4a4a;
+  font: inherit;
+  text-align: center;
+}
+
+.stepper input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  text-align: center;
+}
+
+.stepper input[type='number']::-webkit-outer-spin-button,
+.stepper input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.stepper button:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.stepper input {
+  border-right: 0;
+  border-left: 0;
+}
+
+.productWorkspace {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 0 12px;
+}
+
+.tabs button {
+  min-height: 40px;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4a4a4a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.tabs .activeTab {
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.06);
+  color: #ff0000;
+}
+
+.groupPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.groupPanelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid rgba(74, 74, 74, 0.24);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.groupPanelHeader h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.groupPanelHeader p {
+  margin: 6px 0 0;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 14px;
+}
+
+.groupActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.groupActions label,
+.splitControl label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.groupActions input,
+.splitControl input {
+  min-height: 40px;
+  box-sizing: border-box;
+  border: 1px solid rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  color: #4a4a4a;
+  font: inherit;
+  padding: 8px 10px;
+}
+
+.groupActions input {
+  width: 96px;
+}
+
+.groupActions button {
+  border-color: rgba(74, 74, 74, 0.28);
+  background: #ffffff;
+  color: #4a4a4a;
+}
+
+.splitControl {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  border-left: 3px solid #ff0000;
+  border-radius: 10px;
+  background: rgba(74, 74, 74, 0.04);
+}
+
+.splitControl label {
+  flex: 1;
+}
+
+.fullSpan {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  display: inline-flex;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.requiredMark {
+  color: #ff0000;
+}
+
+.field input,
+.field select,
+.field textarea,
+.readOnlyValue {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  border: 1px solid rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4a4a4a;
+  font: inherit;
+  font-size: 14px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 10px 12px;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #ff0000;
+  outline: 3px solid rgba(255, 0, 0, 0.16);
+}
+
+.field [aria-invalid='true'] {
+  border-color: #ff0000;
+}
+
+.numberControl {
+  position: relative;
+  display: block;
+}
+
+.numberControl input {
+  padding-right: 48px;
+}
+
+.unit {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  color: rgba(74, 74, 74, 0.72);
+  font-size: 13px;
+  transform: translateY(-50%);
+}
+
+.checkboxField {
+  display: flex;
+  min-height: 44px;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.checkboxField input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #ff0000;
+}
+
+.checkboxField span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.readOnlyValue {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(74, 74, 74, 0.08);
+  color: rgba(74, 74, 74, 0.78);
+}
+
+.helperText,
+.errorText {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.helperText {
+  color: rgba(74, 74, 74, 0.72);
+  font-weight: 400;
+}
+
+.errorText {
+  color: #ff0000;
+  font-weight: 600;
+}
+
+.actionBar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.actionBar button {
+  min-height: 44px;
+  border: 1px solid rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4a4a4a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+
+.actionBar button[type='submit'] {
+  border-color: #ff0000;
+  background: #ff0000;
+  color: #ffffff;
+}
+
+.generationError {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  font-size: 14px;
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  .formShell {
+    width: min(100% - 24px, 960px);
+    padding: 20px 0 36px;
+  }
+
+  .sectionCard {
+    padding: 16px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .carouselControls {
+    position: static;
+    justify-content: flex-end;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+
+  .productTrack {
+    margin: 0 -16px;
+    padding: 0 16px 8px;
+    scroll-padding-inline: 16px;
+  }
+
+  .productSlide {
+    flex-basis: min(82vw, 320px);
+  }
+
+  .productCardFooter,
+  .groupPanelHeader,
+  .splitControl {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .groupActions {
+    justify-content: stretch;
+  }
+
+  .groupActions button,
+  .splitControl button {
+    width: 100%;
+  }
+
+  .actionBar {
+    flex-direction: column-reverse;
+  }
+
+  .actionBar button {
+    width: 100%;
+  }
+}
