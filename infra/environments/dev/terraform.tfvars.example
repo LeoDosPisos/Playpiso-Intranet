@@ -1,0 +1,17 @@
+# Copiar para terraform.tfvars e preencher valores reais
+# terraform.tfvars está no .gitignore — nunca versionar
+
+project_name             = "playpiso-proposta"
+environment              = "dev"
+location                 = "brazilsouth"
+db_admin_username        = "pgadmin"
+db_sku                   = "B_Standard_B1ms"
+db_storage_mb            = 32768
+db_backup_retention_days = 7
+backend_min_replicas     = 0
+backend_max_replicas     = 3
+
+# Variáveis sensíveis — definir via variável de ambiente para não entrar no tfvars:
+# export TF_VAR_db_admin_password="<SENHA_FORTE>"
+# export TF_VAR_azure_tenant_id="a75f3ed1-64d2-4473-b836-0b7cb2db1542"
+# export TF_VAR_azure_client_id="d59319c0-6b41-497f-b233-447c78d9d391"

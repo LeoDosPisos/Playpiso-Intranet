@@ -1,0 +1,826 @@
+import type { ConditionalRule } from "../types/proposalForm";
+
+const conditionalRules: readonly ConditionalRule[] = [
+  {
+    id: "default_largura_quadra_tenis",
+    description: "Aplicar largura padrão da Quadra de Tênis.",
+    when: {
+      any: [
+        {
+          field: "variante_quadra_tenis",
+          operator: "equals",
+          value: "piso_asfaltico",
+        },
+        { field: "variante_quadra_tenis", operator: "equals", value: "saibro" },
+        { field: "variante_quadra_tenis", operator: "equals", value: "grama" },
+      ],
+    },
+    effects: [{ type: "setDefault", field: "largura", value: 18 }],
+  },
+  {
+    id: "default_comprimento_quadra_tenis",
+    description: "Aplicar comprimento padrão da Quadra de Tênis.",
+    when: {
+      any: [
+        {
+          field: "variante_quadra_tenis",
+          operator: "equals",
+          value: "piso_asfaltico",
+        },
+        { field: "variante_quadra_tenis", operator: "equals", value: "saibro" },
+        { field: "variante_quadra_tenis", operator: "equals", value: "grama" },
+      ],
+    },
+    effects: [{ type: "setDefault", field: "comprimento", value: 36 }],
+  },
+  {
+    id: "default_variante_quadra_tenis",
+    description: "Iniciar com Piso Asfáltico como variante padrão.",
+    effects: [
+      {
+        type: "setDefault",
+        field: "variante_quadra_tenis",
+        value: "piso_asfaltico",
+      },
+    ],
+  },
+  {
+    id: "default_variante_beach_tenis",
+    description: "Iniciar Beach Tennis com variante técnica padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_beach_tenis", value: "padrao" },
+    ],
+  },
+  {
+    id: "default_largura_beach_tenis",
+    description: "Aplicar largura padrão do Beach Tennis.",
+    when: { field: "variante_beach_tenis", operator: "equals", value: "padrao" },
+    effects: [{ type: "setDefault", field: "largura", value: 10 }],
+  },
+  {
+    id: "default_comprimento_beach_tenis",
+    description: "Aplicar comprimento padrão do Beach Tennis.",
+    when: { field: "variante_beach_tenis", operator: "equals", value: "padrao" },
+    effects: [{ type: "setDefault", field: "comprimento", value: 20 }],
+  },
+  {
+    id: "default_largura_quadra_poliesportiva_piso_asfaltico",
+    description: "Aplicar largura padrão da Quadra Poliesportiva (Piso Asfáltico).",
+    when: { field: "variante_quadra_poliesportiva", operator: "equals", value: "piso_asfaltico" },
+    effects: [{ type: "setDefault", field: "largura", value: 16 }],
+  },
+  {
+    id: "default_comprimento_quadra_poliesportiva_piso_asfaltico",
+    description: "Aplicar comprimento padrão da Quadra Poliesportiva (Piso Asfáltico).",
+    when: { field: "variante_quadra_poliesportiva", operator: "equals", value: "piso_asfaltico" },
+    effects: [{ type: "setDefault", field: "comprimento", value: 27 }],
+  },
+  {
+    id: "default_variante_campo",
+    description: "Iniciar campo com Natural como variante padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_campo", value: "natural" },
+    ],
+  },
+  {
+    id: "default_variante_pickleball",
+    description: "Iniciar Pickleball com variante técnica padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_pickleball", value: "padrao" },
+    ],
+  },
+  {
+    id: "default_variante_padel",
+    description: "Iniciar Padel com grama sintética como variante padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_padel", value: "grama_sintetica" },
+    ],
+  },
+  {
+    id: "default_variante_squash",
+    description: "Iniciar Squash com variante técnica padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_squash", value: "padrao" },
+    ],
+  },
+  {
+    id: "default_variante_garagem_epoxi",
+    description: "Iniciar garagem epóxi com variante técnica padrão.",
+    effects: [
+      {
+        type: "setDefault",
+        field: "variante_garagem_epoxi",
+        value: "padrao",
+      },
+    ],
+  },
+  {
+    id: "default_variante_softplay",
+    description: "Iniciar Softplay com variante técnica padrão.",
+    effects: [
+      { type: "setDefault", field: "variante_softplay", value: "padrao" },
+    ],
+  },
+  {
+    id: "default_responsavel_ligacao_eletrica",
+    description: "Responsável pela ligação elétrica deve ser sempre cliente.",
+    effects: [
+      {
+        type: "setDefault",
+        field: "responsavel_ligacao_eletrica",
+        value: "cliente",
+      },
+    ],
+  },
+  {
+    id: "compute_area_total",
+    description: "Calcular área total por largura x comprimento.",
+    effects: [
+      {
+        type: "compute",
+        field: "area_total",
+        expression: "largura * comprimento",
+        overridable: true,
+      },
+    ],
+  },
+  {
+    id: "variant_piso_asfaltico_fields",
+    description: "Piso asfáltico exibe cor e PlayCushion.",
+    when: {
+      field: "variante_quadra_tenis",
+      operator: "equals",
+      value: "piso_asfaltico",
+    },
+    effects: [
+      { type: "show", field: "cor_piso_asfaltico" },
+      { type: "show", field: "possui_playcushion" },
+      { type: "require", field: "cor_piso_asfaltico" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "cor_piso_asfaltico" },
+      { type: "clear", field: "cor_piso_asfaltico" },
+      { type: "hide", field: "especificar_cor" },
+      { type: "clear", field: "especificar_cor" },
+      { type: "hide", field: "possui_playcushion" },
+      { type: "clear", field: "possui_playcushion" },
+      { type: "unrequire", field: "cor_piso_asfaltico" },
+      { type: "unrequire", field: "especificar_cor" },
+    ],
+  },
+  {
+    id: "variant_saibro_fields",
+    description: "Saibro exibe Kit Saibro.",
+    when: {
+      field: "variante_quadra_tenis",
+      operator: "equals",
+      value: "saibro",
+    },
+    effects: [{ type: "show", field: "possui_kit_saibro" }],
+    elseEffects: [
+      { type: "hide", field: "possui_kit_saibro" },
+      { type: "clear", field: "possui_kit_saibro" },
+    ],
+  },
+  {
+    id: "variant_grama_fields",
+    description: "Grama exibe Tipo de grama.",
+    when: {
+      field: "variante_quadra_tenis",
+      operator: "equals",
+      value: "grama",
+    },
+    effects: [
+      { type: "show", field: "tipo_grama" },
+      { type: "require", field: "tipo_grama" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_grama" },
+      { type: "clear", field: "tipo_grama" },
+      { type: "hide", field: "especificar_tipo_grama" },
+      { type: "clear", field: "especificar_tipo_grama" },
+      { type: "unrequire", field: "tipo_grama" },
+      { type: "unrequire", field: "especificar_tipo_grama" },
+    ],
+  },
+  {
+    id: "variant_assoalho_fields",
+    description: "Assoalho e Squash exibem Tipo de madeira.",
+    when: {
+      any: [
+        {
+          field: "variante_quadra_poliesportiva",
+          operator: "equals",
+          value: "assoalho",
+        },
+        { field: "variante_squash", operator: "equals", value: "padrao" },
+      ],
+    },
+    effects: [
+      { type: "show", field: "tipo_madeira" },
+      { type: "require", field: "tipo_madeira" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_madeira" },
+      { type: "clear", field: "tipo_madeira" },
+      { type: "unrequire", field: "tipo_madeira" },
+    ],
+  },
+  {
+    id: "variant_epoxi_fields",
+    description: "Epóxi exibe condição da base/piso.",
+    when: {
+      field: "variante_quadra_poliesportiva",
+      operator: "equals",
+      value: "epoxi",
+    },
+    effects: [
+      { type: "show", field: "condicao_base_piso" },
+      { type: "require", field: "condicao_base_piso" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "condicao_base_piso" },
+      { type: "clear", field: "condicao_base_piso" },
+      { type: "unrequire", field: "condicao_base_piso" },
+    ],
+  },
+  {
+    id: "variant_pu_200_b_fields",
+    description: "P.U. 200 B exibe Tipo de poliuretano.",
+    when: {
+      field: "variante_quadra_poliesportiva",
+      operator: "equals",
+      value: "pu_200_b",
+    },
+    effects: [
+      { type: "show", field: "tipo_poliuretano" },
+      { type: "require", field: "tipo_poliuretano" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_poliuretano" },
+      { type: "clear", field: "tipo_poliuretano" },
+      { type: "unrequire", field: "tipo_poliuretano" },
+    ],
+  },
+  {
+    id: "variant_piso_asfaltico_quadra_poliesportiva_fields",
+    description:
+      "Piso asfáltico da quadra poliesportiva não possui campos específicos.",
+    when: {
+      field: "variante_quadra_poliesportiva",
+      operator: "equals",
+      value: "piso_asfaltico",
+    },
+    effects: [],
+  },
+  {
+    id: "variant_beach_tenis_padrao_fields",
+    description:
+      "Beach Tennis padrão não possui campos condicionais de variante.",
+    when: {
+      field: "variante_beach_tenis",
+      operator: "equals",
+      value: "padrao",
+    },
+    effects: [],
+  },
+  {
+    id: "variant_campo_natural_fields",
+    description: "Campo Natural exibe Tipo de grama natural.",
+    when: { field: "variante_campo", operator: "equals", value: "natural" },
+    effects: [
+      { type: "show", field: "tipo_grama_natural" },
+      { type: "require", field: "tipo_grama_natural" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_grama_natural" },
+      { type: "clear", field: "tipo_grama_natural" },
+      { type: "hide", field: "especificar_tipo_grama_natural" },
+      { type: "clear", field: "especificar_tipo_grama_natural" },
+      { type: "unrequire", field: "tipo_grama_natural" },
+      { type: "unrequire", field: "especificar_tipo_grama_natural" },
+    ],
+  },
+  {
+    id: "variant_campo_sintetico_fields",
+    description:
+      "Campo sintético exibe grama sintética, altura, base drenante e shockpad.",
+    when: { field: "variante_campo", operator: "equals", value: "sintetico" },
+    effects: [
+      { type: "show", field: "tipo_grama_sintetica" },
+      { type: "show", field: "altura_grama_sintetica" },
+      { type: "show", field: "base_drenante" },
+      { type: "show", field: "possui_shockpad" },
+      { type: "require", field: "tipo_grama_sintetica" },
+      { type: "require", field: "altura_grama_sintetica" },
+      { type: "require", field: "base_drenante" },
+      { type: "unrequire", field: "possui_shockpad" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_grama_sintetica" },
+      { type: "clear", field: "tipo_grama_sintetica" },
+      { type: "hide", field: "especificar_tipo_grama_sintetica" },
+      { type: "clear", field: "especificar_tipo_grama_sintetica" },
+      { type: "hide", field: "altura_grama_sintetica" },
+      { type: "clear", field: "altura_grama_sintetica" },
+      { type: "hide", field: "base_drenante" },
+      { type: "clear", field: "base_drenante" },
+      { type: "hide", field: "possui_shockpad" },
+      { type: "clear", field: "possui_shockpad" },
+      { type: "unrequire", field: "tipo_grama_sintetica" },
+      { type: "unrequire", field: "especificar_tipo_grama_sintetica" },
+      { type: "unrequire", field: "altura_grama_sintetica" },
+      { type: "unrequire", field: "base_drenante" },
+      { type: "unrequire", field: "possui_shockpad" },
+    ],
+  },
+  {
+    id: "variant_pickleball_padrao_fields",
+    description:
+      "Pickleball padrão não possui campos condicionais de variante.",
+    when: { field: "variante_pickleball", operator: "equals", value: "padrao" },
+    effects: [],
+  },
+  {
+    id: "variant_squash_padrao_fields",
+    description: "Squash padrão não possui campos condicionais de variante.",
+    when: { field: "variante_squash", operator: "equals", value: "padrao" },
+    effects: [],
+  },
+  {
+    id: "variant_garagem_epoxi_padrao_fields",
+    description:
+      "Garagem epóxi padrão não possui campos condicionais de variante.",
+    when: {
+      field: "variante_garagem_epoxi",
+      operator: "equals",
+      value: "padrao",
+    },
+    effects: [],
+  },
+  {
+    id: "variant_softplay_padrao_fields",
+    description: "Softplay padrão não possui campos condicionais de variante.",
+    when: { field: "variante_softplay", operator: "equals", value: "padrao" },
+    effects: [],
+  },
+  {
+    id: "show_vagas_carro_garagem_epoxi",
+    description:
+      "Vagas de carro exibem quantidade, largura e comprimento quando selecionadas.",
+    when: { field: "possui_vagas_carro", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "quantidade_vagas_carro" },
+      { type: "show", field: "largura_vaga_carro" },
+      { type: "show", field: "comprimento_vaga_carro" },
+      { type: "require", field: "quantidade_vagas_carro" },
+      { type: "require", field: "largura_vaga_carro" },
+      { type: "require", field: "comprimento_vaga_carro" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "quantidade_vagas_carro" },
+      { type: "clear", field: "quantidade_vagas_carro" },
+      { type: "hide", field: "largura_vaga_carro" },
+      { type: "clear", field: "largura_vaga_carro" },
+      { type: "hide", field: "comprimento_vaga_carro" },
+      { type: "clear", field: "comprimento_vaga_carro" },
+      { type: "unrequire", field: "quantidade_vagas_carro" },
+      { type: "unrequire", field: "largura_vaga_carro" },
+      { type: "unrequire", field: "comprimento_vaga_carro" },
+    ],
+  },
+  {
+    id: "show_vagas_moto_garagem_epoxi",
+    description:
+      "Vagas de moto exibem quantidade, largura e comprimento quando selecionadas.",
+    when: { field: "possui_vagas_moto", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "quantidade_vagas_moto" },
+      { type: "show", field: "largura_vaga_moto" },
+      { type: "show", field: "comprimento_vaga_moto" },
+      { type: "require", field: "quantidade_vagas_moto" },
+      { type: "require", field: "largura_vaga_moto" },
+      { type: "require", field: "comprimento_vaga_moto" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "quantidade_vagas_moto" },
+      { type: "clear", field: "quantidade_vagas_moto" },
+      { type: "hide", field: "largura_vaga_moto" },
+      { type: "clear", field: "largura_vaga_moto" },
+      { type: "hide", field: "comprimento_vaga_moto" },
+      { type: "clear", field: "comprimento_vaga_moto" },
+      { type: "unrequire", field: "quantidade_vagas_moto" },
+      { type: "unrequire", field: "largura_vaga_moto" },
+      { type: "unrequire", field: "comprimento_vaga_moto" },
+    ],
+  },
+  {
+    id: "show_vagas_bicicleta_garagem_epoxi",
+    description:
+      "Vagas de bicicleta exibem quantidade, largura e comprimento quando selecionadas.",
+    when: {
+      field: "possui_vagas_bicicleta",
+      operator: "equals",
+      value: true,
+    },
+    effects: [
+      { type: "show", field: "quantidade_vagas_bicicleta" },
+      { type: "show", field: "largura_vaga_bicicleta" },
+      { type: "show", field: "comprimento_vaga_bicicleta" },
+      { type: "require", field: "quantidade_vagas_bicicleta" },
+      { type: "require", field: "largura_vaga_bicicleta" },
+      { type: "require", field: "comprimento_vaga_bicicleta" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "quantidade_vagas_bicicleta" },
+      { type: "clear", field: "quantidade_vagas_bicicleta" },
+      { type: "hide", field: "largura_vaga_bicicleta" },
+      { type: "clear", field: "largura_vaga_bicicleta" },
+      { type: "hide", field: "comprimento_vaga_bicicleta" },
+      { type: "clear", field: "comprimento_vaga_bicicleta" },
+      { type: "unrequire", field: "quantidade_vagas_bicicleta" },
+      { type: "unrequire", field: "largura_vaga_bicicleta" },
+      { type: "unrequire", field: "comprimento_vaga_bicicleta" },
+    ],
+  },
+  {
+    id: "show_vagas_pne_garagem_epoxi",
+    description:
+      "Vagas PNE exibem quantidade, largura e comprimento quando selecionadas.",
+    when: { field: "possui_vagas_pne", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "quantidade_vagas_pne" },
+      { type: "show", field: "largura_vaga_pne" },
+      { type: "show", field: "comprimento_vaga_pne" },
+      { type: "require", field: "quantidade_vagas_pne" },
+      { type: "require", field: "largura_vaga_pne" },
+      { type: "require", field: "comprimento_vaga_pne" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "quantidade_vagas_pne" },
+      { type: "clear", field: "quantidade_vagas_pne" },
+      { type: "hide", field: "largura_vaga_pne" },
+      { type: "clear", field: "largura_vaga_pne" },
+      { type: "hide", field: "comprimento_vaga_pne" },
+      { type: "clear", field: "comprimento_vaga_pne" },
+      { type: "unrequire", field: "quantidade_vagas_pne" },
+      { type: "unrequire", field: "largura_vaga_pne" },
+      { type: "unrequire", field: "comprimento_vaga_pne" },
+    ],
+  },
+  {
+    id: "show_anti_chama_quadra_poliesportiva",
+    description:
+      "Anti-chama aparece para Assoalho, P.U. 200 B e Squash, sempre opcional.",
+    when: {
+      any: [
+        {
+          field: "variante_quadra_poliesportiva",
+          operator: "equals",
+          value: "assoalho",
+        },
+        {
+          field: "variante_quadra_poliesportiva",
+          operator: "equals",
+          value: "pu_200_b",
+        },
+        { field: "variante_squash", operator: "equals", value: "padrao" },
+      ],
+    },
+    effects: [
+      { type: "show", field: "anti_chama" },
+      { type: "unrequire", field: "anti_chama" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "anti_chama" },
+      { type: "clear", field: "anti_chama" },
+      { type: "unrequire", field: "anti_chama" },
+    ],
+  },
+  {
+    id: "show_especificar_cor",
+    description: "Cor não padrão exige especificação manual.",
+    when: {
+      field: "cor_piso_asfaltico",
+      operator: "equals",
+      value: "nao_padrao",
+    },
+    effects: [
+      { type: "show", field: "especificar_cor" },
+      { type: "require", field: "especificar_cor" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_cor" },
+      { type: "clear", field: "especificar_cor" },
+      { type: "unrequire", field: "especificar_cor" },
+    ],
+  },
+  {
+    id: "show_especificar_tipo_grama",
+    description: "Tipo de grama Outros exige especificação manual.",
+    when: { field: "tipo_grama", operator: "equals", value: "outros" },
+    effects: [
+      { type: "show", field: "especificar_tipo_grama" },
+      { type: "require", field: "especificar_tipo_grama" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_tipo_grama" },
+      { type: "clear", field: "especificar_tipo_grama" },
+      { type: "unrequire", field: "especificar_tipo_grama" },
+    ],
+  },
+  {
+    id: "show_especificar_tipo_grama_natural",
+    description: "Tipo de grama natural Outros exige especificação manual.",
+    when: { field: "tipo_grama_natural", operator: "equals", value: "outros" },
+    effects: [
+      { type: "show", field: "especificar_tipo_grama_natural" },
+      { type: "require", field: "especificar_tipo_grama_natural" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_tipo_grama_natural" },
+      { type: "clear", field: "especificar_tipo_grama_natural" },
+      { type: "unrequire", field: "especificar_tipo_grama_natural" },
+    ],
+  },
+  {
+    id: "show_especificar_tipo_grama_sintetica",
+    description: "Tipo de grama sintética Outros exige especificação manual.",
+    when: {
+      field: "tipo_grama_sintetica",
+      operator: "equals",
+      value: "outros",
+    },
+    effects: [
+      { type: "show", field: "especificar_tipo_grama_sintetica" },
+      { type: "require", field: "especificar_tipo_grama_sintetica" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_tipo_grama_sintetica" },
+      { type: "clear", field: "especificar_tipo_grama_sintetica" },
+      { type: "unrequire", field: "especificar_tipo_grama_sintetica" },
+    ],
+  },
+  {
+    id: "show_especificar_cor_pickleball",
+    description: "Cor não padrão do Pickleball exige especificação manual.",
+    when: { field: "cor_pickleball", operator: "equals", value: "nao_padrao" },
+    effects: [
+      { type: "show", field: "especificar_cor_pickleball" },
+      { type: "require", field: "especificar_cor_pickleball" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_cor_pickleball" },
+      { type: "clear", field: "especificar_cor_pickleball" },
+      { type: "unrequire", field: "especificar_cor_pickleball" },
+    ],
+  },
+  {
+    id: "show_tipo_rede_pickleball",
+    description: "Rede de Pickleball exige seleção do tipo da rede.",
+    when: { field: "possui_rede_pickleball", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "tipo_rede_pickleball" },
+      { type: "require", field: "tipo_rede_pickleball" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "tipo_rede_pickleball" },
+      { type: "clear", field: "tipo_rede_pickleball" },
+      { type: "unrequire", field: "tipo_rede_pickleball" },
+    ],
+  },
+  {
+    id: "show_iluminacao_fields",
+    description: "Possui iluminação exibe campos internos de iluminação.",
+    when: { field: "possui_iluminacao", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "iluminacao_fixada_alambrado" },
+      { type: "show", field: "quantidade_postes_iluminacao" },
+      { type: "show", field: "altura_postes_iluminacao" },
+      { type: "show", field: "quantidade_projetores" },
+      { type: "show", field: "potencia_projetores" },
+      { type: "show", field: "quantidade_cruzetas" },
+      { type: "show", field: "responsavel_ligacao_eletrica" },
+      { type: "show", field: "tipo_coligacao" },
+      { type: "require", field: "quantidade_projetores" },
+      { type: "require", field: "potencia_projetores" },
+      { type: "require", field: "quantidade_cruzetas" },
+      { type: "require", field: "tipo_coligacao" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "iluminacao_fixada_alambrado" },
+      { type: "clear", field: "iluminacao_fixada_alambrado" },
+      { type: "hide", field: "quantidade_postes_iluminacao" },
+      { type: "clear", field: "quantidade_postes_iluminacao" },
+      { type: "hide", field: "altura_postes_iluminacao" },
+      { type: "clear", field: "altura_postes_iluminacao" },
+      { type: "hide", field: "quantidade_projetores" },
+      { type: "clear", field: "quantidade_projetores" },
+      { type: "hide", field: "potencia_projetores" },
+      { type: "clear", field: "potencia_projetores" },
+      { type: "hide", field: "especificar_potencia_projetores" },
+      { type: "clear", field: "especificar_potencia_projetores" },
+      { type: "hide", field: "quantidade_cruzetas" },
+      { type: "clear", field: "quantidade_cruzetas" },
+      { type: "hide", field: "responsavel_ligacao_eletrica" },
+      { type: "hide", field: "tipo_coligacao" },
+      { type: "clear", field: "tipo_coligacao" },
+      { type: "unrequire", field: "quantidade_postes_iluminacao" },
+      { type: "unrequire", field: "altura_postes_iluminacao" },
+      { type: "unrequire", field: "quantidade_projetores" },
+      { type: "unrequire", field: "potencia_projetores" },
+      { type: "unrequire", field: "especificar_potencia_projetores" },
+      { type: "unrequire", field: "quantidade_cruzetas" },
+      { type: "unrequire", field: "tipo_coligacao" },
+    ],
+  },
+  {
+    id: "hide_postes_when_iluminacao_fixada_alambrado",
+    description:
+      "Iluminação fixada em alambrado oculta campos de postes próprios.",
+    when: {
+      all: [
+        { field: "possui_iluminacao", operator: "equals", value: true },
+        {
+          field: "iluminacao_fixada_alambrado",
+          operator: "equals",
+          value: true,
+        },
+      ],
+    },
+    effects: [
+      { type: "hide", field: "quantidade_postes_iluminacao" },
+      { type: "clear", field: "quantidade_postes_iluminacao" },
+      { type: "hide", field: "altura_postes_iluminacao" },
+      { type: "clear", field: "altura_postes_iluminacao" },
+      { type: "unrequire", field: "quantidade_postes_iluminacao" },
+      { type: "unrequire", field: "altura_postes_iluminacao" },
+    ],
+  },
+  {
+    id: "show_especificar_potencia_projetores",
+    description: "Potência dos projetores Outro exige especificação manual.",
+    when: { field: "potencia_projetores", operator: "equals", value: "outro" },
+    effects: [
+      { type: "show", field: "especificar_potencia_projetores" },
+      { type: "require", field: "especificar_potencia_projetores" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_potencia_projetores" },
+      { type: "clear", field: "especificar_potencia_projetores" },
+      { type: "unrequire", field: "especificar_potencia_projetores" },
+    ],
+  },
+  {
+    id: "show_alambrado_fields",
+    description: "Possui alambrado exibe campos técnicos de alambrado.",
+    when: { field: "possui_alambrado", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "sistema_alambrado_beach_tenis" },
+      { type: "show", field: "comprimento_alambrado" },
+      { type: "show", field: "altura_alambrado" },
+      { type: "show", field: "espacamento_postes_tubos" },
+      { type: "show", field: "galvanizacao" },
+      { type: "show", field: "possui_trelica" },
+      { type: "show", field: "travamento" },
+      { type: "show", field: "quantidade_portoes" },
+      { type: "require", field: "sistema_alambrado_beach_tenis" },
+      { type: "require", field: "comprimento_alambrado" },
+      { type: "require", field: "altura_alambrado" },
+      { type: "require", field: "espacamento_postes_tubos" },
+      { type: "require", field: "galvanizacao" },
+      { type: "require", field: "travamento" },
+      { type: "require", field: "quantidade_portoes" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "sistema_alambrado_beach_tenis" },
+      { type: "clear", field: "sistema_alambrado_beach_tenis" },
+      { type: "hide", field: "comprimento_alambrado" },
+      { type: "clear", field: "comprimento_alambrado" },
+      { type: "hide", field: "altura_alambrado" },
+      { type: "clear", field: "altura_alambrado" },
+      { type: "hide", field: "espacamento_postes_tubos" },
+      { type: "clear", field: "espacamento_postes_tubos" },
+      { type: "hide", field: "galvanizacao" },
+      { type: "clear", field: "galvanizacao" },
+      { type: "hide", field: "especificar_galvanizacao" },
+      { type: "clear", field: "especificar_galvanizacao" },
+      { type: "hide", field: "possui_trelica" },
+      { type: "clear", field: "possui_trelica" },
+      { type: "hide", field: "travamento" },
+      { type: "clear", field: "travamento" },
+      { type: "hide", field: "quantidade_portoes" },
+      { type: "clear", field: "quantidade_portoes" },
+      { type: "unrequire", field: "sistema_alambrado_beach_tenis" },
+      { type: "unrequire", field: "comprimento_alambrado" },
+      { type: "unrequire", field: "altura_alambrado" },
+      { type: "unrequire", field: "espacamento_postes_tubos" },
+      { type: "unrequire", field: "galvanizacao" },
+      { type: "unrequire", field: "especificar_galvanizacao" },
+      { type: "unrequire", field: "travamento" },
+      { type: "unrequire", field: "quantidade_portoes" },
+    ],
+  },
+  {
+    id: "show_portao_dimensions",
+    description: "Quantidade de portões > 0 exibe e obriga altura e largura dos portões.",
+    when: { field: "quantidade_portoes", operator: "truthy" },
+    effects: [
+      { type: "show", field: "altura_portoes" },
+      { type: "show", field: "largura_portoes" },
+      { type: "require", field: "altura_portoes" },
+      { type: "require", field: "largura_portoes" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "altura_portoes" },
+      { type: "clear", field: "altura_portoes" },
+      { type: "hide", field: "largura_portoes" },
+      { type: "clear", field: "largura_portoes" },
+      { type: "unrequire", field: "altura_portoes" },
+      { type: "unrequire", field: "largura_portoes" },
+    ],
+  },
+  {
+    id: "show_estrutura_basquete_adulto",
+    description: "Basquete adulto exibe seleção de estrutura.",
+    when: { field: "possui_basquete_adulto", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "estrutura_basquete_adulto" },
+      { type: "require", field: "estrutura_basquete_adulto" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "estrutura_basquete_adulto" },
+      { type: "clear", field: "estrutura_basquete_adulto" },
+      { type: "unrequire", field: "estrutura_basquete_adulto" },
+    ],
+  },
+  {
+    id: "show_cor_tela_superior",
+    description: "Tela superior exibe campo de cor.",
+    when: { field: "possui_tela_superior", operator: "equals", value: true },
+    effects: [
+      { type: "show", field: "cor_tela_superior" },
+      { type: "require", field: "cor_tela_superior" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "cor_tela_superior" },
+      { type: "clear", field: "cor_tela_superior" },
+      { type: "unrequire", field: "cor_tela_superior" },
+    ],
+  },
+  {
+    id: "show_dimensoes_sombreamento",
+    description:
+      "Tela de sombreamento exibe largura e comprimento do sombreamento.",
+    when: {
+      field: "possui_tela_sombreamento",
+      operator: "equals",
+      value: true,
+    },
+    effects: [
+      { type: "show", field: "largura_sombreamento" },
+      { type: "show", field: "comprimento_sombreamento" },
+      { type: "require", field: "largura_sombreamento" },
+      { type: "require", field: "comprimento_sombreamento" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "largura_sombreamento" },
+      { type: "clear", field: "largura_sombreamento" },
+      { type: "hide", field: "comprimento_sombreamento" },
+      { type: "clear", field: "comprimento_sombreamento" },
+      { type: "unrequire", field: "largura_sombreamento" },
+      { type: "unrequire", field: "comprimento_sombreamento" },
+    ],
+  },
+  {
+    id: "show_especificar_galvanizacao",
+    description: "Galvanização Outro exige especificação manual.",
+    when: { field: "galvanizacao", operator: "equals", value: "outro" },
+    effects: [
+      { type: "show", field: "especificar_galvanizacao" },
+      { type: "require", field: "especificar_galvanizacao" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "especificar_galvanizacao" },
+      { type: "clear", field: "especificar_galvanizacao" },
+      { type: "unrequire", field: "especificar_galvanizacao" },
+    ],
+  },
+  {
+    id: "show_opcao_pu_200_b_pista",
+    description:
+      "Exibe e obriga o campo de opção para a variante PU 200 B da pista.",
+    when: { field: "variante_pista", operator: "equals", value: "pu_200_b" },
+    effects: [
+      { type: "show", field: "opcao_pu_200_b_pista" },
+      { type: "require", field: "opcao_pu_200_b_pista" },
+    ],
+    elseEffects: [
+      { type: "hide", field: "opcao_pu_200_b_pista" },
+      { type: "clear", field: "opcao_pu_200_b_pista" },
+      { type: "unrequire", field: "opcao_pu_200_b_pista" },
+    ],
+  },
+];
+
+export { conditionalRules };

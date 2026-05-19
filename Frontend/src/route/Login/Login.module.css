@@ -1,0 +1,166 @@
+.loginPage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(420px, 1fr);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.brandPanel {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 48px;
+  background: var(--color-brand-primary);
+  color: var(--color-brand-on-primary);
+}
+
+.brandLogo {
+  width: 192px;
+  height: auto;
+  display: block;
+}
+
+.brandCopy {
+  max-width: 460px;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.brandCopy h2 {
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.12;
+}
+
+.brandCopy p:last-child {
+  margin: 16px 0 0;
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.formPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+}
+
+.loginForm {
+  width: min(100%, 432px);
+  padding: 32px;
+  border: 1px solid rgba(74, 74, 74, 0.18);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 16px 48px rgba(31, 29, 26, 0.08);
+}
+
+.mobileBrand {
+  display: none;
+  margin-bottom: 28px;
+}
+
+.mobileBrand img {
+  width: 152px;
+  height: auto;
+  display: block;
+}
+
+.formHeader {
+  margin-bottom: 28px;
+}
+
+.formHeader h1 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.formHeader p {
+  margin: 8px 0 0;
+  color: rgba(31, 29, 26, 0.72);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.msButton {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #3c3c3c;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.msButton:hover {
+  background: #f3f3f3;
+  border-color: rgba(74, 74, 74, 0.48);
+}
+
+.msButton:focus-visible {
+  outline: 3px solid rgba(0, 164, 239, 0.4);
+  outline-offset: 2px;
+}
+
+.accessHint {
+  margin: 18px 0 0;
+  color: rgba(74, 74, 74, 0.72);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .loginPage {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPanel {
+    display: none;
+  }
+
+  .formPanel {
+    min-height: 100vh;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .mobileBrand {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .formPanel {
+    padding: 16px;
+  }
+
+  .loginForm {
+    padding: 24px 18px;
+  }
+
+  .formHeader h1 {
+    font-size: 24px;
+  }
+}

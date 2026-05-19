@@ -1,0 +1,158 @@
+.page {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+  color: #4a4a4a;
+}
+
+.pageTitle {
+  margin-bottom: 24px;
+}
+
+.pageTitle h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.pageTitle p {
+  max-width: 680px;
+  margin: 8px 0 0;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid rgba(74, 74, 74, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.table thead {
+  background: rgba(74, 74, 74, 0.04);
+}
+
+.table th {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.16);
+  color: rgba(74, 74, 74, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.1);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: rgba(74, 74, 74, 0.02);
+}
+
+.dateCell {
+  white-space: nowrap;
+  color: rgba(74, 74, 74, 0.72);
+  font-size: 13px;
+}
+
+.clientCell {
+  font-weight: 600;
+}
+
+.productsCell {
+  color: rgba(74, 74, 74, 0.78);
+}
+
+.productTag {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 2px 8px;
+  border: 1px solid rgba(74, 74, 74, 0.2);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.actionsCell {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.regenButton {
+  min-height: 36px;
+  margin-right: 8px;
+  padding: 6px 12px;
+  border: 1px solid #ff0000;
+  border-radius: 8px;
+  background: #ff0000;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.regenButton:disabled {
+  border-color: rgba(74, 74, 74, 0.2);
+  background: rgba(74, 74, 74, 0.08);
+  color: rgba(74, 74, 74, 0.52);
+  cursor: not-allowed;
+}
+
+.deleteButton {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #fff;
+  color: rgba(74, 74, 74, 0.72);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.deleteButton:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.emptyState {
+  padding: 64px 0;
+  text-align: center;
+  color: rgba(74, 74, 74, 0.6);
+}
+
+.emptyState p {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+.rowError {
+  padding: 4px 0 0;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+@media (max-width: 767px) {
+  .page {
+    width: min(100% - 24px, 960px);
+    padding: 20px 0 36px;
+  }
+
+  .table th:nth-child(3),
+  .table td:nth-child(3) {
+    display: none;
+  }
+}
