@@ -12,5 +12,11 @@ public class DateOnlyTypeHandler : SqlMapper.TypeHandler<DateOnly>
     }
 
     public override DateOnly Parse(object value) =>
-        DateOnly.FromDateTime((DateTime)value);
+        value switch
+        {
+            DateOnly dateOnly => dateOnly,
+            DateTime dateTime => DateOnly.FromDateTime(dateTime),
+            string text => DateOnly.Parse(text),
+            _ => throw new DataException($"Cannot convert {value.GetType()} to DateOnly.")
+        };
 }

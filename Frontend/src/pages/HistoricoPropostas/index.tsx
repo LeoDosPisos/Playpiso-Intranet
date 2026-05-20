@@ -522,6 +522,7 @@ function DetailPanel({
         </div>
         <div className={styles.contactGroup}>
           {detail.enderecoObra && <ContactField label="Endereço da obra" value={detail.enderecoObra} />}
+          {detail.localObra && <ContactField label="Local da obra" value={detail.localObra} />}
           <ContactField label="Cidade / Estado" value={`${detail.cidade} / ${detail.estado}`} />
           {detail.tipoProjeto && <ContactField label="Tipo de projeto" value={formatSpecValue(detail.tipoProjeto)} />}
           {detail.dataSolicitacao && <ContactField label="Data de solicitação" value={detail.dataSolicitacao} />}
