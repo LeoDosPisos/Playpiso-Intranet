@@ -173,13 +173,19 @@
   border-top: 1px solid rgba(74, 74, 74, 0.1);
 }
 
-.contactGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 32px;
+.contactSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 40px;
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(74, 74, 74, 0.1);
+}
+
+.contactGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .productGroupList {
@@ -189,14 +195,16 @@
 }
 
 .productGroupCard {
-  padding: 12px 16px;
+  padding: 16px 20px;
   background: #fff;
   border: 1px solid rgba(74, 74, 74, 0.14);
   border-radius: 8px;
 }
 
 .productGroupHeader {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.08);
 }
 
 .productGroupName {
@@ -213,9 +221,26 @@
   color: rgba(74, 74, 74, 0.6);
 }
 
+.specSection {
+  margin-bottom: 16px;
+}
+
+.specSection:last-child {
+  margin-bottom: 0;
+}
+
+.specSectionTitle {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(74, 74, 74, 0.45);
+  text-transform: uppercase;
+}
+
 .specGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px 20px;
 }
 
@@ -240,6 +265,17 @@
   word-break: break-word;
 }
 
+.observacoes {
+  margin-top: 4px;
+}
+
+.observacoesText {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #2a2a2a;
+  line-height: 1.5;
+}
+
 .detailLoading {
   padding: 20px;
   font-size: 13px;
@@ -256,6 +292,10 @@
   .page {
     width: min(100% - 32px, 1280px);
     padding: 20px 0 36px;
+  }
+
+  .contactSection {
+    grid-template-columns: 1fr;
   }
 
   .table th:nth-child(4),
