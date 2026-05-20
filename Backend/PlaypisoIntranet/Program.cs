@@ -28,14 +28,25 @@ if (!result.Successful)
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+var disableAuthentication = builder.Environment.IsDevelopment()
+    && builder.Configuration.GetValue("Authentication:DisableAzureAd", true);
+
+if (!disableAuthentication)
+{
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+}
 
 builder.Services.Configure<AllowedUsersOptions>(builder.Configuration.GetSection("AllowedUsers"));
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AllowedUsers", policy =>
-        policy.RequireAuthenticatedUser());
+    {
+        if (disableAuthentication)
+            policy.RequireAssertion(_ => true);
+        else
+            policy.RequireAuthenticatedUser();
+    });
 });
 
 builder.Services.AddSingleton<IProposalRepository>(_ => new ProposalRepository(connectionString));
@@ -61,7 +72,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
 app.UseCors();
-app.UseAuthentication();
+if (!disableAuthentication)
+    app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -727,6 +727,17 @@
   text-align: right;
 }
 
+.saveSuccess {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(22, 163, 74, 0.4);
+  border-radius: 8px;
+  background: rgba(22, 163, 74, 0.06);
+  color: #16a34a;
+  font-size: 14px;
+  text-align: right;
+}
+
 @keyframes slideUp {
   from {
     opacity: 0;

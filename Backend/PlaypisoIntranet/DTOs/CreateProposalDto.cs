@@ -15,6 +15,7 @@ public record CreateProposalDto(
     string? Email,
 
     [Required] string EnderecoObra,
+    [Required] string LocalObra,
     [Required] string Cidade,
     [Required] string Estado,
     [Required] string TipoProjeto,

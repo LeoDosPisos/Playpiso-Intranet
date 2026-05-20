@@ -66,27 +66,90 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
   quantidadePortoes: { label: 'Qtd. portões' },
   alturaPortoes: { label: 'Altura dos portões', unit: 'm' },
   larguraPortoes: { label: 'Largura dos portões', unit: 'm' },
-  // Cobertura (snake_case)
+  // Cobertura
   cor_tela_superior: { label: 'Cor da tela superior' },
-  // Piso & extras comuns (snake_case)
+  // Piso & cores
   cor_piso_asfaltico: { label: 'Cor do piso' },
+  especificar_cor: { label: 'Especificar cor' },
+  cor_pickleball: { label: 'Cor' },
+  especificar_cor_pickleball: { label: 'Especificar cor' },
+  // Extras (tênis / saibro)
   incluir_rede_tenis: { label: 'Rede de tênis', unit: 'bool' },
-  possui_playcushion: { label: 'Playcushion', unit: 'bool' },
+  possui_playcushion: { label: 'PlayCushion', unit: 'bool' },
   possui_rede: { label: 'Rede', unit: 'bool' },
   altura_rede: { label: 'Altura da rede', unit: 'm' },
   possui_kit_saibro: { label: 'Kit saibro', unit: 'bool' },
-  // Quadra poliesportiva (snake_case)
-  tipo_futsal: { label: 'Tipo de piso (futsal)' },
+  // Grama (tênis / campo / padel)
+  tipo_grama: { label: 'Tipo de grama' },
+  especificar_tipo_grama: { label: 'Especificar tipo de grama' },
+  tipo_grama_natural: { label: 'Tipo de grama natural' },
+  especificar_tipo_grama_natural: { label: 'Especificar grama natural' },
+  tipo_grama_sintetica: { label: 'Tipo de grama sintética' },
+  especificar_tipo_grama_sintetica: { label: 'Especificar grama sintética' },
+  tipo_grama_padel: { label: 'Tipo de grama' },
+  altura_grama_sintetica: { label: 'Altura da grama sintética' },
+  base_drenante: { label: 'Base drenante' },
+  possui_shockpad: { label: 'Shockpad', unit: 'bool' },
+  // Quadra poliesportiva / squash (madeira & poliuretano)
+  tipo_madeira: { label: 'Tipo de madeira' },
+  anti_chama: { label: 'Anti-chama', unit: 'bool' },
+  condicao_base_piso: { label: 'Condição da base/piso' },
+  tipo_poliuretano: { label: 'Tipo de poliuretano' },
+  // Quadra poliesportiva (esportes)
+  tipo_futsal: { label: 'Tipo de trave (futsal)' },
   possui_tenis: { label: 'Tênis', unit: 'bool' },
   possui_volei: { label: 'Vôlei', unit: 'bool' },
   possui_futebol_futsal: { label: 'Futebol/Futsal', unit: 'bool' },
   possui_basquete_adulto: { label: 'Basquete adulto', unit: 'bool' },
   possui_basquete_juvenil: { label: 'Basquete juvenil', unit: 'bool' },
   estrutura_basquete_adulto: { label: 'Estrutura basquete adulto' },
-  // Beach tennis (snake_case)
-  possui_eva: { label: 'EVA', unit: 'bool' },
+  // Campo (traves)
+  possui_trave_3x2: { label: 'Trave 3x2', unit: 'bool' },
+  possui_trave_4x2: { label: 'Trave 4x2', unit: 'bool' },
+  possui_trave_5x2: { label: 'Trave 5x2', unit: 'bool' },
+  possui_trave_oficial: { label: 'Trave oficial 7,24 × 2,42', unit: 'bool' },
+  // Beach tennis
+  possui_eva: { label: 'Proteção EVA', unit: 'bool' },
   tipo_areia: { label: 'Tipo de areia' },
   espessura_areia: { label: 'Espessura da areia', unit: 'cm' },
+  // Pickleball
+  possui_rede_pickleball: { label: 'Rede', unit: 'bool' },
+  tipo_rede_pickleball: { label: 'Tipo da rede' },
+  // Padel
+  tipo_estrutura_alambrado_padel: { label: 'Tipo de estrutura do alambrado' },
+  // Pista
+  numero_raias: { label: 'Número de raias', unit: 'un' },
+  opcao_pu_200_b_pista: { label: 'Opção PU 200 B' },
+  // Softplay
+  espessura_sbr: { label: 'Espessura de SBR', unit: 'cm' },
+  espessura_epdm: { label: 'Espessura de EPDM', unit: 'cm' },
+  // Garagem epóxi — dimensões
+  largura_piso_liso: { label: 'Largura (piso liso)', unit: 'm' },
+  comprimento_piso_liso: { label: 'Comprimento (piso liso)', unit: 'm' },
+  area_piso_liso: { label: 'Área (piso liso)', unit: 'm²' },
+  largura_piso_derrapante: { label: 'Largura (piso derrapante)', unit: 'm' },
+  comprimento_piso_derrapante: { label: 'Comprimento (piso derrapante)', unit: 'm' },
+  area_piso_derrapante: { label: 'Área (piso derrapante)', unit: 'm²' },
+  possui_multilayer_garagem_epoxi: { label: 'Multilayer', unit: 'bool' },
+  condicao_base_piso_garagem_epoxi: { label: 'Condição da base/piso' },
+  metro_linear_faixa: { label: 'Metro linear de faixa', unit: 'm' },
+  // Garagem epóxi — vagas
+  possui_vagas_carro: { label: 'Vagas de carro', unit: 'bool' },
+  quantidade_vagas_carro: { label: 'Qtd. vagas de carro', unit: 'un' },
+  largura_vaga_carro: { label: 'Largura vaga carro', unit: 'm' },
+  comprimento_vaga_carro: { label: 'Comprimento vaga carro', unit: 'm' },
+  possui_vagas_moto: { label: 'Vagas de moto', unit: 'bool' },
+  quantidade_vagas_moto: { label: 'Qtd. vagas de moto', unit: 'un' },
+  largura_vaga_moto: { label: 'Largura vaga moto', unit: 'm' },
+  comprimento_vaga_moto: { label: 'Comprimento vaga moto', unit: 'm' },
+  possui_vagas_bicicleta: { label: 'Vagas de bicicleta', unit: 'bool' },
+  quantidade_vagas_bicicleta: { label: 'Qtd. vagas de bicicleta', unit: 'un' },
+  largura_vaga_bicicleta: { label: 'Largura vaga bicicleta', unit: 'm' },
+  comprimento_vaga_bicicleta: { label: 'Comprimento vaga bicicleta', unit: 'm' },
+  possui_vagas_pne: { label: 'Vagas PNE', unit: 'bool' },
+  quantidade_vagas_pne: { label: 'Qtd. vagas PNE', unit: 'un' },
+  largura_vaga_pne: { label: 'Largura vaga PNE', unit: 'm' },
+  comprimento_vaga_pne: { label: 'Comprimento vaga PNE', unit: 'm' },
   // Iluminação
   iluminacao_fixada_alambrado: { label: 'Iluminação fixada no alambrado', unit: 'bool' },
   especificar_potencia_projetores: { label: 'Potência especificada' },
@@ -98,8 +161,11 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
 }
 
 // Valores conhecidos com acentuação e capitalização corretas em português.
+// Fonte: Frontend/src/pages/FormPropostaComercial/config/fieldOptionsRegistry.ts
 const VALUE_LABELS: Record<string, string> = {
+  // Variantes / produtos
   padrao: 'Padrão',
+  nao_padrao: 'Não padrão',
   piso_asfaltico: 'Piso Asfáltico',
   saibro: 'Saibro',
   grama: 'Grama',
@@ -108,29 +174,87 @@ const VALUE_LABELS: Record<string, string> = {
   epoxi: 'Epóxi',
   natural: 'Natural',
   sintetico: 'Sintético',
-  gaiola: 'Gaiola',
-  gradil: 'Gradil',
-  elastica: 'Elástica',
+  // Tipo de projeto / terreno / acesso
+  obra_nova: 'Obra Nova',
+  reforma: 'Reforma',
+  solo_preparado: 'Solo preparado',
+  laje_concreto: 'Laje/Concreto',
+  facil: 'Fácil',
+  dificil: 'Difícil',
+  muito_dificil: 'Muito difícil',
+  // Responsáveis
+  cliente: 'Cliente',
+  fornecedor: 'Fornecedor',
+  playpiso: 'Playpiso',
+  // Areia (beach tennis)
+  rio: 'Rio',
+  quartzo: 'Quartzo',
+  lavado: 'Lavado',
+  // Grama natural / sintética
+  esmeralda: 'Esmeralda',
+  bermuda: 'Bermuda',
+  bermuda_celebration: 'Bermuda Celebration',
+  soccer_pro: 'Soccer Pro',
+  tturf: 'TTurf',
+  hero_shape: 'Hero Shape',
+  super_txt: 'Super TXT',
+  txt: 'TXT',
+  outros: 'Outros',
+  outro: 'Outro',
+  '50_mm': '50 mm',
+  '60_mm': '60 mm',
+  com_drenagem: 'Com drenagem',
+  sem_drenagem: 'Sem drenagem',
+  // Madeira (assoalho / squash)
+  grapia: 'Grapia',
+  cumaru: 'Cumaru',
+  tauari: 'Tauari',
+  // Condição da base
+  boa: 'Boa',
+  ruim: 'Ruim',
+  // Poliuretano / opção PU 200 B
+  b7: 'B7',
+  b9: 'B9',
+  b11: 'B11',
+  // Estrutura basquete
+  metalica: 'Metálica',
+  hidraulica: 'Hidráulica',
+  comum: 'Comum',
+  // Trave futsal
+  mini_trave: 'Mini Trave',
+  // Rede (pickleball)
+  fixo: 'Fixo',
+  removivel: 'Removível',
+  // Coligação
+  sem_coligacao: 'Sem coligação',
+  lateral: 'Lateral',
+  fundo: 'Fundo',
+  // Galvanização
+  fogo: 'Fogo',
+  eletrolitico: 'Eletrolítico',
   galvanizado: 'Galvanizado',
   zincado: 'Zincado',
   pintado: 'Pintado',
+  // Travamento
+  sem_travamento: 'Sem travamento',
   travamento_inferior: 'Inferior',
   travamento_intermediario: 'Intermediário',
   travamento_superior: 'Superior',
-  cliente: 'Cliente',
-  fornecedor: 'Fornecedor',
-  eletrolitico: 'Eletrolítico',
-  metalica: 'Metálica',
+  // Estrutura alambrado padel
+  estrutura_vidro: 'Estrutura de vidro',
+  estrutura_especial: 'Estrutura especial',
+  // Sistema alambrado
+  gaiola: 'Gaiola',
+  gradil: 'Gradil',
+  elastica: 'Elástica',
+  trapezio: 'Trapézio',
+  // Cores
   branca: 'Branca',
   amarelo: 'Amarela',
   preta: 'Preta',
   verde: 'Verde',
   azul: 'Azul',
   vermelha: 'Vermelha',
-  obra_nova: 'Obra Nova',
-  reforma: 'Reforma',
-  rio: 'Rio',
-  lavado: 'Lavado',
 }
 
 // ─── Formatadores ─────────────────────────────────────────────────────────────

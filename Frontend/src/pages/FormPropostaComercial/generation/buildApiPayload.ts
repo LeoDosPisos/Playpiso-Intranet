@@ -58,6 +58,7 @@ export function buildApiPayload(payload: ProposalBuilderPayload): object {
     email: str(g.email),
 
     enderecoObra: str(g.endereco_obra) ?? '',
+    localObra: str(g.local_obra) ?? '',
     cidade: str(g.cidade) ?? '',
     estado: str(g.estado) ?? '',
     tipoProjeto: str(g.tipo_projeto) ?? '',

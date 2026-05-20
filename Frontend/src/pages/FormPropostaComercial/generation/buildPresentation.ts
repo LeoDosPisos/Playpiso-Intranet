@@ -79,9 +79,37 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   }
 }
 
+export async function saveProposalDraft(
+  payload: ProposalBuilderPayload,
+  existingId?: string | null,
+): Promise<string> {
+  const headers = await getAuthHeaders()
+  const body = JSON.stringify(buildApiPayload(payload))
+
+  if (existingId) {
+    const res = await fetch(`${PROPOSTA_API_URL}/api/proposals/${existingId}`, {
+      method: 'PUT',
+      headers,
+      body,
+    })
+    if (!res.ok) throw new Error(`Erro ao atualizar rascunho: ${res.status}`)
+    return existingId
+  }
+
+  const res = await fetch(`${PROPOSTA_API_URL}/api/proposals`, {
+    method: 'POST',
+    headers,
+    body,
+  })
+  if (!res.ok) throw new Error(`Erro ao salvar rascunho: ${res.status}`)
+  const { id } = (await res.json()) as { id: string }
+  return id
+}
+
 export async function generateProposal(
   payload: ProposalBuilderPayload,
-): Promise<{ url: string; filename: string }> {
+  existingId?: string | null,
+): Promise<{ url: string; filename: string; proposalId: string }> {
   const resolvedSlides = resolveSlideList(payload)
 
   const pptxRequest = {
@@ -107,19 +135,8 @@ export async function generateProposal(
   }
 
   const headers = await getAuthHeaders()
+  const proposalId = await saveProposalDraft(payload, existingId)
 
-  // 1. salvar rascunho no banco
-  const createRes = await fetch(`${PROPOSTA_API_URL}/api/proposals`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(buildApiPayload(payload)),
-  })
-  if (!createRes.ok) {
-    throw new Error(`Erro ao salvar proposta: ${createRes.status}`)
-  }
-  const { id: proposalId } = (await createRes.json()) as { id: string }
-
-  // 2. gerar PPTX via C# API (que chama o Python internamente)
   const generateRes = await fetch(`${PROPOSTA_API_URL}/api/proposals/${proposalId}/generate`, {
     method: 'POST',
     headers,
@@ -136,7 +153,7 @@ export async function generateProposal(
     .trim()
   const filename = `Proposta Playpiso — ${clienteNome}.pptx`
 
-  return { url, filename }
+  return { url, filename, proposalId }
 }
 
 export type { ProductAvailability }
