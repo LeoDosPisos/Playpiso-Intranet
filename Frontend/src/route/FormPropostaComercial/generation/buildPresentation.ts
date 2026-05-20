@@ -21,10 +21,10 @@ function deriveProductAvailability(availableSlideIds: Set<string>): ProductAvail
   const productVariantMap = new Map<string, Set<string>>()
 
   for (const slide of slideRegistry) {
-    if (!('productId' in slide)) continue
+    if (!('productId' in slide) || !slide.productId) continue
     if (!availableSlideIds.has(slide.slideId)) continue
 
-    const { productId } = slide
+    const productId = slide.productId
     if (!productVariantMap.has(productId)) {
       productVariantMap.set(productId, new Set())
     }
@@ -85,7 +85,12 @@ export async function generateProposal(
   const resolvedSlides = resolveSlideList(payload)
 
   const pptxRequest = {
-    slideIds: resolvedSlides.map((s) => s.slideId),
+    slides: resolvedSlides.map(({ entry, groupIndex }) => ({
+      slideId: entry.slideId,
+      templateFile: entry.templateFile,
+      dynamic: 'dynamic' in entry ? (entry as { dynamic?: string }).dynamic : undefined,
+      groupIndex: groupIndex ?? undefined,
+    })),
     globalValues: payload.globalValues,
     productGroups: payload.productGroups.map((group) => {
       const variant = productCatalog[group.productId]?.variants[String(group.variantId)]

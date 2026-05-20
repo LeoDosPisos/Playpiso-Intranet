@@ -38,13 +38,17 @@ export function resolveInvestimentoRows(
     }
     if (values.possui_basquete_juvenil) sports.push('Basquete Juvenil')
     if (values.possui_volei) sports.push('Vôlei')
-    if (values.possui_futebol_futsal) sports.push('Futebol/Futsal')
+    if (values.possui_futebol_futsal) {
+      const tipoFutsal = values.tipo_futsal as string | undefined
+      sports.push(tipoFutsal === 'mini_trave' ? 'Futebol/Futsal – Mini Trave' : 'Futebol/Futsal')
+    }
+    if (values.possui_tenis) sports.push('Tênis')
 
     return [
       { label: 'Quadra Poliesportiva — Piso Asfáltico' },
       ...(sports.length > 0 ? [{ label: `Acessórios – ${sports.join(', ')}` }] : []),
-      ...(values.possui_alambrado || values.possui_iluminacao || values.possui_tela_superior
-        ? [{ label: 'Alambrado, Iluminação e Tela Superior' }]
+      ...(values.possui_alambrado || values.possui_iluminacao || values.possui_tela_superior || values.possui_tela_sombreamento
+        ? [{ label: 'Alambrado, Iluminação e Telas' }]
         : []),
     ]
   }

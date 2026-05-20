@@ -9,8 +9,8 @@ const NORMALIZED_KEYS = new Set([
   'altura_postes_iluminacao', 'quantidade_projetores', 'potencia_projetores',
   'especificar_potencia_projetores', 'quantidade_cruzetas', 'responsavel_ligacao_eletrica',
   'tipo_coligacao',
-  'possui_alambrado', 'comprimento_alambrado', 'altura_alambrado', 'espacamento_postes_tubos',
-  'galvanizacao', 'especificar_galvanizacao', 'possui_trelica', 'travamento',
+  'possui_alambrado',
+  'galvanizacao', 'especificar_galvanizacao', 'travamento',
   'quantidade_portoes', 'altura_portoes', 'largura_portoes',
   'possui_tela_superior', 'possui_tela_sombreamento', 'largura_sombreamento',
   'comprimento_sombreamento',
@@ -94,12 +94,8 @@ export function buildApiPayload(payload: ProposalBuilderPayload): object {
 
         // fechamentos_protecoes
         possuiAlambrado: bool(v.possui_alambrado),
-        comprimentoAlambrado: num(v.comprimento_alambrado),
-        alturaAlambrado: num(v.altura_alambrado),
-        espacamentoPostesTubos: num(v.espacamento_postes_tubos),
         galvanizacao: str(v.galvanizacao),
         especificarGalvanizacao: str(v.especificar_galvanizacao),
-        possuiTrelica: boolOrNull(v.possui_trelica),
         travamento: str(v.travamento),
         quantidadePortoes: num(v.quantidade_portoes),
         alturaPortoes: num(v.altura_portoes),

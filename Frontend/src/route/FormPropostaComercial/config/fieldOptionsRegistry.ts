@@ -421,6 +421,17 @@ const estruturaBasqueteOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
+const tipoFutsalOptions = [
+  {
+    value: "padrao",
+    label: "Padrão",
+  },
+  {
+    value: "mini_trave",
+    label: "Mini Trave",
+  },
+] as const satisfies readonly FieldOption[];
+
 const tipoRedePickleballOptions = [
   {
     value: "fixo",
@@ -518,7 +529,7 @@ const tipoEstruturaAlambradoPadelOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
-const sistemaAlambradoBeachTenisOptions = [
+const sistemaAlambradoOptions = [
   {
     value: "gaiola",
     label: "Gaiola",
@@ -558,13 +569,14 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   tipo_poliuretano: tipoPoliuretanoOptions,
   tipo_areia: tipoAreiaOptions,
   estrutura_basquete: estruturaBasqueteOptions,
+  tipo_futsal: tipoFutsalOptions,
   tipo_rede_pickleball: tipoRedePickleballOptions,
   tipo_coligacao: tipoColigacaoOptions,
   potencia_projetores: potenciaProjetoresOptions,
   galvanizacao: galvanizacaoOptions,
   travamento: travamentoOptions,
   tipo_estrutura_alambrado_padel: tipoEstruturaAlambradoPadelOptions,
-  sistema_alambrado_beach_tenis: sistemaAlambradoBeachTenisOptions,
+  sistema_alambrado: sistemaAlambradoOptions,
 };
 
 export { fieldOptionsRegistry };

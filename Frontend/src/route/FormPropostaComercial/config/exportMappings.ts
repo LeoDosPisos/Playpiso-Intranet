@@ -127,22 +127,30 @@ const exportMappings: ExportMappings = {
       },
       { fieldId: "tipo_coligacao", columnName: "Tipo de coligação" },
       { fieldId: "possui_alambrado", columnName: "Alambrado" },
-      { fieldId: "sistema_alambrado_beach_tenis", columnName: "Sistema do alambrado" },
+      { fieldId: "sistema_alambrado", columnName: "Sistema do alambrado" },
       {
-        fieldId: "comprimento_alambrado",
-        columnName: "Comprimento do alambrado",
+        fieldId: "comprimento_alambrado_laterais",
+        columnName: "Comprimento — Laterais",
       },
-      { fieldId: "altura_alambrado", columnName: "Altura do alambrado" },
+      { fieldId: "altura_alambrado_laterais", columnName: "Altura — Laterais" },
       {
-        fieldId: "espacamento_postes_tubos",
-        columnName: "Espaçamento entre postes/tubos",
+        fieldId: "espacamento_postes_tubos_laterais",
+        columnName: "Espaçamento — Laterais",
+      },
+      {
+        fieldId: "comprimento_alambrado_fundos",
+        columnName: "Comprimento — Fundos",
+      },
+      { fieldId: "altura_alambrado_fundos", columnName: "Altura — Fundos" },
+      {
+        fieldId: "espacamento_postes_tubos_fundos",
+        columnName: "Espaçamento — Fundos",
       },
       { fieldId: "galvanizacao", columnName: "Galvanização" },
       {
         fieldId: "especificar_galvanizacao",
         columnName: "Especificar galvanização",
       },
-      { fieldId: "possui_trelica", columnName: "Treliça" },
       { fieldId: "travamento", columnName: "Travamento" },
       { fieldId: "possui_tela_superior", columnName: "Tela superior" },
       {
@@ -183,7 +191,7 @@ const exportMappings: ExportMappings = {
         fieldId: "tipo_estrutura_alambrado_padel",
         columnName: "Tipo de estrutura do alambrado do Padel",
       },
-      { fieldId: "observacoes", columnName: "Observações" },
+      { fieldId: "observacoes", columnName: "Observações", },
     ],
   },
   pptx: {

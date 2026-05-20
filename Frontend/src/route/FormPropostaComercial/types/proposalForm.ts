@@ -38,6 +38,7 @@ type FieldDefinition = {
 
 type FieldLayout = {
   span?: 1 | 2 | 'full'
+  subsectionTitle?: string
 }
 
 type ConditionalFieldGroup = {
@@ -213,6 +214,7 @@ type VariantSlide = {
   orderWithinProduct: number
   templateFile: string
   placeholders?: readonly SlidePlaceholder[]
+  dynamic?: 'investimento'
 }
 
 type ConditionalSlide = {
@@ -220,10 +222,12 @@ type ConditionalSlide = {
   slideId: string
   label: string
   productId?: string
+  variantIds?: readonly string[]
   condition: ConditionalExpression
   orderWithinProduct: number
   templateFile: string
   placeholders?: readonly SlidePlaceholder[]
+  dynamic?: 'fechamentos' | 'acessorios'
 }
 
 type SlideEntry = GlobalSlide | ProductSlide | VariantSlide | ConditionalSlide

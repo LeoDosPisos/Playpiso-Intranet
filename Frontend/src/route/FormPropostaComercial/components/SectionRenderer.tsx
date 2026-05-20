@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { fieldOptionsRegistry } from '../config/fieldOptionsRegistry'
 import { fieldRegistry } from '../config/fieldRegistry'
@@ -36,7 +36,13 @@ function normalizeNumberValue(value: FormValue) {
     return ''
   }
 
-  return String(value)
+  return String(value).replace('.', ',')
+}
+
+function parseNumberRaw(raw: string): number | null {
+  if (raw === '') return null
+  const parsed = Number(raw.replace(',', '.'))
+  return Number.isFinite(parsed) ? parsed : null
 }
 
 function readOnlyValue(field: FieldDefinition, value: FormValue) {
@@ -78,10 +84,15 @@ function NumberInput({ field, value, error, describedBy, onBlur, onChange }: Num
     }
   }, [value])
 
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const newRaw = e.target.value
+    setRaw(newRaw)
+    onChange(field.id, parseNumberRaw(newRaw))
+  }
+
   function handleBlur() {
     focusedRef.current = false
-    const parsed = raw === '' ? null : Number(raw)
-    onChange(field.id, parsed !== null && Number.isFinite(parsed) ? parsed : null)
+    onChange(field.id, parseNumberRaw(raw))
     onBlur(field.id)
   }
 
@@ -94,7 +105,7 @@ function NumberInput({ field, value, error, describedBy, onBlur, onChange }: Num
         inputMode="decimal"
         name={field.id}
         onBlur={handleBlur}
-        onChange={(e) => setRaw(e.target.value)}
+        onChange={handleChange}
         onFocus={() => { focusedRef.current = true }}
         placeholder={field.placeholder}
         type="text"
@@ -314,16 +325,25 @@ function SectionRenderer({
                 return null
               }
 
+              const subsectionTitle = section.layout?.[fieldId]?.subsectionTitle
+
               return (
-                <div className={isFullWidth(section, fieldId) ? styles.fullSpan : undefined} key={fieldId}>
-                  <FieldRenderer
-                    disabledOptionValues={disabledOptionValuesByFieldId?.[fieldId]}
-                    field={field}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    state={state}
-                  />
-                </div>
+                <Fragment key={fieldId}>
+                  {subsectionTitle && (
+                    <div className={styles.fullSpan}>
+                      <h3 className={styles.subsectionTitle}>{subsectionTitle}</h3>
+                    </div>
+                  )}
+                  <div className={isFullWidth(section, fieldId) ? styles.fullSpan : undefined}>
+                    <FieldRenderer
+                      disabledOptionValues={disabledOptionValuesByFieldId?.[fieldId]}
+                      field={field}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      state={state}
+                    />
+                  </div>
+                </Fragment>
               )
             })}
           </div>

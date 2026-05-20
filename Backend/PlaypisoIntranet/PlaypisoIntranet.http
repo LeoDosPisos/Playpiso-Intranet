@@ -1,0 +1,6 @@
+@PlaypisoIntranet_HostAddress = http://localhost:5204
+
+GET {{PlaypisoIntranet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

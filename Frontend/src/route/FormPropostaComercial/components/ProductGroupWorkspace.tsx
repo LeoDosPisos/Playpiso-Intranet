@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { productCatalog } from '../config/productCatalog'
 import { VARIANT_FIELD_IDS, getVariantValue, isGlobalSectionId } from '../domain/proposalStructure'
@@ -74,6 +74,21 @@ function ProductGroupWorkspace({
 }: ProductGroupWorkspaceProps) {
   const tabsRef = useRef<HTMLDivElement>(null)
   const groupPanelRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const [isTabsStuck, setIsTabsStuck] = useState(false)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsTabsStuck(!entry.isIntersecting),
+      { threshold: 0 },
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   function handleTabClick(groupId: string) {
     onActivateGroup(groupId)
@@ -105,9 +120,14 @@ function ProductGroupWorkspace({
   }
 
   return (
-    // Tab/Label
     <section className={styles.productWorkspace}>
-      <div className={styles.tabs} ref={tabsRef} role="tablist" aria-label="Grupos de produtos">
+      <div ref={sentinelRef} className={styles.tabsSentinel} />
+      <div
+        className={isTabsStuck ? `${styles.tabs} ${styles.tabsStuck}` : styles.tabs}
+        ref={tabsRef}
+        role="tablist"
+        aria-label="Grupos de produtos"
+      >
         {builderState.productGroups.map((group) => (
           <button
             aria-selected={activeGroup?.groupId === group.groupId}

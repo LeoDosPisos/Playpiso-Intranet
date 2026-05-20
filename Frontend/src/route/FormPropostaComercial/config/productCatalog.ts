@@ -35,7 +35,7 @@ const beachTenisSections = [
   "especificacoes_beach_tenis",
   "acessorios_beach_tenis",
   "iluminacao",
-  "fechamentos_protecoes_beach_tenis",
+  "fechamentos_protecoes",
   "observacoes",
 ] as const;
 
@@ -139,6 +139,11 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraTenisSections,
         defaultValues: {
           variante_quadra_tenis: "piso_asfaltico",
+          cor_piso_asfaltico: "padrao",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 8,
+          quantidade_projetores: 16,
+          quantidade_cruzetas: 4,
         },
         sumarioTemplate:
           "{quantity} quadra(s) de tênis de {area_total}m² ({largura}m x {comprimento}m), " +
@@ -153,6 +158,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraTenisSections,
         defaultValues: {
           variante_quadra_tenis: "saibro",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 8,
+          quantidade_projetores: 16,
+          quantidade_cruzetas: 4,
         },
         sumarioTemplate:
           "{quantity} quadra(s) de tênis saibro coberta(s) de {area_total}m² ({largura}m x {comprimento}m), " +
@@ -166,6 +175,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraTenisSections,
         defaultValues: {
           variante_quadra_tenis: "grama",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 8,
+          quantidade_projetores: 16,
+          quantidade_cruzetas: 4,
         },
       },
     },
@@ -192,6 +205,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraPoliesportivaSections,
         defaultValues: {
           variante_quadra_poliesportiva: "piso_asfaltico",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 12,
+          quantidade_cruzetas: 3,
         },
         sumarioTemplate:
           "{quantity} quadra(s) poliesportiva(s) de {area_total}m² ({largura}m x {comprimento}m), " +
@@ -200,7 +217,9 @@ const productCatalog: Record<string, ProductDefinition> = {
           "{?possui_basquete_juvenil:, basquete juvenil}" +
           "{?possui_volei:, vôlei}" +
           "{?possui_futebol_futsal:, futebol/futsal}" +
-          "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}, " +
+          "{?possui_tenis:, tênis}" +
+          "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}" +
+          "{?possui_tela_superior:, tela superior}{?possui_tela_sombreamento:, tela de sombreamento}, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
       assoalho: {
@@ -209,6 +228,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraPoliesportivaSections,
         defaultValues: {
           variante_quadra_poliesportiva: "assoalho",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 12,
+          quantidade_cruzetas: 3,
         },
       },
       epoxi: {
@@ -217,6 +240,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraPoliesportivaSections,
         defaultValues: {
           variante_quadra_poliesportiva: "epoxi",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 12,
+          quantidade_cruzetas: 3,
         },
       },
       pu_200_b: {
@@ -225,6 +252,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraPoliesportivaSections,
         defaultValues: {
           variante_quadra_poliesportiva: "pu_200_b",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 12,
+          quantidade_cruzetas: 3,
         },
       },
     },

@@ -1,7 +1,7 @@
 .page {
-  width: min(960px, calc(100% - 32px));
+  width: min(1280px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 32px 0 48px;
+  padding: 36px 0 56px;
   color: #4a4a4a;
 }
 
@@ -70,89 +70,198 @@
 
 .clientCell {
   font-weight: 600;
+  font-size: 15px;
 }
 
-.productsCell {
+.numberCell,
+.locationCell,
+.ownerCell,
+.countCell {
   color: rgba(74, 74, 74, 0.78);
 }
 
-.productTag {
-  display: inline-block;
-  margin: 2px 4px 2px 0;
-  padding: 2px 8px;
-  border: 1px solid rgba(74, 74, 74, 0.2);
-  border-radius: 999px;
-  font-size: 12px;
-}
-
-.actionsCell {
-  white-space: nowrap;
-  text-align: right;
-}
-
-.regenButton {
-  min-height: 36px;
-  margin-right: 8px;
-  padding: 6px 12px;
-  border: 1px solid #ff0000;
-  border-radius: 8px;
-  background: #ff0000;
-  color: #fff;
-  cursor: pointer;
-  font: inherit;
-  font-size: 13px;
+.numberCell {
   font-weight: 700;
 }
 
-.regenButton:disabled {
-  border-color: rgba(74, 74, 74, 0.2);
-  background: rgba(74, 74, 74, 0.08);
-  color: rgba(74, 74, 74, 0.52);
-  cursor: not-allowed;
+.countCell {
+  text-align: center;
 }
 
-.deleteButton {
-  min-height: 36px;
-  padding: 6px 12px;
-  border: 1px solid rgba(74, 74, 74, 0.28);
-  border-radius: 8px;
-  background: #fff;
-  color: rgba(74, 74, 74, 0.72);
-  cursor: pointer;
-  font: inherit;
-  font-size: 13px;
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid rgba(22, 101, 52, 0.24);
+  border-radius: 999px;
+  background: rgba(22, 101, 52, 0.08);
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
 }
 
-.deleteButton:hover {
-  border-color: #dc2626;
-  color: #dc2626;
-}
-
-.emptyState {
+.emptyState,
+.errorState {
   padding: 64px 0;
   text-align: center;
   color: rgba(74, 74, 74, 0.6);
 }
 
-.emptyState p {
+.emptyState p,
+.errorState p {
   margin: 8px 0 0;
   font-size: 14px;
 }
 
-.rowError {
-  padding: 4px 0 0;
+.errorState {
   color: #dc2626;
-  font-size: 12px;
 }
 
-@media (max-width: 767px) {
+.rowExpanded td {
+  background: rgba(74, 74, 74, 0.02);
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: 1px solid rgba(74, 74, 74, 0.18);
+  border-radius: 6px;
+  color: rgba(74, 74, 74, 0.6);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.toggleButton:hover {
+  background: rgba(74, 74, 74, 0.06);
+  border-color: rgba(74, 74, 74, 0.3);
+  color: #4a4a4a;
+}
+
+.toggleButton svg {
+  transition: transform 0.2s;
+}
+
+.toggleButtonOpen svg {
+  transform: rotate(180deg);
+}
+
+.detailRow td {
+  padding: 0;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.16);
+}
+
+.detailRow:hover td {
+  background: none;
+}
+
+.detailPanel {
+  padding: 20px 24px 24px;
+  background: rgba(74, 74, 74, 0.015);
+  border-top: 1px solid rgba(74, 74, 74, 0.1);
+}
+
+.contactGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 32px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.1);
+}
+
+.productGroupList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.productGroupCard {
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid rgba(74, 74, 74, 0.14);
+  border-radius: 8px;
+}
+
+.productGroupHeader {
+  margin-bottom: 12px;
+}
+
+.productGroupName {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.productGroupSubtitle {
+  margin-top: 2px;
+  font-size: 13px;
+  color: rgba(74, 74, 74, 0.6);
+}
+
+.specGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px 20px;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.specLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(74, 74, 74, 0.5);
+  text-transform: uppercase;
+}
+
+.specValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2a2a2a;
+  word-break: break-word;
+}
+
+.detailLoading {
+  padding: 20px;
+  font-size: 13px;
+  color: rgba(74, 74, 74, 0.55);
+}
+
+.detailError {
+  padding: 20px;
+  font-size: 13px;
+  color: #dc2626;
+}
+
+@media (max-width: 1024px) {
   .page {
-    width: min(100% - 24px, 960px);
+    width: min(100% - 32px, 1280px);
     padding: 20px 0 36px;
   }
 
-  .table th:nth-child(3),
-  .table td:nth-child(3) {
+  .table th:nth-child(4),
+  .table td:nth-child(4),
+  .table th:nth-child(6),
+  .table td:nth-child(6) {
     display: none;
   }
 }

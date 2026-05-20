@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMsal } from '@azure/msal-react'
+import { createPortal } from 'react-dom'
 
 import { productCatalog } from '../config/productCatalog'
 import { getGlobalSections, getVariantValue } from '../domain/proposalStructure'
@@ -17,7 +17,6 @@ import {
   validateForm,
 } from '../formEngine'
 import type { FormState, FormValue, ProposalProductGroup, SectionDefinition } from '../types/proposalForm'
-import { saveProposalEntry } from '../history/proposalHistory'
 import styles from './FormRenderer.module.css'
 import { ProductCarousel } from './ProductCarousel'
 import { ProductGroupWorkspace } from './ProductGroupWorkspace'
@@ -110,10 +109,39 @@ function getUnsupportedGroupLabels(
     })
 }
 
-function FormRenderer() {
-  const { accounts } = useMsal()
-  const userEmail = accounts[0]?.username ?? 'anonymous'
+function DownloadStickyBar({
+  file,
+  onDismiss,
+}: {
+  file: { url: string; filename: string }
+  onDismiss: () => void
+}) {
+  return createPortal(
+    <div className={styles.stickyBar} data-testid="download-sticky-bar">
+      <span className={styles.stickyBarSuccess}>✓ Proposta gerada</span>
+      <span className={styles.stickyBarFilename}>{file.filename}</span>
+      <a
+        className={styles.stickyBarDownloadButton}
+        data-testid="btn-baixar-proposta"
+        download={file.filename}
+        href={file.url}
+      >
+        Baixar PPTX
+      </a>
+      <button
+        aria-label="Fechar"
+        className={styles.stickyBarDismiss}
+        onClick={onDismiss}
+        type="button"
+      >
+        ×
+      </button>
+    </div>,
+    document.body,
+  )
+}
 
+function FormRenderer() {
   const [builderState, setBuilderState] = useState(() => createInitialProposalBuilderState())
   const [collapsedGlobalSections, setCollapsedGlobalSections] = useState<Record<string, boolean>>({})
   const completionScrollAnchorsRef = useRef<Record<string, number>>({})
@@ -127,6 +155,7 @@ function FormRenderer() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [generatedFile, setGeneratedFile] = useState<{ url: string; filename: string } | null>(null)
+  const [generationCount, setGenerationCount] = useState(0)
   const [shouldScrollToError, setShouldScrollToError] = useState(false)
 
   useEffect(() => {
@@ -334,20 +363,12 @@ function FormRenderer() {
     }
 
     const payload = buildProposalBuilderPayload(validatedState)
+    setGeneratedFile(null)
     setIsGenerating(true)
     generateProposal(payload)
       .then(({ url, filename }) => {
         setGeneratedFile({ url, filename })
-        saveProposalEntry(userEmail, {
-          id: crypto.randomUUID(),
-          savedAt: new Date().toISOString(),
-          filename,
-          clientName: String(payload.globalValues.nome_razao_social ?? ''),
-          productLabels: payload.productGroups.map((g) =>
-            g.quantity > 1 ? `${g.productLabel} x${g.quantity}` : g.productLabel,
-          ),
-          payload,
-        })
+        setGenerationCount((c) => c + 1)
       })
       .catch((err: unknown) => {
         setGenerationError(err instanceof Error ? err.message : 'Erro ao gerar proposta.')
@@ -379,6 +400,7 @@ function FormRenderer() {
         {globalSections.map((section) => (
           <SectionRenderer
             completionStatus={globalSectionStatuses[section.id]}
+            disabledOptionValuesByFieldId={{ tipo_projeto: new Set(['reforma']) }}
             isCollapsed={Boolean(collapsedGlobalSections[section.id])}
             isCollapsible
             key={section.id}
@@ -457,18 +479,11 @@ function FormRenderer() {
       )}
 
       {generatedFile && (
-        <div className={styles.downloadArea} data-testid="download-area">
-          <span className={styles.downloadSuccess}>✓ Proposta gerada</span>
-          <span className={styles.downloadFilename}>{generatedFile.filename}</span>
-          <a
-            className={styles.downloadButton}
-            data-testid="btn-baixar-proposta"
-            download={generatedFile.filename}
-            href={generatedFile.url}
-          >
-            Baixar PPTX
-          </a>
-        </div>
+        <DownloadStickyBar
+          key={generationCount}
+          file={generatedFile}
+          onDismiss={() => setGeneratedFile(null)}
+        />
       )}
     </form>
   )
