@@ -13,6 +13,7 @@ CREATE TABLE proposals (
   email                   VARCHAR(255),
 
   endereco_obra           TEXT NOT NULL,
+  local_obra              TEXT NOT NULL, 
   cidade                  VARCHAR(100) NOT NULL,
   estado                  VARCHAR(2) NOT NULL,
   tipo_projeto            VARCHAR(20) NOT NULL,

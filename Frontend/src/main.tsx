@@ -8,10 +8,10 @@ import '@/styles/global.css'
 
 import { msalInstance } from '@/auth/msalConfig'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import Root from '@/route/Root.tsx'
-import FormPropostaComercial from '@/route/FormPropostaComercial'
-import HistoricoPropostas from '@/route/HistoricoPropostas'
-import Login from '@/route/Login'
+import Root from '@/pages/Root.tsx'
+import FormPropostaComercial from '@/pages/FormPropostaComercial'
+import HistoricoPropostas from '@/pages/HistoricoPropostas'
+import Login from '@/pages/Login'
 
 const router = createBrowserRouter([
   {

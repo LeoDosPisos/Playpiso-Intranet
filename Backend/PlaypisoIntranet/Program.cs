@@ -1,7 +1,6 @@
 using Dapper;
 using DbUp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web;
 using PlaypisoIntranet.Infrastructure;
 using PlaypisoIntranet.Repositories;
@@ -33,19 +32,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.Configure<AllowedUsersOptions>(builder.Configuration.GetSection("AllowedUsers"));
-builder.Services.AddSingleton<IAuthorizationHandler, AllowedUsersHandler>();
 builder.Services.AddAuthorization(options =>
 {
-    if (builder.Environment.IsDevelopment())
-    {
-        options.AddPolicy("AllowedUsers", policy =>
-            policy.RequireAssertion(_ => true));
-    }
-    else
-    {
-        options.AddPolicy("AllowedUsers", policy =>
-            policy.RequireAuthenticatedUser().AddRequirements(new AllowedUsersRequirement()));
-    }
+    options.AddPolicy("AllowedUsers", policy =>
+        policy.RequireAuthenticatedUser());
 });
 
 builder.Services.AddSingleton<IProposalRepository>(_ => new ProposalRepository(connectionString));

@@ -2,8 +2,8 @@
 
 Terraform para provisionamento da infraestrutura Azure. Arquitetura: **Container Apps + ACR + Static Web Apps**.
 
-Documentação arquitetural completa: [`../.docs/infra-azure-arquitetura.md`](../.docs/infra-azure-arquitetura.md)
-Tarefas manuais necessárias: [`../.docs/infra-azure-tarefas-manuais.md`](../.docs/infra-azure-tarefas-manuais.md)
+Documentação arquitetural completa: [`../docs/infra/azure/infra-azure-arquitetura.md`](../docs/infra/azure/infra-azure-arquitetura.md)
+Tarefas manuais necessárias: [`../docs/infra/azure/infra-azure-tarefas-manuais.md`](../docs/infra/azure/infra-azure-tarefas-manuais.md)
 
 ## Pré-requisitos
 

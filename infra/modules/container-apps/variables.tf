@@ -12,3 +12,4 @@ variable "azure_tenant_id"                { sensitive = true }
 variable "azure_client_id"               {}
 variable "min_replicas"                   { default = 0 }
 variable "max_replicas"                   { default = 3 }
+variable "frontend_url"                   { description = "URL do Static Web App (com https://) — usada nas políticas de CORS do pptx-generator e da proposta-api" }

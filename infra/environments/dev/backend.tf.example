@@ -1,5 +1,5 @@
 # Renomear para backend.tf e preencher o nome real da storage account
-# Ver tarefas manuais: .docs/infra-azure-tarefas-manuais.md (seção 2)
+# Ver tarefas manuais: docs/infra/azure/infra-azure-tarefas-manuais.md (seção 2)
 terraform {
   backend "azurerm" {
     resource_group_name  = "playpiso-tfstate-rg"

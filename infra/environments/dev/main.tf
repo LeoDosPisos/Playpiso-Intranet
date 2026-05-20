@@ -72,6 +72,7 @@ module "container_apps" {
   azure_client_id                     = var.azure_client_id
   min_replicas                        = var.backend_min_replicas
   max_replicas                        = var.backend_max_replicas
+  frontend_url                        = "https://${module.static_web_app.default_host_name}"
 }
 
 module "static_web_app" {

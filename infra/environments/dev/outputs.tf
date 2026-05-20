@@ -8,6 +8,11 @@ output "backend_fqdn" {
   value       = module.container_apps.backend_fqdn
 }
 
+output "microservice_fqdn" {
+  description = "FQDN do PPTX Generator (Container App com ingress externo)"
+  value       = module.container_apps.microservice_fqdn
+}
+
 output "acr_login_server" {
   description = "Login server do Azure Container Registry"
   value       = module.container_registry.login_server

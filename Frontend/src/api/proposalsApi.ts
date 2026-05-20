@@ -65,18 +65,32 @@ type ProductGroupDetail = {
   areaTotal: number | null
   tipoTerreno: string | null
   dificuldadeAcesso: string | null
+  responsavelMaterialPedreira: string | null
   possuiIluminacao: boolean
+  iluminacaoFixadaAlambrado: boolean | null
   quantidadePostesIluminacao: number | null
   alturaPostesIluminacao: number | null
   quantidadeProjetores: number | null
   potenciaProjetores: string | null
+  especificarPotenciaProjetores: string | null
+  quantidadeCruzetas: number | null
+  responsavelLigacaoEletrica: string | null
+  tipoColigacao: string | null
   possuiAlambrado: boolean
   comprimentoAlambrado: number | null
   alturaAlambrado: number | null
+  espacamentoPostesTubos: number | null
   galvanizacao: string | null
+  especificarGalvanizacao: string | null
+  possuiTrelica: boolean | null
   travamento: string | null
+  quantidadePortoes: number | null
+  alturaPortoes: number | null
+  larguraPortoes: number | null
   possuiTelaSuperior: boolean | null
   possuiTelaSombreamento: boolean | null
+  larguraSombreamento: number | null
+  comprimentoSombreamento: number | null
   observacoes: string | null
   specs: string
 }

@@ -56,6 +56,9 @@ public class CreateProductGroupDto
     public string? EspecificarGalvanizacao { get; init; }
     public bool? PossuiTrelica { get; init; }
     public string? Travamento { get; init; }
+    public int? QuantidadePortoes { get; init; }
+    public decimal? AlturaPortoes { get; init; }
+    public decimal? LarguraPortoes { get; init; }
     public bool? PossuiTelaSuperior { get; init; }
     public bool? PossuiTelaSombreamento { get; init; }
     public decimal? LarguraSombreamento { get; init; }

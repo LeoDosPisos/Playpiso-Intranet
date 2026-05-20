@@ -167,7 +167,8 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 responsavel_ligacao_eletrica, tipo_coligacao,
                 possui_alambrado, comprimento_alambrado, altura_alambrado,
                 espacamento_postes_tubos, galvanizacao, especificar_galvanizacao,
-                possui_trelica, travamento, possui_tela_superior,
+                possui_trelica, travamento, quantidade_portoes, altura_portoes, largura_portoes,
+                possui_tela_superior,
                 possui_tela_sombreamento, largura_sombreamento, comprimento_sombreamento,
                 observacoes, specs
             ) VALUES (
@@ -180,7 +181,8 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 @ResponsavelLigacaoEletrica, @TipoColigacao,
                 @PossuiAlambrado, @ComprimentoAlambrado, @AlturaAlambrado,
                 @EspacamentoPostesTubos, @Galvanizacao, @EspecificarGalvanizacao,
-                @PossuiTrelica, @Travamento, @PossuiTelaSuperior,
+                @PossuiTrelica, @Travamento, @QuantidadePortoes, @AlturaPortoes, @LarguraPortoes,
+                @PossuiTelaSuperior,
                 @PossuiTelaSombreamento, @LarguraSombreamento, @ComprimentoSombreamento,
                 @Observacoes, @Specs::jsonb
             )

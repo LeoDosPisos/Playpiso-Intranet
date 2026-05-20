@@ -1,447 +1,346 @@
 # pptx-generator-service
 
-Microservico responsavel por gerar propostas comerciais da Playpiso em formato PowerPoint (`.pptx`).
+Microserviço FastAPI responsável por montar propostas comerciais em formato `.pptx`. Recebe do frontend a lista ordenada de slides, os dados do formulário e os grupos de produto, abre os templates `.pptx` correspondentes, substitui os placeholders e devolve o arquivo final em bytes.
 
-Ele recebe dados preenchidos no formulario comercial, monta uma apresentacao a partir de modelos `.pptx` existentes e devolve o arquivo final para download.
-
-## Visao geral para equipes nao tecnicas
-
-O servico funciona como um montador automatico de propostas:
-
-1. O usuario preenche a proposta no sistema web.
-2. O frontend envia os dados da proposta para este microservico.
-3. O microservico abre modelos de PowerPoint prontos.
-4. Ele substitui informacoes variaveis, como nome do cliente, contato, endereco, datas e sumario.
-5. Ele adiciona os slides do produto contratado.
-6. Ele adiciona os slides finais da proposta.
-7. Ele devolve um arquivo `.pptx` pronto para baixar.
-
-Na implementacao atual, a proposta final e montada em tres blocos:
-
-- `slides/head.pptx`: abertura, apresentacao institucional, dados do cliente e sumario.
-- `slides/products/*.pptx`: bloco de slides do produto selecionado.
-- `slides/tail.pptx`: condicoes finais, regras, encerramento e slides finais.
+---
 
 ## Como executar localmente
 
-Instale as dependencias:
-
 ```bash
-cd pptx-generator-service
+python -m venv .venv
+source .venv/bin/activate        # Linux/Mac
+# .venv\Scripts\activate         # Windows
+
 pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 ```
 
-Inicie a API:
+Variável de ambiente opcional:
 
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+| Variável | Padrão | Descrição |
+|---|---|---|
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Origins permitidos pelo CORS (separados por vírgula) |
+| `PORT` | `8000` | Injetado automaticamente pelo Railway/Azure |
 
-O frontend esta configurado para chamar essa API em `http://localhost:8000`, conforme `vite-project/.env.development`.
-
-## Dependencias
-
-As dependencias estao em `requirements.txt`:
-
-- `fastapi`: cria a API HTTP.
-- `uvicorn[standard]`: servidor local/ASGI usado para executar a API.
-- `python-pptx`: biblioteca que le, copia, edita e salva arquivos PowerPoint.
+---
 
 ## Endpoints
 
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `/health` | GET | Verificação de saúde |
+| `/slides-disponiveis` | GET | Lista slideIds com template `.pptx` presente em disco |
+| `/gerar-proposta` | POST | Monta e retorna o `.pptx` |
+
 ### `GET /health`
 
-Endpoint simples para verificar se o servico esta no ar.
-
-Implementacao: `main.py`, funcao `health`.
-
-Resposta:
-
 ```json
-{
-  "status": "ok"
-}
+{ "status": "ok" }
 ```
 
-### `GET /produtos-disponiveis`
+### `GET /slides-disponiveis`
 
-Endpoint que informa quais produtos/variantes possuem template `.pptx` disponivel para geracao.
-
-Implementacao: `main.py`, funcao `produtos_disponiveis`.
-
-A resposta e calculada a partir de `PRODUCT_FILE_MAP` e da existencia real dos arquivos em `slides/products/`.
-
-Resposta esperada no estado atual:
+Retorna lista de strings com os `slideId`s que possuem arquivo `.pptx` mapeado e presente em `slides/`. O frontend usa esta lista para saber quais produtos estão disponíveis para seleção.
 
 ```json
-[
-  {
-    "productId": "beach_tenis",
-    "variantIds": ["padrao"]
-  },
-  {
-    "productId": "quadra_tenis",
-    "variantIds": ["piso_asfaltico", "saibro"]
-  }
-]
+["capa", "dados_cliente", "hero_beach_tenis", "investimento_beach_tenis", ...]
 ```
 
 ### `POST /gerar-proposta`
 
-Endpoint principal. Recebe os dados da proposta e retorna um arquivo `.pptx`.
+Retorna os bytes do arquivo `.pptx` com `Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation`.
 
-Implementacao: `main.py`, funcao `gerar_proposta`.
+---
 
-O endpoint:
+## Payload de `/gerar-proposta`
 
-1. Recebe um payload validado por modelos Pydantic.
-2. Valida se todos os produtos/variantes possuem template disponivel.
-3. Chama `build_presentation(req)`, em `slide_merger.py`.
-4. Retorna os bytes do PowerPoint com o tipo MIME correto.
-5. Define o nome tecnico do anexo como `proposta.pptx`.
-
-Resposta:
-
-- Conteudo binario de PowerPoint.
-- `Content-Type`: `application/vnd.openxmlformats-officedocument.presentationml.presentation`.
-- `Content-Disposition`: `attachment; filename="proposta.pptx"`.
-
-Se algum produto/variante nao tiver template disponivel, a API retorna `422` e nao gera o arquivo.
-
-Exemplo de erro:
+### Formato atual (campo `slides`)
 
 ```json
 {
-  "detail": {
-    "message": "Um ou mais produtos nao possuem template PPTX disponivel.",
-    "unsupportedProductGroups": [
-      {
-        "index": 0,
-        "productId": "quadra_tenis",
-        "variantId": "grama"
-      }
-    ]
-  }
-}
-```
-
-## Contrato do payload
-
-Os modelos de entrada estao declarados em `main.py`.
-
-Estrutura esperada:
-
-```json
-{
-  "slideIds": ["capa", "dados_cliente", "sumario"],
+  "slides": [
+    {
+      "slideId": "capa",
+      "templateFile": "slides/global/capa.pptx"
+    },
+    {
+      "slideId": "dados_cliente",
+      "templateFile": "slides/global/dados_cliente.pptx"
+    },
+    {
+      "slideId": "fechamentos_quadra_tenis",
+      "templateFile": "slides/quadra_tenis/fechamentos_base.pptx",
+      "dynamic": "fechamentos",
+      "groupIndex": 0
+    },
+    {
+      "slideId": "investimento_piso_asfaltico_quadra_tenis",
+      "templateFile": "slides/quadra_tenis/investimento_piso_asfaltico.pptx"
+    }
+  ],
   "globalValues": {
-    "nome_razao_social": "Cliente Exemplo",
+    "nome_razao_social": "Condomínio Exemplo",
     "nome_contato": "Maria Silva",
     "endereco_obra": "Rua Exemplo, 100",
-    "local_obra": "Condominio Exemplo",
+    "local_obra": "São Paulo, SP",
     "telefone": "(11) 99999-9999",
-    "email": "cliente@email.com",
-    "numero_proposta": "P001",
-    "data_solicitacao": "01/05/2026",
-    "data_envio": "12/05/2026"
+    "email": "maria@exemplo.com",
+    "numero_proposta": "P-2026-001",
+    "data_solicitacao": "2026-05-01",
+    "data_envio": "2026-05-20"
   },
   "productGroups": [
     {
-      "productId": "beach_tenis",
+      "productId": "quadra_tenis",
       "quantity": 1,
-      "variantId": "padrao",
+      "variantId": "piso_asfaltico",
       "values": {
-        "largura": 10,
-        "comprimento": 20,
-        "area_total": 200
+        "largura": 10.97,
+        "comprimento": 23.77,
+        "area_total": 260.66,
+        "possui_playcushion": true,
+        "possui_alambrado": true,
+        "sistema_alambrado": "gaiola",
+        "altura_alambrado_fundos": 4.0,
+        "galvanizacao": "fogo",
+        "possui_iluminacao": false,
+        "travamento": ["travamento_superior", "travamento_inferior"]
       },
-      "sumarioText": "1 quadra de Beach Tennis...",
-      "investimentoRows": ["Quadra de Beach Tennis", "Acessorios"]
+      "sumarioText": "1 Quadra de Tênis — Piso Asfáltico com PlayCushion",
+      "investimentoRows": ["Piso Asfáltico", "PlayCushion", "Alambrado"]
     }
   ]
 }
 ```
 
-Campos principais:
+### Formato legado (campo `slideIds`)
 
-- `slideIds`: lista de slides resolvida pelo frontend. No codigo atual do microservico, esse campo e validado pela API, mas a montagem em `slide_merger.py` usa principalmente `productGroups`.
-- `globalValues`: dados globais da proposta, usados no bloco inicial.
-- `productGroups`: lista de produtos/grupos selecionados na proposta.
-- `sumarioText`: texto ja renderizado pelo frontend para aparecer no sumario.
-- `investimentoRows`: linhas de investimento calculadas pelo frontend. Atualmente existem builders auxiliares para esse uso, mas o fluxo principal copia os modelos prontos de produto.
-
-## Integracao com o frontend
-
-O frontend monta e envia o payload em:
-
-`vite-project/src/route/FormPropostaComercial/generation/buildPresentation.ts`
-
-Fluxo no frontend:
-
-1. `resolveSlideList(payload)` calcula a lista de slides esperados.
-2. `renderSumarioText(...)` gera o texto do sumario de cada produto.
-3. `resolveInvestimentoRows(...)` calcula as linhas de investimento.
-4. `fetch(.../gerar-proposta...)` envia o payload para a API.
-5. A resposta e tratada como `blob`.
-6. O navegador baixa o arquivo como `Proposta Playpiso - NomeCliente.pptx`.
-
-Observacao tecnica: apesar de o frontend enviar `slideIds`, o `slide_merger.py` atual nao monta a apresentacao slide a slide a partir dessa lista. Ele monta a proposta por blocos: head, produtos e tail.
-
-## Arquitetura dos arquivos
-
-```text
-pptx-generator-service/
-  main.py
-  slide_merger.py
-  slide_builders.py
-  requirements.txt
-  slides/
-    head.pptx
-    tail.pptx
-    products/
-      qbt.pptx
-      qtpa.pptx
-      qts.pptx
-```
-
-### `main.py`
-
-Responsabilidades:
-
-- Criar a aplicacao FastAPI.
-- Configurar CORS para o frontend local.
-- Declarar os modelos de entrada `ProductGroupRequest` e `GenerateRequest`.
-- Expor os endpoints `/health` e `/gerar-proposta`.
-- Retornar o arquivo PowerPoint como resposta HTTP.
-
-Pontos relevantes do codigo:
-
-- `app = FastAPI(...)`: cria a API.
-- `CORSMiddleware`: permite chamadas vindas de `localhost:5173` e `127.0.0.1:5173`.
-- `ProductGroupRequest`: representa um produto/grupo dentro da proposta.
-- `GenerateRequest`: representa o payload completo.
-- `gerar_proposta`: chama o motor de montagem e devolve o `.pptx`.
-
-### `slide_merger.py`
-
-Responsavel pela montagem real da apresentacao.
-
-Fluxo principal na funcao `build_presentation(req)`:
-
-1. Cria uma apresentacao vazia com `Presentation()`.
-2. Define tamanho widescreen `13.33 x 7.5`.
-3. Adiciona o bloco inicial usando `HEAD_PATH`.
-4. Percorre `req.productGroups`.
-5. Para cada produto, consulta `PRODUCT_FILE_MAP`.
-6. Se houver modelo correspondente, copia os slides desse `.pptx`.
-7. Se nao houver modelo, cria um slide de placeholder.
-8. Adiciona o bloco final usando `TAIL_PATH`.
-9. Salva a apresentacao em memoria com `BytesIO`.
-10. Retorna os bytes do arquivo final.
-
-Mapa de produtos suportados:
-
-```python
-PRODUCT_FILE_MAP = {
-    ("beach_tenis", "padrao"): "qbt.pptx",
-    ("quadra_tenis", "piso_asfaltico"): "qtpa.pptx",
-    ("quadra_tenis", "saibro"): "qts.pptx",
-}
-```
-
-Isso significa que, atualmente, apenas esses pares de produto/variante possuem modelo conectado ao gerador:
-
-- Beach Tenis / Padrao -> `slides/products/qbt.pptx`
-- Quadra de Tenis / Piso Asfaltico -> `slides/products/qtpa.pptx`
-- Quadra de Tenis / Saibro -> `slides/products/qts.pptx`
-
-Qualquer outro produto ou variante e rejeitado pelo endpoint `/gerar-proposta` com erro `422`.
-
-Funcoes auxiliares importantes:
-
-- `_assemble_head(...)`: copia todos os slides de `head.pptx` e substitui placeholders.
-- `_add_from_file(...)`: copia todos os slides de um arquivo `.pptx` para a apresentacao final.
-- `get_available_products(...)`: lista produtos/variantes com arquivo `.pptx` existente.
-- `validate_product_groups(...)`: rejeita grupos sem template disponivel.
-- `_build_head_context(...)`: transforma `globalValues` e `productGroups` em dados para substituir no head.
-- `_replace_placeholders(...)`: percorre textos e tabelas de um slide.
-- `_replace_in_paragraph(...)`: substitui placeholders no formato `{{ chave }}` ou `{{chave}}`.
-- `_add_placeholder_slide(...)`: cria um slide de aviso quando nao existe template.
-
-### `slide_builders.py`
-
-Contem construtores programaticos de slides usando `python-pptx`.
-
-Funcoes disponiveis:
-
-- `build_dados_cliente(...)`: cria um slide simples de dados do cliente.
-- `build_sumario(...)`: cria um slide simples de sumario.
-- `build_investimento(...)`: cria um slide simples de investimento com tabela.
-
-No fluxo atual de `slide_merger.py`, esse arquivo nao e chamado. Ele funciona como suporte/legado para gerar slides via codigo caso a equipe opte por nao usar um modelo `.pptx` pronto.
-
-## Como os placeholders funcionam
-
-Os placeholders sao textos dentro dos arquivos `.pptx`, por exemplo:
-
-```text
-{{ nome_razao_social }}
-{{ nome_contato }}
-{{ endereco_obra }}
-{{ telefone }}
-{{ email }}
-{{ local_obra }}
-{{ numero_proposta }}
-{{ data_solicitacao }}
-{{ data_envio }}
-{{ sumario }}
-```
-
-O contexto para substituicao e criado em `_build_head_context(...)`, dentro de `slide_merger.py`.
-
-O mecanismo de substituicao aceita duas formas:
-
-```text
-{{ chave }}
-{{chave}}
-```
-
-Exemplo:
-
-Se `globalValues.nome_razao_social` for `Condominio Exemplo`, o texto:
-
-```text
-{{ nome_razao_social }}
-```
-
-sera substituido por:
-
-```text
-Condominio Exemplo
-```
-
-O codigo procura placeholders em:
-
-- caixas de texto;
-- paragrafos;
-- celulas de tabelas.
-
-## Ordem de montagem da proposta
-
-A ordem final e determinada pelo backend desta forma:
-
-1. Todos os slides de `slides/head.pptx`.
-2. Para cada item de `productGroups`, todos os slides do arquivo de produto correspondente.
-3. Todos os slides de `slides/tail.pptx`.
-
-Exemplo:
-
-Se a proposta tiver:
+Ainda suportado, mas depreciado. Substitui `slides` por uma lista de strings:
 
 ```json
 {
-  "productGroups": [
-    { "productId": "beach_tenis", "variantId": "padrao" },
-    { "productId": "quadra_tenis", "variantId": "piso_asfaltico" }
-  ]
+  "slideIds": ["capa", "dados_cliente", "sumario", "hero_beach_tenis"],
+  "globalValues": { ... },
+  "productGroups": [ ... ]
 }
 ```
 
-A apresentacao final sera:
+### Campos de `globalValues` reconhecidos nos templates
 
-```text
-head.pptx
-qbt.pptx
-qtpa.pptx
-tail.pptx
+| Campo | Formato | Observação |
+|---|---|---|
+| `nome_razao_social` | string | |
+| `nome_contato` | string | |
+| `endereco_obra` | string | |
+| `local_obra` | string | |
+| `telefone` | string | |
+| `email` | string | |
+| `numero_proposta` | string | |
+| `data_solicitacao` | `YYYY-MM-DD` | Convertida para `DD/MM/YYYY` |
+| `data_envio` | `YYYY-MM-DD` | Convertida para `DD/MM/YYYY` |
+
+---
+
+## Arquitetura
+
+### Fluxo de montagem (`build_presentation` em `slide_merger.py`)
+
+```
+req.slides (lista de SlideEntryRequest)
+  ↓
+Para cada slide_entry:
+  ├─ dynamic == "fechamentos"  → compose_fechamentos()
+  │     Abre fechamentos_base.pptx como canvas
+  │     Cola verticalmente as secao_{alambrado,iluminacao,...}.pptx ativas
+  │     Até 3 seções por slide; 4+ divide em 2 slides
+  │
+  ├─ dynamic == "acessorios"   → compose_acessorios()
+  │     Abre acessorios_base.pptx como canvas
+  │     Cola verticalmente as secao_acessorio_{basquete,...}.pptx ativas
+  │     Até 4 seções por slide
+  │
+  └─ (normal)
+        Abre templateFile como Presentation
+        _copy_slide() — deepcopy do XML + remapeamento de imagens
+        _replace_placeholders() — substitui {{ chave }} em textos e tabelas
+  ↓
+merged.save(BytesIO) → retorna bytes
 ```
 
-## Limitacoes e pontos de atencao
+### `SLIDE_FILE_MAP`
 
-- O campo `slideIds` e recebido, mas nao controla a montagem final no backend atual.
-- Apenas tres combinacoes de produto/variante estao mapeadas em `PRODUCT_FILE_MAP`.
-- Produtos ainda nao mapeados sao rejeitados com erro `422`.
-- O backend nao valida se os placeholders esperados existem nos arquivos `.pptx`.
-- O backend nao substitui placeholders dentro dos arquivos de produto ou do `tail.pptx`; a substituicao atual acontece no `head.pptx`.
-- Os slides sao copiados por manipulacao da arvore interna do `python-pptx` (`_spTree`), o que funciona para esse caso, mas exige cuidado ao evoluir templates complexos.
-- `slide_builders.py` esta disponivel, mas nao participa do fluxo principal atual.
+Dicionário em `slide_merger.py` que mapeia `slideId` → caminho relativo a `slides/`. Tem 36 entradas organizadas em seções:
 
-## Como adicionar um novo produto ao gerador
+- **global pré-produto**: capa, portfolio, sobre_empresa, pilares, parceiros, dados_cliente, sumario
+- **beach_tenis**: hero, areia_rio, areia_quartzo, protecao_eva, acessorio, investimento
+- **quadra_tenis**: hero (3 variantes), specs (3), playcushion, cores, detalhe_construtivo (2), investimento (3)
+- **quadra_poliesportiva**: hero, specs, cores, investimento
+- **global pós-produto**: condicoes_pagamento (3 variantes), prazos_garantia, regras, consideracoes_gerais, encerramento
 
-1. Criar ou exportar o modelo PowerPoint do produto.
-2. Salvar o arquivo em `pptx-generator-service/slides/products/`.
-3. Adicionar uma entrada em `PRODUCT_FILE_MAP`, em `slide_merger.py`.
-4. Garantir que o frontend envie o mesmo `productId` e `variantId`.
-5. Testar a geracao chamando `/gerar-proposta`.
+Slides dinâmicos (`fechamentos_*`, `acessorios_*`) **não entram** no `SLIDE_FILE_MAP` — o `templateFile` vem diretamente no request.
 
-Exemplo:
+### `_build_context`
 
-```python
-PRODUCT_FILE_MAP = {
-    ("beach_tenis", "padrao"): "qbt.pptx",
-    ("quadra_tenis", "piso_asfaltico"): "qtpa.pptx",
-    ("quadra_tenis", "saibro"): "qts.pptx",
-    ("novo_produto", "padrao"): "novo_produto.pptx",
-}
+Constrói o dicionário de substituição de placeholders:
+
+- Campos globais: datas formatadas, sumário (texto corrido ou numerado para multi-produto)
+- Campos do grupo de produto: todos os `group.values` + derivados calculados:
+  - `travamento_descricao` — ex: "Instalação de travamento superior e inferior"
+  - `alambrado_descricao` / `descricao_alambrado` — ex: "Sistema gaiola: alambrado com fundo e laterais de 4,00m;"
+  - `dimensoes_portoes` — ex: "1,20m x 2,00m"
+  - `area_alambrado`, `area_playcushion`, `qtde_iluminacao`, `qtde_eva`
+  - `galvanizacao` — mapeado de `"fogo"` → `"a fogo"`
+  - `sistema_alambrado` — mapeado de `"gaiola"` → `"Gaiola"`
+
+### `_copy_slide`
+
+Copia um slide preservando imagens: para cada relação de imagem (`r:embed`) na origem, cria uma nova `ImagePart` com nome único (`/ppt/media/m{counter}{ext}`) e remapeia os atributos no XML copiado via deepcopy.
+
+### Slides dinâmicos (`compose_fechamentos`, `compose_acessorios`)
+
+Composição vertical: abre o slide base como canvas, lê cada componente (`secao_*.pptx`), mede sua altura real (borda inferior dos shapes) e cola os elements com deslocamento Y acumulado via `_shift_shape_top`. Após montar todos os shapes, chama `_replace_placeholders` no slide resultante.
+
+### `_replace_placeholders`
+
+Percorre todos os shapes do slide (text frames e tabelas). Para cada parágrafo com `{{`, concatena o texto de todos os runs, aplica as substituições e recoloca tudo no `runs[0]`, limpando os runs subsequentes — preserva a formatação (fonte, tamanho, cor) do primeiro run.
+
+Aceita ambas as formas: `{{ chave }}` e `{{chave}}`.
+
+---
+
+## Placeholders disponíveis nos templates
+
+```
+{{ nome_razao_social }}        {{ nome_contato }}            {{ telefone }}
+{{ email }}                    {{ endereco_obra }}            {{ local_obra }}
+{{ numero_proposta }}          {{ data_solicitacao }}         {{ data_envio }}
+{{ sumario }}
+
+{{ quantity }}                 {{ area_total_fmt }}           {{ area_fmt }}
+{{ area_tela_superior }}       {{ area_playcushion }}         {{ area_alambrado }}
+{{ qtde_iluminacao }}          {{ qtde_tela_superior }}       {{ qtde_eva }}
+{{ qtde_acessorios_esportivos }}
+
+{{ kit_saibro }}               {{ cor_tela_superior }}
+{{ galvanizacao }}             {{ sistema_alambrado }}        {{ sistema_alabrado }}
+{{ travamento_descricao }}     {{ alambrado_descricao }}      {{ descricao_alambrado }}
+{{ dimensoes_portoes }}        {{ acessorios_esportivos_descricao }}
+
++ qualquer chave de group.values (ex: {{ largura }}, {{ comprimento }}, {{ possui_alambrado }})
 ```
 
-## Como adicionar novos campos no bloco inicial
+> `{{ sistema_alabrado }}` é um alias de `{{ sistema_alambrado }}` — existe para compatibilidade com um typo em `investimento_piso_asfaltico.pptx` (quadra_poli).
 
-1. Adicionar o campo no formulario/frontend.
-2. Garantir que ele seja enviado dentro de `globalValues`.
-3. Adicionar a chave em `_build_head_context(...)`, em `slide_merger.py`.
-4. Inserir o placeholder correspondente em `slides/head.pptx`.
+---
 
-Exemplo:
+## Estrutura de arquivos de slides
 
-```python
-"cidade": global_values.get("cidade", "")
+```
+slides/
+├── global/
+│   ├── capa.pptx                      # slide de abertura
+│   ├── sumario.pptx
+│   ├── dados_cliente.pptx
+│   ├── sobre_empresa.pptx
+│   ├── pilares.pptx
+│   ├── portfolio.pptx
+│   ├── parceiros.pptx
+│   ├── condicoes_pagamento_direto_a.pptx
+│   ├── condicoes_pagamento_direto_b.pptx
+│   ├── condicoes_pagamento_playpiso.pptx
+│   ├── prazos_garantia.pptx
+│   ├── regras_contratada.pptx
+│   ├── regras_contratante.pptx
+│   ├── consideracoes_gerais.pptx
+│   └── encerramento.pptx
+│
+├── beach_tenis/
+│   ├── hero.pptx
+│   ├── areia_rio.pptx
+│   ├── areia_quartzo.pptx
+│   ├── protecao_eva.pptx
+│   ├── acessorio.pptx
+│   ├── investimento.pptx
+│   ├── fechamentos_base.pptx          # canvas para compose_fechamentos
+│   ├── secao_alambrado.pptx
+│   ├── secao_iluminacao.pptx
+│   ├── secao_tela_superior.pptx
+│   └── secao_tela_sombreamento.pptx
+│
+├── quadra_tenis/
+│   ├── hero_{piso_asfaltico,saibro,grama}.pptx
+│   ├── specs_{piso_asfaltico,saibro,grama}.pptx
+│   ├── playcushion.pptx
+│   ├── cores_piso_asfaltico.pptx
+│   ├── detalhe_construtivo.pptx       # com playcushion
+│   ├── detalhe_construtivo_sem_playcushion.pptx
+│   ├── kit_saibro_quadra_tenis.pptx
+│   ├── acessorio_piso_asfaltico.pptx
+│   ├── investimento_{piso_asfaltico,saibro,grama}.pptx
+│   ├── fechamentos_base.pptx
+│   └── secao_{alambrado,iluminacao,tela_superior,tela_sombreamento}.pptx
+│
+└── quadra_poli/
+    ├── hero_piso_asfaltico.pptx
+    ├── specs_piso_asfaltico.pptx
+    ├── cores_piso_asfaltico.pptx
+    ├── investimento_piso_asfaltico.pptx
+    ├── acessorios_base.pptx           # canvas para compose_acessorios
+    ├── fechamentos_base.pptx
+    ├── secao_alambrado.pptx
+    ├── secao_iluminacao.pptx
+    ├── secao_tela_superior.pptx
+    ├── secao_tela_sombreamento.pptx
+    └── secao_acessorio_{basquete_adulto_metalica,basquete_adulto_hidraulica,
+                          basquete_adulto_comum,basquete_juvenil,
+                          volei,tenis,futsal_padrao,futsal_mini_trave}.pptx
 ```
 
-No PowerPoint:
+---
 
-```text
-{{ cidade }}
-```
+## Como adicionar um novo slide estático
 
-## Como testar manualmente
+1. Criar o arquivo `.pptx` em `slides/<produto>/nome.pptx`
+2. Adicionar a entrada em `SLIDE_FILE_MAP` em `slide_merger.py`:
+   ```python
+   "meu_novo_slide": "quadra_tenis/meu_novo_slide.pptx",
+   ```
+3. Adicionar o `slideId` e o `templateFile` no `slideRegistry.ts` do frontend
 
-Com o servidor rodando, verifique a saude:
+## Como adicionar um novo produto
+
+1. Criar o diretório `slides/<novo_produto>/` com os arquivos de template
+2. Adicionar o mapeamento em `_PRODUCT_SLIDES_DIR` (`slide_merger.py`):
+   ```python
+   "meu_produto": "meu_produto_dir",
+   ```
+3. Adicionar as entradas de slides em `SLIDE_FILE_MAP`
+4. Se o produto tiver **fechamentos**: criar `fechamentos_base.pptx` e `secao_{alambrado,...}.pptx`
+5. Se o produto tiver **acessórios**: criar `acessorios_base.pptx`, `secao_acessorio_*.pptx` e adicionar a lógica em `_get_active_acessorios_sections`
+6. Adicionar os campos derivados necessários em `_build_context` se os placeholders do produto exigirem formatação especial
+
+---
+
+## `slide_builders.py`
+
+Contém construtores programáticos de slides (`build_dados_cliente`, `build_sumario`, `build_investimento`). **Não são chamados pelo fluxo principal** — o serviço usa exclusivamente a abordagem de templates `.pptx`. Mantidos como referência caso seja necessário gerar slides via código no futuro.
+
+---
+
+## Testes manuais
 
 ```bash
+# Verificar se o serviço está no ar
 curl http://localhost:8000/health
-```
 
-Para testar a geracao, envie um `POST` para `/gerar-proposta` com um payload valido e salve a resposta como `.pptx`.
+# Ver slides disponíveis
+curl http://localhost:8000/slides-disponiveis
 
-Exemplo conceitual:
-
-```bash
+# Gerar proposta a partir de um arquivo de payload
 curl -X POST http://localhost:8000/gerar-proposta \
   -H "Content-Type: application/json" \
-  --data @payload-exemplo.json \
+  -d @payload-exemplo.json \
   --output proposta.pptx
 ```
 
-## Referencias rapidas no codigo
-
-| Tema | Referencia |
-| --- | --- |
-| Criacao da API FastAPI | `main.py`, linhas 14-21 |
-| Modelo de produto no payload | `main.py`, linhas 24-30 |
-| Modelo da requisicao completa | `main.py`, linhas 33-36 |
-| Endpoint de disponibilidade | `main.py`, linhas 44-46 |
-| Endpoint de geracao | `main.py`, linhas 49-66 |
-| Endpoint de saude | `main.py`, linhas 69-71 |
-| Pastas e arquivos base dos slides | `slide_merger.py`, linhas 10-15 |
-| Mapa produto/variante para `.pptx` | `slide_merger.py`, linhas 17-21 |
-| Checagem de disponibilidade | `slide_merger.py`, linhas 30-81 |
-| Fluxo principal de montagem | `slide_merger.py`, linhas 84-115 |
-| Montagem do head e troca de placeholders | `slide_merger.py`, linhas 118-125 |
-| Copia de slides de um arquivo `.pptx` | `slide_merger.py`, linhas 128-137 |
-| Contexto dos placeholders globais | `slide_merger.py`, linhas 147-159 |
-| Substituicao em textos e tabelas | `slide_merger.py`, linhas 162-188 |
-| Slide de template pendente | `slide_merger.py`, linhas 191-199 |
-| Builders programaticos auxiliares | `slide_builders.py`, linhas 21-98 |
-| Dependencias Python | `requirements.txt`, linhas 1-3 |
-| Cliente frontend que chama a API | `vite-project/src/route/FormPropostaComercial/generation/buildPresentation.ts`, linhas 9-49 |
+A documentação interativa da API está disponível em `http://localhost:8000/docs` (Swagger UI gerado automaticamente pelo FastAPI).

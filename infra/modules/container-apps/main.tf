@@ -24,7 +24,7 @@ resource "azurerm_key_vault_access_policy" "backend" {
   secret_permissions = ["Get"]
 }
 
-# Python PPTX Generator — ingress interno (não exposto à internet)
+# Python PPTX Generator — ingress externo: o browser chama /slides-disponiveis diretamente
 # Criado antes do backend para que o FQDN esteja disponível
 resource "azurerm_container_app" "microservice" {
   name                         = "${var.prefix}-pptx"
@@ -45,7 +45,7 @@ resource "azurerm_container_app" "microservice" {
   }
 
   ingress {
-    external_enabled = false
+    external_enabled = true
     target_port      = 8000
     traffic_weight {
       percentage      = 100
@@ -62,6 +62,11 @@ resource "azurerm_container_app" "microservice" {
       image  = "${var.acr_login_server}/pptx-generator:latest"
       cpu    = 0.5
       memory = "1Gi"
+
+      env {
+        name  = "CORS_ALLOWED_ORIGINS"
+        value = var.frontend_url
+      }
     }
   }
 }
@@ -149,6 +154,22 @@ resource "azurerm_container_app" "backend" {
       env {
         name  = "AzureAd__Audience"
         value = "api://${var.azure_client_id}"
+      }
+      env {
+        name  = "Cors__AllowedOrigins__0"
+        value = var.frontend_url
+      }
+      env {
+        name  = "AllowedUsers__ObjectIds__0"
+        value = "b7a688cf-e36a-4eb1-97da-36efed5dd2fe"
+      }
+      env {
+        name  = "AllowedUsers__ObjectIds__1"
+        value = "4bd71798-cd86-4238-a1ef-b29572feda64"
+      }
+      env {
+        name  = "AllowedUsers__AdminObjectIds__0"
+        value = "4bd71798-cd86-4238-a1ef-b29572feda64"
       }
     }
   }

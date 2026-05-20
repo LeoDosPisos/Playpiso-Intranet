@@ -93,12 +93,12 @@ export async function generateProposal(
     })),
     globalValues: payload.globalValues,
     productGroups: payload.productGroups.map((group) => {
-      const variant = productCatalog[group.productId]?.variants[String(group.variantId)]
+      const variant = productCatalog[group.productId]?.variants[String(group.variantId ?? '')]
       const template = variant?.sumarioTemplate ?? group.productLabel
       return {
         productId: group.productId,
         quantity: group.quantity,
-        variantId: String(group.variantId),
+        variantId: String(group.variantId ?? ''),
         values: group.values,
         sumarioText: renderSumarioText(template, group.values, group.quantity),
         investimentoRows: resolveInvestimentoRows(group.productId, group.values).map((r) => r.label),

@@ -49,32 +49,88 @@ const VARIANT_LABELS: Record<string, string> = {
   pu_250: 'PU 250',
 }
 
-// Tradução dos campos JSONB (camelCase) para labels em português + unidade opcional.
+// Tradução dos campos JSONB para labels em português + unidade opcional.
+// Portões têm chaves camelCase (vindas via [JsonExtensionData] do C#) e os demais snake_case.
 // Chaves 'variante_*' são omitidas intencionalmente — já aparecem no subtítulo do card.
 const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
-  sistemaAlambrado: { label: 'Sistema de alambrado' },
-  alturaAlambradoFundos: { label: 'Altura alambrado (fundos)', unit: 'm' },
-  alturaAlambradoLaterais: { label: 'Altura alambrado (laterais)', unit: 'm' },
-  comprimentoAlambradoFundos: { label: 'Comprimento alambrado (fundos)', unit: 'm' },
-  comprimentoAlambradoLaterais: { label: 'Comprimento alambrado (laterais)', unit: 'm' },
-  espacamentoPostesTubosFundos: { label: 'Espaçamento postes (fundos)', unit: 'm' },
-  espacamentoPostesTubosLaterais: { label: 'Espaçamento postes (laterais)', unit: 'm' },
+  // Alambrado (snake_case — enviados pelo buildSpecs() do frontend)
+  sistema_alambrado: { label: 'Sistema de alambrado' },
+  altura_alambrado_fundos: { label: 'Altura alambrado (fundos)', unit: 'm' },
+  altura_alambrado_laterais: { label: 'Altura alambrado (laterais)', unit: 'm' },
+  comprimento_alambrado_fundos: { label: 'Comprimento alambrado (fundos)', unit: 'm' },
+  comprimento_alambrado_laterais: { label: 'Comprimento alambrado (laterais)', unit: 'm' },
+  espacamento_postes_tubos_fundos: { label: 'Espaçamento postes (fundos)', unit: 'm' },
+  espacamento_postes_tubos_laterais: { label: 'Espaçamento postes (laterais)', unit: 'm' },
+  especificar_galvanizacao: { label: 'Detalhe galvanização' },
+  // Portões (camelCase — mantido para exibição de registros históricos gravados antes da migração V004)
   quantidadePortoes: { label: 'Qtd. portões' },
   alturaPortoes: { label: 'Altura dos portões', unit: 'm' },
   larguraPortoes: { label: 'Largura dos portões', unit: 'm' },
-  corPisoAsfaltico: { label: 'Cor do piso' },
-  corTelaSuperior: { label: 'Cor da tela superior' },
-  incluirRedeTenis: { label: 'Rede de tênis', unit: 'bool' },
-  possuiPlaycushion: { label: 'Playcushion', unit: 'bool' },
-  possuiRede: { label: 'Rede', unit: 'bool' },
-  alturaRede: { label: 'Altura da rede', unit: 'm' },
-  responsavelMaterialPedreira: { label: 'Responsável (material/pedreira)' },
-  especificarGalvanizacao: { label: 'Detalhe galvanização' },
-  especificarPotenciaProjetores: { label: 'Potência especificada' },
-  tipoColigacao: { label: 'Tipo de coligação' },
-  responsavelLigacaoEletrica: { label: 'Responsável elétrica' },
-  quantidadeCruzetas: { label: 'Cruzetas' },
-  iluminacaoFixadaAlambrado: { label: 'Iluminação fixada no alambrado', unit: 'bool' },
+  // Cobertura (snake_case)
+  cor_tela_superior: { label: 'Cor da tela superior' },
+  // Piso & extras comuns (snake_case)
+  cor_piso_asfaltico: { label: 'Cor do piso' },
+  incluir_rede_tenis: { label: 'Rede de tênis', unit: 'bool' },
+  possui_playcushion: { label: 'Playcushion', unit: 'bool' },
+  possui_rede: { label: 'Rede', unit: 'bool' },
+  altura_rede: { label: 'Altura da rede', unit: 'm' },
+  possui_kit_saibro: { label: 'Kit saibro', unit: 'bool' },
+  // Quadra poliesportiva (snake_case)
+  tipo_futsal: { label: 'Tipo de piso (futsal)' },
+  possui_tenis: { label: 'Tênis', unit: 'bool' },
+  possui_volei: { label: 'Vôlei', unit: 'bool' },
+  possui_futebol_futsal: { label: 'Futebol/Futsal', unit: 'bool' },
+  possui_basquete_adulto: { label: 'Basquete adulto', unit: 'bool' },
+  possui_basquete_juvenil: { label: 'Basquete juvenil', unit: 'bool' },
+  estrutura_basquete_adulto: { label: 'Estrutura basquete adulto' },
+  // Beach tennis (snake_case)
+  possui_eva: { label: 'EVA', unit: 'bool' },
+  tipo_areia: { label: 'Tipo de areia' },
+  espessura_areia: { label: 'Espessura da areia', unit: 'cm' },
+  // Iluminação
+  iluminacao_fixada_alambrado: { label: 'Iluminação fixada no alambrado', unit: 'bool' },
+  especificar_potencia_projetores: { label: 'Potência especificada' },
+  tipo_coligacao: { label: 'Tipo de coligação' },
+  responsavel_ligacao_eletrica: { label: 'Responsável elétrica' },
+  quantidade_cruzetas: { label: 'Cruzetas' },
+  // Outros
+  responsavel_material_pedreira: { label: 'Responsável (material/pedreira)' },
+}
+
+// Valores conhecidos com acentuação e capitalização corretas em português.
+const VALUE_LABELS: Record<string, string> = {
+  padrao: 'Padrão',
+  piso_asfaltico: 'Piso Asfáltico',
+  saibro: 'Saibro',
+  grama: 'Grama',
+  grama_sintetica: 'Grama Sintética',
+  assoalho: 'Assoalho',
+  epoxi: 'Epóxi',
+  natural: 'Natural',
+  sintetico: 'Sintético',
+  gaiola: 'Gaiola',
+  gradil: 'Gradil',
+  elastica: 'Elástica',
+  galvanizado: 'Galvanizado',
+  zincado: 'Zincado',
+  pintado: 'Pintado',
+  travamento_inferior: 'Inferior',
+  travamento_intermediario: 'Intermediário',
+  travamento_superior: 'Superior',
+  cliente: 'Cliente',
+  fornecedor: 'Fornecedor',
+  eletrolitico: 'Eletrolítico',
+  metalica: 'Metálica',
+  branca: 'Branca',
+  amarelo: 'Amarela',
+  preta: 'Preta',
+  verde: 'Verde',
+  azul: 'Azul',
+  vermelha: 'Vermelha',
+  obra_nova: 'Obra Nova',
+  reforma: 'Reforma',
+  rio: 'Rio',
+  lavado: 'Lavado',
 }
 
 // ─── Formatadores ─────────────────────────────────────────────────────────────
@@ -95,6 +151,7 @@ function formatDec(value: number | null): string | null {
 }
 
 function formatEnumValue(v: string): string {
+  if (VALUE_LABELS[v]) return VALUE_LABELS[v]
   return v.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 }
 
@@ -105,8 +162,9 @@ function formatSpecValue(raw: string, unit?: string): string {
   if (raw.includes(',')) {
     return raw.split(',').map(v => formatEnumValue(v.trim())).join(', ')
   }
-  const formatted = /^[a-z]/.test(raw) ? formatEnumValue(raw) : raw
-  return unit ? `${formatted} ${unit}` : formatted
+  if (VALUE_LABELS[raw]) return VALUE_LABELS[raw]
+  const formatted = /^[a-z_]/.test(raw) ? formatEnumValue(raw) : raw
+  return unit && unit !== 'bool' ? `${formatted} ${unit}` : formatted
 }
 
 // ─── Inferência de produto/variante a partir de specs ────────────────────────
@@ -165,8 +223,13 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     return out
   }
 
-  // Fechamentos & Alambrado
-  if (g.possuiAlambrado) {
+  // Alambrado — mostra se coluna = true OU se há dados de alambrado no JSONB
+  const alambradoJsonbKeys = ['sistema_alambrado', 'altura_alambrado_fundos', 'altura_alambrado_laterais',
+    'comprimento_alambrado_fundos', 'comprimento_alambrado_laterais',
+    'espacamento_postes_tubos_fundos', 'espacamento_postes_tubos_laterais']
+  const hasAlambradoData = g.possuiAlambrado
+    || alambradoJsonbKeys.some(k => specsObj[k] != null && specsObj[k] !== '')
+  if (hasAlambradoData) {
     const fechEntries: SpecEntry[] = []
     if (g.comprimentoAlambrado !== null)
       fechEntries.push({ label: 'Comprimento', value: `${formatDec(g.comprimentoAlambrado)}m` })
@@ -178,14 +241,20 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     if (g.travamento) fechEntries.push({ label: 'Travamento', value: formatSpecValue(g.travamento) })
     if (g.possuiTrelica !== null)
       fechEntries.push({ label: 'Trélica', value: g.possuiTrelica ? 'Sim' : 'Não' })
-    fechEntries.push(...fromSpecs(['sistemaAlambrado', 'alturaAlambradoFundos', 'alturaAlambradoLaterais',
-      'comprimentoAlambradoFundos', 'comprimentoAlambradoLaterais',
-      'espacamentoPostesTubosFundos', 'espacamentoPostesTubosLaterais', 'especificarGalvanizacao']))
+    fechEntries.push(...fromSpecs([...alambradoJsonbKeys, 'especificar_galvanizacao']))
     if (fechEntries.length) sections.push({ title: 'Alambrado', entries: fechEntries })
   }
 
-  // Portões
-  const portEntries = fromSpecs(['quantidadePortoes', 'alturaPortoes', 'larguraPortoes'])
+  // Portões — colunas próprias (novos registros); fallback para JSONB camelCase (registros históricos)
+  const portEntries: SpecEntry[] = []
+  if (g.quantidadePortoes != null)
+    portEntries.push({ label: 'Qtd. portões', value: String(g.quantidadePortoes) })
+  if (g.alturaPortoes != null)
+    portEntries.push({ label: 'Altura dos portões', value: `${formatDec(g.alturaPortoes)}m` })
+  if (g.larguraPortoes != null)
+    portEntries.push({ label: 'Largura dos portões', value: `${formatDec(g.larguraPortoes)}m` })
+  if (portEntries.length === 0)
+    portEntries.push(...fromSpecs(['quantidadePortoes', 'alturaPortoes', 'larguraPortoes']))
   if (portEntries.length) sections.push({ title: 'Portões', entries: portEntries })
 
   // Iluminação
@@ -199,8 +268,8 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
       ilumEntries.push({ label: 'Projetores', value: String(g.quantidadeProjetores) })
     if (g.potenciaProjetores)
       ilumEntries.push({ label: 'Potência', value: formatSpecValue(g.potenciaProjetores) })
-    ilumEntries.push(...fromSpecs(['iluminacaoFixadaAlambrado', 'especificarPotenciaProjetores',
-      'quantidadeCruzetas', 'tipoColigacao', 'responsavelLigacaoEletrica']))
+    ilumEntries.push(...fromSpecs(['iluminacao_fixada_alambrado', 'especificar_potencia_projetores',
+      'quantidade_cruzetas', 'tipo_coligacao', 'responsavel_ligacao_eletrica']))
     if (ilumEntries.length) sections.push({ title: 'Iluminação', entries: ilumEntries })
   }
 
@@ -214,12 +283,19 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     coberturaEntries.push({ label: 'Largura sombreamento', value: `${formatDec(g.larguraSombreamento)}m` })
   if (g.comprimentoSombreamento !== null)
     coberturaEntries.push({ label: 'Comprimento sombreamento', value: `${formatDec(g.comprimentoSombreamento)}m` })
-  coberturaEntries.push(...fromSpecs(['corTelaSuperior']))
+  coberturaEntries.push(...fromSpecs(['cor_tela_superior']))
   if (coberturaEntries.length) sections.push({ title: 'Cobertura', entries: coberturaEntries })
 
   // Piso & Extras — campos JSONB restantes (conhecidos ou desconhecidos, exceto variante_*)
-  const extrasKnown = fromSpecs(['corPisoAsfaltico', 'incluirRedeTenis', 'possuiPlaycushion',
-    'possuiRede', 'alturaRede', 'responsavelMaterialPedreira'])
+  const extrasKnown = fromSpecs([
+    'cor_piso_asfaltico', 'incluir_rede_tenis', 'possui_playcushion', 'possui_kit_saibro',
+    'possui_rede', 'altura_rede', 'responsavel_material_pedreira',
+    // poliesportiva
+    'tipo_futsal', 'possui_tenis', 'possui_volei', 'possui_futebol_futsal',
+    'possui_basquete_adulto', 'possui_basquete_juvenil', 'estrutura_basquete_adulto',
+    // beach
+    'possui_eva', 'tipo_areia', 'espessura_areia',
+  ])
   const extrasUnknown: SpecEntry[] = []
   for (const [key, val] of Object.entries(specsObj)) {
     if (consumed.has(key)) continue

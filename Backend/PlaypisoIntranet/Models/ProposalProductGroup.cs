@@ -46,6 +46,11 @@ public class ProposalProductGroup
     public decimal? LarguraSombreamento { get; set; }
     public decimal? ComprimentoSombreamento { get; set; }
 
+    // portoes
+    public int? QuantidadePortoes { get; set; }
+    public decimal? AlturaPortoes { get; set; }
+    public decimal? LarguraPortoes { get; set; }
+
     public string? Observacoes { get; set; }
 
     // campos especificos por produto/variante (serializado como JSON)

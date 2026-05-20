@@ -538,7 +538,7 @@ function buildProposalBuilderPayload(state: ProposalBuilderState): ProposalBuild
         productId: group.productId,
         productLabel: group.productLabel,
         quantity: group.quantity,
-        variantId: getVariantValue(values),
+        variantId: getVariantValue(group.formState.values),
         values,
         computed: {
           area_total_calculada: computeArea(group.formState.values),
