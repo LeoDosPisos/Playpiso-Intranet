@@ -66,13 +66,13 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 numero_proposta, status,
                 data_solicitacao, data_envio,
                 nome_razao_social, cpf_cnpj, nome_contato, telefone, email,
-                endereco_obra, cidade, estado, tipo_projeto,
+                endereco_obra, local_obra, cidade, estado, tipo_projeto,
                 created_by_user_id, created_by_email
             ) VALUES (
                 @NumeroProposta, @Status,
                 @DataSolicitacao, @DataEnvio,
                 @NomeRazaoSocial, @CpfCnpj, @NomeContato, @Telefone, @Email,
-                @EnderecoObra, @Cidade, @Estado, @TipoProjeto,
+                @EnderecoObra, @LocalObra, @Cidade, @Estado, @TipoProjeto,
                 @CreatedByUserId, @CreatedByEmail
             ) RETURNING id
             """, proposal, tx);
@@ -105,6 +105,7 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 telefone = @Telefone,
                 email = @Email,
                 endereco_obra = @EnderecoObra,
+                local_obra = @LocalObra,
                 cidade = @Cidade,
                 estado = @Estado,
                 tipo_projeto = @TipoProjeto,

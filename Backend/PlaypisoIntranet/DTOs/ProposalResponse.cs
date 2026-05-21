@@ -31,6 +31,7 @@ public record ProposalDetailResponse(
     string? Telefone,
     string? Email,
     string EnderecoObra,
+    string LocalObra,
     string Cidade,
     string Estado,
     string TipoProjeto,

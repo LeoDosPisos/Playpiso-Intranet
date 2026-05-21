@@ -187,7 +187,7 @@ Constrói o dicionário de substituição de placeholders:
 - Campos do grupo de produto: todos os `group.values` + derivados calculados:
   - `travamento_descricao` — ex: "Instalação de travamento superior e inferior"
   - `alambrado_descricao` / `descricao_alambrado` — ex: "Sistema gaiola: alambrado com fundo e laterais de 4,00m;"
-  - `dimensoes_portoes` — ex: "1,20m x 2,00m"
+  - `dimensoes_portoes` — ex: "2,00m x 1,20m"
   - `area_alambrado`, `area_playcushion`, `qtde_iluminacao`, `qtde_eva`
   - `galvanizacao` — mapeado de `"fogo"` → `"a fogo"`
   - `sistema_alambrado` — mapeado de `"gaiola"` → `"Gaiola"`

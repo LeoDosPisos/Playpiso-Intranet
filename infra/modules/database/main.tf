@@ -16,6 +16,11 @@ resource "azurerm_postgresql_flexible_server" "this" {
   public_network_access_enabled = true
 
   tags = var.tags
+
+  # A zone é atribuída pelo Azure no momento da criação; mudar exige troca com standby HA
+  lifecycle {
+    ignore_changes = [zone]
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_database" "app" {

@@ -104,6 +104,7 @@ type ProposalDetail = {
   telefone: string | null
   email: string | null
   enderecoObra: string
+  localObra: string
   cidade: string
   estado: string
   tipoProjeto: string

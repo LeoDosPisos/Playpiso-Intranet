@@ -29,6 +29,8 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: "Host=postgres;Port=5432;Database=proposta_comercial;Username=postgres;Password=postgres"
       PptxGeneratorUrl: "http://pptx-generator:8000"
+      Cors__AllowedOrigins__0: "http://localhost:3000"
+      Cors__AllowedOrigins__1: "http://localhost:5173"
     depends_on:
       postgres:
         condition: service_healthy

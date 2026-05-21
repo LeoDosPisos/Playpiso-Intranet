@@ -120,96 +120,73 @@ AllowedUsers__AdminObjectIds__0=<OID>
 
 ---
 
-## 5. Criar Dockerfiles (pré-requisito para Container Apps)
+## 5. Dockerfiles (já existentes — apenas validar)
 
-Os Dockerfiles não existem ainda. Precisam ser criados antes do primeiro deploy.
+Os Dockerfiles já existem no repositório:
 
-### `Backend/PlaypisoIntranet/Dockerfile`
+- `Backend/Dockerfile` — C# .NET 9 (multi-stage SDK → ASP.NET runtime, porta 8080)
+- `Backend/services/pptx-generator-service/Dockerfile` — Python 3.12 slim + FastAPI/Uvicorn (porta 8000)
+- `Frontend/Dockerfile` — multi-stage Node 22 → Nginx (porta 80, usado apenas pelo `compose.yaml` em dev local; em produção o frontend vai pro Static Web App, não como container)
 
-```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
-COPY PlaypisoIntranet.csproj .
-RUN dotnet restore
-COPY . .
-RUN dotnet publish -c Release -o /app
-
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-WORKDIR /app
-COPY --from=build /app .
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
-ENTRYPOINT ["dotnet", "PlaypisoIntranet.dll"]
-```
-
-### `pptx-generator-service/Dockerfile`
-
-```dockerfile
-FROM python:3.12-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### Testar as imagens localmente antes de fazer push para ACR
+### Validar build local antes do primeiro push
 
 ```bash
 # C# API
-cd Backend/PlaypisoIntranet
-docker build -t proposta-api:local .
-docker run -p 8080:8080 -e ConnectionStrings__Default="<conn>" proposta-api:local
+docker build -t proposta-api:local Backend
+docker run --rm -p 8080:8080 -e ConnectionStrings__Default="<conn>" proposta-api:local
 
 # Python service
-cd pptx-generator-service
-docker build -t pptx-generator:local .
-docker run -p 8000:8000 pptx-generator:local
+docker build -t pptx-generator:local Backend/services/pptx-generator-service
+docker run --rm -p 8000:8000 pptx-generator:local
 ```
+
+Mais simples: usar `docker compose up --build` na raiz do projeto, que builda os três e sobe junto com Postgres local.
 
 ---
 
 ## 6. Configurar GitHub Actions (após Terraform)
 
-Após `terraform apply`, os seguintes valores precisam ser configurados como **Secrets no GitHub** do repositório:
+Após `terraform apply`, os seguintes valores precisam ser configurados como **Secrets no GitHub** (Settings → Secrets and variables → Actions). O `.github/workflows/deploy.yml` falha sem qualquer um deles.
 
 | Secret | Como obter |
 |---|---|
-| `AZURE_CREDENTIALS` | `az ad sp create-for-rbac --name "playpiso-github-actions" --role contributor --scopes /subscriptions/<SUB_ID>/resourceGroups/playpiso-proposta-dev-rg --sdk-auth` |
-| `ACR_LOGIN_SERVER` | Output do Terraform: `acr_login_server` |
-| `ACR_USERNAME` | Output do Terraform (ou `az acr credential show`) |
-| `ACR_PASSWORD` | Output do Terraform (sensível) |
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` | Output do Terraform: `static_web_app_token` |
-| `TF_VAR_DB_ADMIN_PASSWORD` | Senha escolhida para o PostgreSQL |
+| `AZURE_CREDENTIALS` | `az ad sp create-for-rbac --name "playpiso-github-actions" --role contributor --scopes /subscriptions/<SUB_ID>/resourceGroups/playpiso-proposta-dev-rg --sdk-auth` — copiar o JSON inteiro |
+| `ACR_LOGIN_SERVER` | `terraform output -raw acr_login_server` |
+| `ACR_USERNAME` | `az acr credential show -n <acr-name> --query username -o tsv` |
+| `ACR_PASSWORD` | `az acr credential show -n <acr-name> --query 'passwords[0].value' -o tsv` |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN` | `terraform output -raw static_web_app_token` |
+| `AZURE_RESOURCE_GROUP` | Nome do RG criado pelo Terraform (ex.: `playpiso-proposta-dev-rg`) |
+| `ACA_PPTX_NAME` | Nome do Container App PPTX (ex.: `playpiso-proposta-dev-pptx`) |
+| `ACA_API_NAME` | Nome do Container App C# (ex.: `playpiso-proposta-dev-api`) |
+| `VITE_API_URL` | `https://` + `terraform output -raw microservice_fqdn` |
+| `VITE_PROPOSTA_API_URL` | `https://` + `terraform output -raw backend_fqdn` |
+| `VITE_API_SCOPE` | Fixo: `api://d59319c0-6b41-497f-b233-447c78d9d391/access_as_user` |
+| `VITE_AZURE_CLIENT_ID` | Fixo: `d59319c0-6b41-497f-b233-447c78d9d391` |
+| `VITE_AZURE_TENANT_ID` | Fixo: `a75f3ed1-64d2-4473-b836-0b7cb2db1542` |
+
+Explicação detalhada de cada job que consome esses secrets: [`infra-azure-cicd.md`](./infra-azure-cicd.md).
 
 ---
 
 ## 7. Domínio customizado (futuro)
 
-Quando houver um domínio customizado (ex: `propostas.playpiso.com.br`):
-
-1. **Static Web App** → *Custom domains* → adicionar domínio → validar via CNAME no DNS
-2. **Container App** → *Custom domain* → certificado TLS (Azure Managed ou próprio)
-3. Atualizar `AllowedOrigins` na C# API para o novo domínio
-4. Atualizar `VITE_PROPOSTA_API_URL` no GitHub Actions para o novo FQDN
+Não implementado por decisão (custo evitado de ~$12/ano). O sistema é acessado pela URL genérica do Static Web App. Passos completos para quando quiser implementar: [`infra-azure-dominio-customizado.md`](./infra-azure-dominio-customizado.md).
 
 ---
 
 ## Checklist de primeiro deploy
 
-- [ ] Subscription Azure ativa com Contributor access
+- [ ] Subscription Azure ativa com Contributor access (seção 1)
 - [ ] Storage Account para tfstate criado (seção 2)
 - [ ] `infra/environments/dev/backend.tf` preenchido com nome da storage account
 - [ ] `infra/environments/dev/terraform.tfvars` criado a partir do `.example`
 - [ ] Variáveis sensíveis exportadas: `TF_VAR_db_admin_password`, `TF_VAR_azure_tenant_id`, `TF_VAR_azure_client_id`
+- [ ] Azure AD Expose an API configurado (seção 3) — **fazer antes do `terraform apply` se possível, mas pode ser depois**
 - [ ] `terraform init && terraform validate && terraform plan` executados sem erros
 - [ ] `terraform apply` executado — recursos criados no portal
-- [ ] Dockerfiles criados e testados localmente (seção 5)
-- [ ] Imagens buildadas e pushed para ACR
-- [ ] Container Apps atualizados com as novas imagens
-- [ ] Azure AD Expose an API configurado (seção 3)
-- [ ] Usuários adicionados em `AllowedUsers` (seção 4)
-- [ ] GitHub Secrets configurados (seção 6)
-- [ ] Frontend buildado e deployed via GitHub Actions
-- [ ] Smoke test: login → preencher formulário → gerar proposta → download .pptx
+- [ ] Dockerfiles validados localmente (seção 5)
+- [ ] OIDs de usuários adicionados em `AllowedUsers__ObjectIds__*` no Container App (seção 4)
+- [ ] GitHub Secrets configurados — todos os 13 (seção 6)
+- [ ] Redirect URI do App Registration aponta para a URL do Static Web App
+- [ ] `git push main` (ou workflow_dispatch) executa o pipeline com sucesso
+- [ ] Smoke test: login Microsoft → preencher formulário → gerar proposta → download .pptx

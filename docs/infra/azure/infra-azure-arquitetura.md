@@ -61,6 +61,31 @@ Serviços transversais:
 
 ---
 
+## Onde mora cada dado
+
+A infra **não tem** Azure Blob Storage, File Share ou Data Lake para a aplicação. Cada categoria de dado mora num lugar específico:
+
+| Tipo de dado | Localização | Observação |
+|---|---|---|
+| **Templates `.pptx`** (~64 arquivos, ~47 MB) | Embutidos **dentro da imagem Docker** do `pptx-generator-service`, em `Backend/services/pptx-generator-service/slides/`. O `Dockerfile` faz `COPY . .` e leva todos os arquivos para `/app/slides/` no container | Versionados no Git. Editar = commit + push + rebuild da imagem |
+| **Metadados de propostas** (formulário, specs do cliente, JSON de inputs) | **PostgreSQL Flexible Server** `playpiso-proposta-dev-db`, database `proposta_comercial`, em colunas JSONB | Persistente. Backup automático configurado pelo Azure |
+| **PPTX gerado final** (output do `/gerar-proposta`) | **Não persiste** — `main.py` retorna bytes em memória via HTTP `Content-Disposition: attachment`; browser baixa, fim | Sem audit log de "qual cliente recebeu qual deck" |
+| **Secrets** (connection string DB, IDs Azure AD) | **Key Vault** `playpiso-proposta-dev-kv` | C# API lê via Managed Identity |
+| **Imagens Docker** (proposta-api, pptx-generator) | **Container Registry** `playpisopropostadevacr` | Replicação na própria região (sem geo-replicação no SKU Basic) |
+| **Estado do Terraform** | Storage Account `playpisotfstate` em RG separado (`playpiso-tfstate-rg`) | Não confundir com armazenamento da aplicação |
+
+### Quando migrar templates para Blob Storage
+
+Avaliar quando alguma destas necessidades aparecer:
+- **Comercial precisa editar templates** sem depender de dev (requer PR e re-deploy hoje).
+- **Auditoria** de qual template foi usado em qual proposta gerada.
+- **Imagem Docker passar de ~500 MB**, impactando tempo de pull no Container App.
+- **A/B test ou templates por cliente** em runtime.
+
+Migração futura envolveria: criar `azurerm_storage_account` + container `templates`, mover arquivos pra lá, ajustar `slide_merger.py` para baixar via Blob SDK (`azure-storage-blob`), conceder acesso à Managed Identity do pptx-generator. Não há demanda atual.
+
+---
+
 ## Recursos a criar por Terraform
 
 | Recurso | Nome (dev) | Propósito |

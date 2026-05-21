@@ -16,6 +16,7 @@ public class Proposal
     public string? Email { get; set; }
 
     public string EnderecoObra { get; set; } = "";
+    public string LocalObra { get; set; } = ""; 
     public string Cidade { get; set; } = "";
     public string Estado { get; set; } = "";
     public string TipoProjeto { get; set; } = "";
