@@ -4,6 +4,64 @@ Estas tarefas precisam ser realizadas **manualmente** (portal Azure, CLI ou e-ma
 
 ---
 
+## 0. Ferramentas locais necessárias
+
+Antes de qualquer comando, garantir que estas ferramentas estão instaladas e funcionando na máquina:
+
+| Ferramenta | Versão | Para que serve | Verificação |
+|---|---|---|---|
+| **Azure CLI** (`az`) | qualquer recente | Autenticar, gerenciar recursos, registrar providers, extrair credenciais ACR | `az --version` |
+| **Terraform** | `>= 1.7` | Provisionar a infra a partir de `infra/environments/dev/` | `terraform version` |
+| **Docker** | qualquer recente | Build inicial das imagens (primeiro provisionamento — ver seção 5) | `docker ps` |
+| **GitHub CLI** (`gh`) | `>= 2.0` | Cadastrar os secrets do GitHub Actions sem usar o portal web | `gh --version && gh auth status` |
+| **Gerenciador de senhas local** | KeePassXC ou equivalente | Guardar senha do PostgreSQL e JSON do Service Principal | `keepassxc --version` |
+
+### Instalação no Ubuntu
+
+**Azure CLI:**
+```bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+az login
+```
+
+**Terraform** (repositório oficial HashiCorp — sempre atualizado, integra com `apt upgrade`):
+```bash
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install -y terraform
+```
+
+> Evitar `snap install terraform` — versão pode ficar desatualizada e o sandbox do snap pode bloquear leitura de módulos locais.
+
+**Docker:**
+```bash
+sudo apt install -y docker.io
+sudo usermod -aG docker $USER
+# Reiniciar sessão (logout/login) para o grupo valer; depois:
+docker ps  # deve listar sem erro de permissão
+```
+
+**GitHub CLI** (repositório oficial GitHub):
+```bash
+(type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
+  && sudo mkdir -p -m 755 /etc/apt/keyrings \
+  && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+  && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && sudo apt update \
+  && sudo apt install gh -y
+gh auth login  # escolher GitHub.com → HTTPS → Login with a web browser
+```
+
+**KeePassXC:**
+```bash
+sudo apt install -y keepassxc
+mkdir -p ~/Vaults && chmod 700 ~/Vaults
+# Criar cofre via GUI: keepassxc & → Database → New Database → salvar em ~/Vaults/playpiso-infra.kdbx
+```
+
+---
+
 ## 1. Pré-requisitos de acesso
 
 ### 1.1 Subscription Azure ativa
@@ -48,6 +106,34 @@ az storage container create \
 ```
 
 Após criar, preencher `infra/environments/dev/backend.tf` com o nome da storage account.
+
+---
+
+## 2.1 Registrar Resource Providers
+
+Subscriptions Azure novas vêm com pouquíssimos resource providers registrados. Sem registro, o Azure recusa criações com mensagens enganosas — por exemplo `SubscriptionNotFound` mesmo quando a subscription existe (sintoma real visto no primeiro provisionamento: erro era na verdade `Microsoft.Storage` não registrado).
+
+Registre **uma vez** todos os providers que o Terraform vai usar:
+
+```bash
+for p in Microsoft.Storage Microsoft.ContainerRegistry Microsoft.App \
+         Microsoft.OperationalInsights Microsoft.Insights Microsoft.DBforPostgreSQL \
+         Microsoft.KeyVault Microsoft.Web Microsoft.ManagedIdentity; do
+  az provider register --namespace "$p" --wait
+done
+```
+
+`--wait` deixa o `az` bloquear até o provider estar `Registered` (1-2 min cada). Sem `--wait`, o registro é assíncrono.
+
+Confirmar que ficou tudo OK:
+
+```bash
+az provider list --query "[?registrationState=='Registered'].namespace" -o tsv | sort
+```
+
+Esperado: lista contendo todos os 9 namespaces acima (além de outros pré-registrados como `Microsoft.Resources` e `Microsoft.Authorization`).
+
+> Resource Provider é o componente Azure que sabe criar um tipo específico de recurso. Cada Subscription tem uma allowlist; antes do registro o provider está "desligado". Registro é permanente até `az provider unregister`. Não confundir com "provider" do Terraform (`azurerm`, `azuread`) — esses são plugins cliente, conceito diferente.
 
 ---
 
@@ -146,25 +232,120 @@ Mais simples: usar `docker compose up --build` na raiz do projeto, que builda os
 
 ## 6. Configurar GitHub Actions (após Terraform)
 
-Após `terraform apply`, os seguintes valores precisam ser configurados como **Secrets no GitHub** (Settings → Secrets and variables → Actions). O `.github/workflows/deploy.yml` falha sem qualquer um deles.
+Após `terraform apply`, são **13 secrets** que precisam estar configurados em **Settings → Secrets and variables → Actions**. O `.github/workflows/deploy.yml` falha sem qualquer um deles.
 
-| Secret | Como obter |
+### Tabela de origem (referência)
+
+| Secret | Origem |
 |---|---|
-| `AZURE_CREDENTIALS` | `az ad sp create-for-rbac --name "playpiso-github-actions" --role contributor --scopes /subscriptions/<SUB_ID>/resourceGroups/playpiso-proposta-dev-rg --sdk-auth` — copiar o JSON inteiro |
+| `AZURE_CREDENTIALS` | `az ad sp create-for-rbac` (JSON `--sdk-auth`) |
 | `ACR_LOGIN_SERVER` | `terraform output -raw acr_login_server` |
-| `ACR_USERNAME` | `az acr credential show -n <acr-name> --query username -o tsv` |
-| `ACR_PASSWORD` | `az acr credential show -n <acr-name> --query 'passwords[0].value' -o tsv` |
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` | `terraform output -raw static_web_app_token` |
-| `AZURE_RESOURCE_GROUP` | Nome do RG criado pelo Terraform (ex.: `playpiso-proposta-dev-rg`) |
-| `ACA_PPTX_NAME` | Nome do Container App PPTX (ex.: `playpiso-proposta-dev-pptx`) |
-| `ACA_API_NAME` | Nome do Container App C# (ex.: `playpiso-proposta-dev-api`) |
+| `ACR_USERNAME` | `az acr credential show --query username -o tsv` |
+| `ACR_PASSWORD` | `az acr credential show --query 'passwords[0].value' -o tsv` |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN` | `terraform output -raw static_web_app_token` (sensível) |
+| `AZURE_RESOURCE_GROUP` | `terraform output -raw resource_group_name` |
+| `ACA_PPTX_NAME` | Nome fixo: `playpiso-proposta-dev-pptx` |
+| `ACA_API_NAME` | Nome fixo: `playpiso-proposta-dev-api` |
 | `VITE_API_URL` | `https://` + `terraform output -raw microservice_fqdn` |
 | `VITE_PROPOSTA_API_URL` | `https://` + `terraform output -raw backend_fqdn` |
 | `VITE_API_SCOPE` | Fixo: `api://d59319c0-6b41-497f-b233-447c78d9d391/access_as_user` |
 | `VITE_AZURE_CLIENT_ID` | Fixo: `d59319c0-6b41-497f-b233-447c78d9d391` |
 | `VITE_AZURE_TENANT_ID` | Fixo: `a75f3ed1-64d2-4473-b836-0b7cb2db1542` |
 
-Explicação detalhada de cada job que consome esses secrets: [`infra-azure-cicd.md`](./infra-azure-cicd.md).
+### Pré-requisitos antes de cadastrar
+
+1. **Service Principal criado** — `AZURE_CREDENTIALS` precisa do JSON do SP:
+   ```bash
+   az ad sp create-for-rbac \
+     --name "playpiso-github-actions" \
+     --role contributor \
+     --scopes "/subscriptions/<SUB_ID>/resourceGroups/playpiso-proposta-dev-rg" \
+     --sdk-auth
+   ```
+   Copiar o JSON inteiro (das chaves `{` até `}`) para uma entrada do KeePassXC chamada `Playpiso — Service Principal GitHub Actions`. O `clientSecret` **não aparece de novo** — perda dele exige regenerar.
+
+   > Pode aparecer warning `Option '--sdk-auth' has been deprecated` — ignorar; o `azure/login@v2` ainda lê esse formato.
+
+2. **Credenciais do ACR anotadas no KeePassXC:**
+   ```bash
+   az acr credential show --name playpisopropostadevacr --query "username" -o tsv
+   az acr credential show --name playpisopropostadevacr --query "passwords[0].value" -o tsv
+   ```
+
+3. **`gh` autenticado** no repo certo:
+   ```bash
+   cd ~/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado
+   gh repo view --json nameWithOwner --jq '.nameWithOwner'  # deve mostrar LeoDosPisos/Playpiso-Intranet
+   ```
+
+### Cadastro em 3 blocos
+
+#### Bloco A — 5 secrets derivados do Terraform
+
+```bash
+cd ~/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/infra/environments/dev
+
+gh secret set AZURE_RESOURCE_GROUP --body "$(terraform output -raw resource_group_name)"
+gh secret set ACR_LOGIN_SERVER --body "$(terraform output -raw acr_login_server)"
+gh secret set VITE_PROPOSTA_API_URL --body "https://$(terraform output -raw backend_fqdn)"
+gh secret set VITE_API_URL --body "https://$(terraform output -raw microservice_fqdn)"
+terraform output -raw static_web_app_token | gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN
+```
+
+#### Bloco B — 5 secrets fixos
+
+```bash
+gh secret set ACA_API_NAME --body "playpiso-proposta-dev-api"
+gh secret set ACA_PPTX_NAME --body "playpiso-proposta-dev-pptx"
+gh secret set VITE_API_SCOPE --body "api://d59319c0-6b41-497f-b233-447c78d9d391/access_as_user"
+gh secret set VITE_AZURE_CLIENT_ID --body "d59319c0-6b41-497f-b233-447c78d9d391"
+gh secret set VITE_AZURE_TENANT_ID --body "a75f3ed1-64d2-4473-b836-0b7cb2db1542"
+```
+
+#### Bloco C — 3 secrets sensíveis do KeePassXC
+
+**C1 — ACR_USERNAME e ACR_PASSWORD** (uma linha cada, `read -s` esconde o que é colado):
+
+```bash
+read -srp "Cole o ACR_USERNAME e pressione Enter: " ACR_USER && echo
+printf "%s" "$ACR_USER" | gh secret set ACR_USERNAME
+unset ACR_USER
+
+read -srp "Cole o ACR_PASSWORD e pressione Enter: " ACR_PASS && echo
+printf "%s" "$ACR_PASS" | gh secret set ACR_PASSWORD
+unset ACR_PASS
+```
+
+`printf "%s"` evita o newline que o Enter adicionaria — a senha do ACR não pode ter trailing newline.
+
+**C2 — AZURE_CREDENTIALS** (JSON multi-linha; `read -s` não serve):
+
+```bash
+SP_FILE=$(mktemp) && chmod 600 "$SP_FILE"
+echo "Cole o JSON COMPLETO do Service Principal e pressione Ctrl+D quando terminar:"
+cat > "$SP_FILE"
+
+# Validar JSON antes de enviar
+python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$SP_FILE" && echo "JSON válido"
+
+# Enviar via stdin (compatível com gh < 2.30; versões mais recentes aceitam --body-file)
+gh secret set AZURE_CREDENTIALS < "$SP_FILE"
+
+# Destruir o arquivo
+shred -u "$SP_FILE" 2>/dev/null || rm -f "$SP_FILE"
+```
+
+> Versões antigas do `gh` (testado em algumas distros Ubuntu) não têm `--body-file`. Usar `< $FILE` é a forma compatível.
+
+### Verificação final
+
+```bash
+gh secret list
+```
+
+Esperado: tabela com exatamente **13 nomes**, todos com `Updated` recente. Se faltar algum, refazer só o ausente.
+
+Explicação detalhada de cada job que consome esses secrets: [`infra-azure-cicd.md`](./infra-azure-cicd.md). Mapeamento e comandos de extração também em [`infra-azure-outputs-dev.md`](./infra-azure-outputs-dev.md).
 
 ---
 
@@ -176,17 +357,25 @@ Não implementado por decisão (custo evitado de ~$12/ano). O sistema é acessad
 
 ## Checklist de primeiro deploy
 
-- [ ] Subscription Azure ativa com Contributor access (seção 1)
+- [ ] Ferramentas locais instaladas (seção 0): `az`, `terraform >= 1.7`, `docker`, `gh >= 2.0`, KeePassXC
+- [ ] Cofre KeePassXC criado em `~/Vaults/playpiso-infra.kdbx`
+- [ ] Subscription Azure ativa com Contributor (ou Owner) access (seção 1)
 - [ ] Storage Account para tfstate criado (seção 2)
+- [ ] Resource Providers registrados (seção 2.1)
 - [ ] `infra/environments/dev/backend.tf` preenchido com nome da storage account
 - [ ] `infra/environments/dev/terraform.tfvars` criado a partir do `.example`
-- [ ] Variáveis sensíveis exportadas: `TF_VAR_db_admin_password`, `TF_VAR_azure_tenant_id`, `TF_VAR_azure_client_id`
-- [ ] Azure AD Expose an API configurado (seção 3) — **fazer antes do `terraform apply` se possível, mas pode ser depois**
-- [ ] `terraform init && terraform validate && terraform plan` executados sem erros
-- [ ] `terraform apply` executado — recursos criados no portal
-- [ ] Dockerfiles validados localmente (seção 5)
-- [ ] OIDs de usuários adicionados em `AllowedUsers__ObjectIds__*` no Container App (seção 4)
-- [ ] GitHub Secrets configurados — todos os 13 (seção 6)
-- [ ] Redirect URI do App Registration aponta para a URL do Static Web App
-- [ ] `git push main` (ou workflow_dispatch) executa o pipeline com sucesso
-- [ ] Smoke test: login Microsoft → preencher formulário → gerar proposta → download .pptx
+- [ ] Senha do PostgreSQL gerada e armazenada no KeePassXC
+- [ ] Variáveis sensíveis exportadas no shell: `TF_VAR_db_admin_password`, `TF_VAR_azure_tenant_id`, `TF_VAR_azure_client_id`
+- [ ] Azure AD Expose an API configurado (seção 3)
+- [ ] `terraform init && terraform plan -out=tfplan` executados sem erros
+- [ ] `terraform apply tfplan` executado — recursos criados no portal
+- [ ] Primeiras imagens Docker buildadas e pushed para o ACR (necessário no primeiro provisionamento — ver [`infra-azure-terraform-plan.md`](./infra-azure-terraform-plan.md) seção "Erros conhecidos")
+- [ ] `terraform apply` re-executado após push das imagens — Container Apps criados com sucesso
+- [ ] OIDs de usuários autorizados em `AllowedUsers__ObjectIds__*` (seção 4)
+- [ ] Service Principal criado e JSON armazenado no KeePassXC
+- [ ] Credenciais ACR (`username` + `password`) armazenadas no KeePassXC
+- [ ] GitHub Secrets configurados — todos os 13 (seção 6); confirmado via `gh secret list`
+- [ ] Redirect URI no App Registration aponta para a URL do Static Web App
+- [ ] `package-lock.json` versionado no repo (não pode estar no `.gitignore` — `npm ci` exige)
+- [ ] Workflow disparado via `gh workflow run deploy.yml` ou push em `main` — 5 jobs verdes
+- [ ] Smoke test: login Microsoft → preencher formulário → gerar proposta → download `.pptx`

@@ -97,3 +97,8 @@ A URL é algo como `playpiso-proposta-dev-swa-<random>.azurestaticapps.net`, com
 
 **Login Microsoft falha após mudar URL do frontend:**
 - O App Registration `d59319c0-...` tem uma allowlist de redirect URIs. Adicione a nova URL em Azure Portal → Azure Active Directory → App registrations → Authentication → Redirect URIs.
+
+**`npm ci` falha com "lockfileVersion >= 1" no `deploy-frontend`:**
+- Sintoma: `npm error The npm ci command can only install with an existing package-lock.json or npm-shrinkwrap.json with lockfileVersion >= 1`.
+- Causa: `Frontend/package-lock.json` está no `.gitignore` raiz, então não foi commitado. `npm ci` exige o lock file no repositório para garantir build determinístico — sem ele, falha.
+- Solução: remover a linha `package-lock.json` do `.gitignore` raiz, commitar tanto o `.gitignore` quanto o `Frontend/package-lock.json` (já gerado localmente por `npm install`) e fazer push em `main`. Lockfiles devem ser versionados — é o padrão de mercado para JS, Python (`poetry.lock`, `Pipfile.lock`), Ruby (`Gemfile.lock`), etc.
