@@ -1,7 +1,5 @@
 node_modules
 
-package-lock.json
-
 # Terraform — estado local e variáveis sensíveis
 **/.terraform/
 **/.terraform.lock.hcl
