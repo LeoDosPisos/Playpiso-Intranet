@@ -4,6 +4,10 @@ Terraform para provisionamento da infraestrutura Azure. Arquitetura: **Container
 
 Documentação arquitetural completa: [`../docs/infra/azure/infra-azure-arquitetura.md`](../docs/infra/azure/infra-azure-arquitetura.md)
 Tarefas manuais necessárias: [`../docs/infra/azure/infra-azure-tarefas-manuais.md`](../docs/infra/azure/infra-azure-tarefas-manuais.md)
+Plano Terraform e variáveis esperadas: [`../docs/infra/azure/infra-azure-terraform-plan.md`](../docs/infra/azure/infra-azure-terraform-plan.md)
+Outputs reais do ambiente dev: [`../docs/infra/azure/infra-azure-outputs-dev.md`](../docs/infra/azure/infra-azure-outputs-dev.md)
+Pipeline CI/CD (GitHub Actions): [`../docs/infra/azure/infra-azure-cicd.md`](../docs/infra/azure/infra-azure-cicd.md)
+Domínio customizado (não implementado): [`../docs/infra/azure/infra-azure-dominio-customizado.md`](../docs/infra/azure/infra-azure-dominio-customizado.md)
 
 ## Pré-requisitos
 
@@ -55,3 +59,14 @@ infra/
 | `backend_fqdn` | FQDN da C# API (Container App) |
 | `acr_login_server` | Login server do Container Registry |
 | `db_fqdn` | FQDN do PostgreSQL Flexible Server |
+
+## URL pública atual
+
+Sem domínio customizado, o sistema é acessado pela URL genérica do Static Web App (HTTPS + cert gerenciado, gratuito):
+
+```bash
+cd infra/environments/dev
+terraform output frontend_url
+```
+
+Detalhes do pipeline que mantém esse endpoint atualizado em [`../docs/infra/azure/infra-azure-cicd.md`](../docs/infra/azure/infra-azure-cicd.md). Para plugar um domínio próprio no futuro, ver [`../docs/infra/azure/infra-azure-dominio-customizado.md`](../docs/infra/azure/infra-azure-dominio-customizado.md).

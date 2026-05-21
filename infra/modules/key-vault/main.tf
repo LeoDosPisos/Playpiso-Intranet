@@ -18,9 +18,9 @@ resource "azurerm_key_vault" "this" {
 }
 
 resource "azurerm_key_vault_secret" "secrets" {
-  for_each     = var.secrets
-  name         = each.key
-  value        = each.value
+  for_each     = nonsensitive(toset(keys(var.secrets)))
+  name         = each.value
+  value        = var.secrets[each.value]
   key_vault_id = azurerm_key_vault.this.id
 }
 
