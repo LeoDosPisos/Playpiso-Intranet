@@ -34,9 +34,6 @@ public class ProposalProductGroup
 
     // fechamentos_protecoes
     public bool PossuiAlambrado { get; set; }
-    public decimal? ComprimentoAlambrado { get; set; }
-    public decimal? AlturaAlambrado { get; set; }
-    public decimal? EspacamentoPostesTubos { get; set; }
     public string? Galvanizacao { get; set; }
     public string? EspecificarGalvanizacao { get; set; }
     public bool? PossuiTrelica { get; set; }

@@ -35,6 +35,11 @@ if (!disableAuthentication)
 {
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+    builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.MapInboundClaims = false;
+    });
 }
 
 builder.Services.Configure<AllowedUsersOptions>(builder.Configuration.GetSection("AllowedUsers"));
@@ -74,6 +79,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 if (!disableAuthentication)
     app.UseAuthentication();
+
+if (app.Environment.IsDevelopment())
+    app.UseMiddleware<UserClaimsLoggingMiddleware>();
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

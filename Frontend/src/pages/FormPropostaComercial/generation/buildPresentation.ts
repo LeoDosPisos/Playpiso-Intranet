@@ -79,22 +79,9 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   }
 }
 
-export async function saveProposalDraft(
-  payload: ProposalBuilderPayload,
-  existingId?: string | null,
-): Promise<string> {
+export async function saveProposalDraft(payload: ProposalBuilderPayload): Promise<string> {
   const headers = await getAuthHeaders()
   const body = JSON.stringify(buildApiPayload(payload))
-
-  if (existingId) {
-    const res = await fetch(`${PROPOSTA_API_URL}/api/proposals/${existingId}`, {
-      method: 'PUT',
-      headers,
-      body,
-    })
-    if (!res.ok) throw new Error(`Erro ao atualizar rascunho: ${res.status}`)
-    return existingId
-  }
 
   const res = await fetch(`${PROPOSTA_API_URL}/api/proposals`, {
     method: 'POST',
@@ -108,7 +95,6 @@ export async function saveProposalDraft(
 
 export async function generateProposal(
   payload: ProposalBuilderPayload,
-  existingId?: string | null,
 ): Promise<{ url: string; filename: string; proposalId: string }> {
   const resolvedSlides = resolveSlideList(payload)
 
@@ -135,7 +121,7 @@ export async function generateProposal(
   }
 
   const headers = await getAuthHeaders()
-  const proposalId = await saveProposalDraft(payload, existingId)
+  const proposalId = await saveProposalDraft(payload)
 
   const generateRes = await fetch(`${PROPOSTA_API_URL}/api/proposals/${proposalId}/generate`, {
     method: 'POST',

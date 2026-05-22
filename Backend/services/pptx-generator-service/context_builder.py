@@ -2,7 +2,14 @@ from datetime import datetime
 
 _GALVANIZACAO_LABELS = {'fogo': 'a fogo', 'eletrolitico': 'eletroliticamente'}
 
-_SISTEMA_ALAMBRADO_LABELS = {'gaiola': 'Gaiola', 'trapezio': 'Trapézio'}
+_SISTEMA_ALAMBRADO_LABELS = {'gaiola': 'Gaiola', 'trapezio': 'Trapézio', 'especial': 'Especial'}
+
+_ALAMBRADO_LADOS = (
+    ('lateral_esquerda', 'lateral esquerda'),
+    ('lateral_direita', 'lateral direita'),
+    ('fundo_frontal', 'fundo frontal'),
+    ('fundo_traseiro', 'fundo traseiro'),
+)
 
 _ILUMINACAO_FALLBACK_KEYS = (
     'quantidade_projetores', 'potencia_projetores',
@@ -65,6 +72,19 @@ def _fmt_alambrado_descricao(values: dict) -> str:
         )
     if sistema == 'gaiola' and h_fun is not None:
         return f"Sistema gaiola: alambrado com fundo e laterais de {_fmt_dimension(h_fun)}m;"
+    if sistema == 'especial':
+        partes = []
+        for key, label in _ALAMBRADO_LADOS:
+            altura = values.get(f'altura_alambrado_{key}')
+            comprimento = values.get(f'comprimento_alambrado_{key}')
+            if altura is None and comprimento is None:
+                continue
+            partes.append(
+                f"{label} de {_fmt_dimension(comprimento)} x {_fmt_dimension(altura)}"
+            )
+        if partes:
+            return f"Sistema especial: alambrado com {'; '.join(partes)};"
+        return 'Sistema especial: alambrado com dimensões individuais por lado;'
     return '—'
 
 
@@ -90,7 +110,7 @@ def _build_base_context(global_values: dict, product_groups: list) -> dict:
     return {
         "nome_razao_social": global_values.get("nome_razao_social", ""),
         "nome_contato":      global_values.get("nome_contato", ""),
-        "endereco_obra":     global_values.get("endereco_obra", ""),
+        "endereco_cliente":     global_values.get("endereco_cliente", ""),
         "local_obra":        global_values.get("local_obra", ""),
         "telefone":          global_values.get("telefone", ""),
         "email":             global_values.get("email", ""),
@@ -136,15 +156,26 @@ def _build_group_context(group) -> dict:
     ctx['area_total_fmt'] = _fmt_numero(values.get('area_total'))
 
     if values.get('possui_alambrado'):
-        c_lat = values.get('comprimento_alambrado_laterais')
-        h_lat = values.get('altura_alambrado_laterais')
-        c_fun = values.get('comprimento_alambrado_fundos')
-        h_fun = values.get('altura_alambrado_fundos')
-        try:
-            area = float(c_lat or 0) * float(h_lat or 0) + float(c_fun or 0) * float(h_fun or 0)
-            ctx['area_alambrado'] = _fmt_numero(area) if area else '—'
-        except (TypeError, ValueError):
-            ctx['area_alambrado'] = '—'
+        if values.get('sistema_alambrado') == 'especial':
+            try:
+                area = 0.0
+                for _key, _ in _ALAMBRADO_LADOS:
+                    _c = float(values.get(f'comprimento_alambrado_{_key}') or 0)
+                    _h = float(values.get(f'altura_alambrado_{_key}') or 0)
+                    area += _c * _h
+                ctx['area_alambrado'] = _fmt_numero(area) if area else '—'
+            except (TypeError, ValueError):
+                ctx['area_alambrado'] = '—'
+        else:
+            c_lat = values.get('comprimento_alambrado_laterais')
+            h_lat = values.get('altura_alambrado_laterais')
+            c_fun = values.get('comprimento_alambrado_fundos')
+            h_fun = values.get('altura_alambrado_fundos')
+            try:
+                area = float(c_lat or 0) * float(h_lat or 0) + float(c_fun or 0) * float(h_fun or 0)
+                ctx['area_alambrado'] = _fmt_numero(area) if area else '—'
+            except (TypeError, ValueError):
+                ctx['area_alambrado'] = '—'
     else:
         ctx['area_alambrado'] = '—'
 

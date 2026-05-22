@@ -23,6 +23,36 @@
   line-height: 1.5;
 }
 
+.scopeToggle {
+  display: inline-flex;
+  margin-bottom: 20px;
+  border: 1px solid rgba(74, 74, 74, 0.16);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.scopeButton,
+.scopeButtonActive {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: rgba(74, 74, 74, 0.78);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.scopeButton:hover {
+  background: rgba(74, 74, 74, 0.04);
+}
+
+.scopeButtonActive {
+  background: rgba(74, 74, 74, 0.12);
+  color: #4a4a4a;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

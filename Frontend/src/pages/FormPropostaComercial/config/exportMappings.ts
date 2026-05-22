@@ -8,7 +8,7 @@ const exportMappings: ExportMappings = {
       { fieldId: "nome_contato", columnName: "Contato" },
       { fieldId: "telefone", columnName: "Telefone" },
       { fieldId: "email", columnName: "E-mail" },
-      { fieldId: "endereco_obra", columnName: "Endereço da obra" },
+      { fieldId: "endereco_cliente", columnName: "Endereço da obra" },
       { fieldId: "cidade", columnName: "Cidade" },
       { fieldId: "estado", columnName: "Estado" },
       { fieldId: "tipo_projeto", columnName: "Tipo de projeto" },
@@ -145,6 +145,54 @@ const exportMappings: ExportMappings = {
       {
         fieldId: "espacamento_postes_tubos_fundos",
         columnName: "Espaçamento — Fundos",
+      },
+      {
+        fieldId: "comprimento_alambrado_lateral_esquerda",
+        columnName: "Comprimento — Lateral esquerda",
+      },
+      {
+        fieldId: "altura_alambrado_lateral_esquerda",
+        columnName: "Altura — Lateral esquerda",
+      },
+      {
+        fieldId: "espacamento_postes_tubos_lateral_esquerda",
+        columnName: "Espaçamento — Lateral esquerda",
+      },
+      {
+        fieldId: "comprimento_alambrado_lateral_direita",
+        columnName: "Comprimento — Lateral direita",
+      },
+      {
+        fieldId: "altura_alambrado_lateral_direita",
+        columnName: "Altura — Lateral direita",
+      },
+      {
+        fieldId: "espacamento_postes_tubos_lateral_direita",
+        columnName: "Espaçamento — Lateral direita",
+      },
+      {
+        fieldId: "comprimento_alambrado_fundo_frontal",
+        columnName: "Comprimento — Fundo frontal",
+      },
+      {
+        fieldId: "altura_alambrado_fundo_frontal",
+        columnName: "Altura — Fundo frontal",
+      },
+      {
+        fieldId: "espacamento_postes_tubos_fundo_frontal",
+        columnName: "Espaçamento — Fundo frontal",
+      },
+      {
+        fieldId: "comprimento_alambrado_fundo_traseiro",
+        columnName: "Comprimento — Fundo traseiro",
+      },
+      {
+        fieldId: "altura_alambrado_fundo_traseiro",
+        columnName: "Altura — Fundo traseiro",
+      },
+      {
+        fieldId: "espacamento_postes_tubos_fundo_traseiro",
+        columnName: "Espaçamento — Fundo traseiro",
       },
       { fieldId: "galvanizacao", columnName: "Galvanização" },
       {

@@ -12,9 +12,9 @@ public record CreateProposalDto(
     string? CpfCnpj,
     string? NomeContato,
     string? Telefone,
-    string? Email,
+    string? EmailCliente,
 
-    [Required] string EnderecoObra,
+    [Required] string EnderecoCliente,
     [Required] string LocalObra,
     [Required] string Cidade,
     [Required] string Estado,
@@ -50,9 +50,6 @@ public class CreateProductGroupDto
     public string? TipoColigacao { get; init; }
 
     public bool PossuiAlambrado { get; init; }
-    public decimal? ComprimentoAlambrado { get; init; }
-    public decimal? AlturaAlambrado { get; init; }
-    public decimal? EspacamentoPostesTubos { get; init; }
     public string? Galvanizacao { get; init; }
     public string? EspecificarGalvanizacao { get; init; }
     public bool? PossuiTrelica { get; init; }

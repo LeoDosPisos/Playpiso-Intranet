@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 
 import Header from '@/components/Header/Header'
 import UserMenu from '@/components/Header/UserMenu'
+import { useIsAdmin } from '@/auth/useIsAdmin'
 import {
   listProposals,
   getProposalDetail,
@@ -521,7 +522,7 @@ function DetailPanel({
           {detail.email && <ContactField label="E-mail" value={detail.email} />}
         </div>
         <div className={styles.contactGroup}>
-          {detail.enderecoObra && <ContactField label="Endereço da obra" value={detail.enderecoObra} />}
+          {detail.enderecoCliente && <ContactField label="Endereço da obra" value={detail.enderecoCliente} />}
           {detail.localObra && <ContactField label="Local da obra" value={detail.localObra} />}
           <ContactField label="Cidade / Estado" value={`${detail.cidade} / ${detail.estado}`} />
           {detail.tipoProjeto && <ContactField label="Tipo de projeto" value={formatSpecValue(detail.tipoProjeto)} />}
@@ -540,25 +541,27 @@ function DetailPanel({
 // ─── Página principal ─────────────────────────────────────────────────────────
 
 function HistoricoPropostas() {
+  const isAdmin = useIsAdmin()
   const [entries, setEntries] = useState<ProposalSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [details, setDetails] = useState<Map<string, ProposalDetail | Error>>(new Map())
   const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [scope, setScope] = useState<'mine' | 'all'>(isAdmin ? 'all' : 'mine')
 
   useEffect(() => {
     let cancelled = false
     setIsLoading(true)
     setError(null)
-    listProposals({ status: 'gerada', page: 1, pageSize: 50 })
+    listProposals({ status: 'gerada', page: 1, pageSize: 50, scope })
       .then((proposals) => { if (!cancelled) setEntries(proposals) })
       .catch((err: unknown) => {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Erro ao carregar histórico.')
       })
       .finally(() => { if (!cancelled) setIsLoading(false) })
     return () => { cancelled = true }
-  }, [])
+  }, [scope])
 
   function handleToggle(id: string) {
     if (expandedId === id) { setExpandedId(null); return }
@@ -584,6 +587,27 @@ function HistoricoPropostas() {
             <h1>Histórico de propostas</h1>
             <p>Propostas comerciais geradas e registradas no banco de dados.</p>
           </div>
+
+          {isAdmin && (
+            <div className={styles.scopeToggle} role="group" aria-label="Filtro de propostas">
+              <button
+                type="button"
+                aria-pressed={scope === 'mine'}
+                className={scope === 'mine' ? styles.scopeButtonActive : styles.scopeButton}
+                onClick={() => setScope('mine')}
+              >
+                Minhas propostas
+              </button>
+              <button
+                type="button"
+                aria-pressed={scope === 'all'}
+                className={scope === 'all' ? styles.scopeButtonActive : styles.scopeButton}
+                onClick={() => setScope('all')}
+              >
+                Todas as propostas
+              </button>
+            </div>
+          )}
 
           {isLoading ? (
             <div className={styles.emptyState}><strong>Carregando histórico...</strong></div>
@@ -622,7 +646,7 @@ function HistoricoPropostas() {
                       <td className={styles.locationCell}>{entry.cidade} / {entry.estado}</td>
                       <td className={styles.countCell}>{entry.totalProducts}</td>
                       <td className={styles.ownerCell}>
-                        {entry.generatedByEmail ?? entry.createdByEmail ?? '-'}
+                        {entry.createdByEmail ?? '-'}
                       </td>
                       <td className={styles.actionsCell}>
                         <span className={styles.statusBadge}>{entry.status}</span>

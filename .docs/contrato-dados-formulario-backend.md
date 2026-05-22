@@ -46,8 +46,8 @@ Todos vão diretamente para a tabela `proposals`.
 | `cpf_cnpj` | text | `cpf_cnpj` | |
 | `nome_contato` | text | `nome_contato` | |
 | `telefone` | text | `telefone` | |
-| `email` | email | `email` | |
-| `endereco_obra` | text | `endereco_obra` | required |
+| `email` | email | `email_cliente` | renomeado para desambiguar de `created_by_email`/`generated_by_email` |
+| `endereco_cliente` | text | `endereco_cliente` | required |
 | `cidade` | text | `cidade` | required |
 | `estado` | text | `estado` | required |
 | `tipo_projeto` | select | `tipo_projeto` | required |
@@ -208,9 +208,6 @@ Todos vão para `specs` com chave **snake_case** (exceto portões, ver 3.3).
 | `responsavel_ligacao_eletrica` | `ResponsavelLigacaoEletrica` | `ResponsavelLigacaoEletrica` | ✅ |
 | `tipo_coligacao` | `TipoColigacao` | `TipoColigacao` | ✅ |
 | `possui_alambrado` | `PossuiAlambrado` | `PossuiAlambrado` | ✅ |
-| `comprimento_alambrado` | `ComprimentoAlambrado` | `ComprimentoAlambrado` | ✅ |
-| `altura_alambrado` | `AlturaAlambrado` | `AlturaAlambrado` | ✅ |
-| `espacamento_postes_tubos` | `EspacamentoPostesTubos` | `EspacamentoPostesTubos` | ✅ |
 | `galvanizacao` | `Galvanizacao` | `Galvanizacao` | ✅ |
 | `especificar_galvanizacao` | `EspecificarGalvanizacao` | `EspecificarGalvanizacao` | ✅ |
 | `possui_trelica` | `PossuiTrelica` | `PossuiTrelica` | ✅ |
@@ -221,22 +218,19 @@ Todos vão para `specs` com chave **snake_case** (exceto portões, ver 3.3).
 | `comprimento_sombreamento` | `ComprimentoSombreamento` | `ComprimentoSombreamento` | ✅ |
 | `observacoes` | `Observacoes` | `Observacoes` | ✅ |
 | `specs` | `[JsonExtensionData] Specs` | `Specs` (string) | ✅ |
-| *(sem coluna)* | `quantidadePortoes` → JSONB | *(via Specs string)* | ⚠️ Lacuna |
-| *(sem coluna)* | `alturaPortoes` → JSONB | *(via Specs string)* | ⚠️ Lacuna |
-| *(sem coluna)* | `larguraPortoes` → JSONB | *(via Specs string)* | ⚠️ Lacuna |
+| `quantidade_portoes` | `QuantidadePortoes` | `QuantidadePortoes` | ✅ |
+| `altura_portoes` | `AlturaPortoes` | `AlturaPortoes` | ✅ |
+| `largura_portoes` | `LarguraPortoes` | `LarguraPortoes` | ✅ |
 
 ---
 
 ## 5. Lacunas identificadas e recomendações
 
-### L1 — Portões sem colunas dedicadas (impacto: médio)
+### L1 — Portões sem colunas dedicadas — ✅ RESOLVIDA
 
-**Problema:** `quantidade_portoes`, `altura_portoes`, `largura_portoes` estão em `NORMALIZED_KEYS` no frontend (intenção: coluna própria), mas `CreateProductGroupDto` não tem essas propriedades. O `[JsonExtensionData]` os captura e os salva no JSONB como camelCase, criando inconsistência de case nas chaves do JSONB.
+Histórico do problema: `quantidade_portoes`, `altura_portoes`, `largura_portoes` estavam apenas no JSONB (`Specs`) como camelCase via `[JsonExtensionData]`.
 
-**Solução:**
-1. Adicionar colunas na DB: migration `V006__add_portoes_columns.sql`
-2. Adicionar propriedades em `CreateProductGroupDto` e `ProductGroupResponse`
-3. Atualizar o INSERT em `ProposalRepository`
+Estado atual: colunas dedicadas existem em `proposal_product_groups`, propriedades estão em `CreateProductGroupDto`/`ProductGroupResponse` e o INSERT em `ProposalRepository` escreve nas colunas.
 
 ### L2 — `product_id` e `variant_id` salvos como strings vazias (impacto: alto)
 
@@ -244,8 +238,8 @@ Todos vão para `specs` com chave **snake_case** (exceto portões, ver 3.3).
 
 **Solução:** investigar por que `group.productId` e `group.variantId` chegam vazios no `buildApiPayload.ts`. Verificar se o estado do formulário (`productGroups[i].productId`) está sendo populado corretamente ao selecionar produtos no carousel.
 
-### L3 — Campos de alambrado duplicados (impacto: baixo)
+### L3 — Campos de alambrado duplicados — ✅ RESOLVIDA via drop
 
-**Problema:** existem colunas normalizadas `comprimento_alambrado`, `altura_alambrado`, `espacamento_postes_tubos` E também campos JSONB `comprimento_alambrado_fundos/laterais`, `altura_alambrado_fundos/laterais`, `espacamento_postes_tubos_fundos/laterais`. A versão por lado (fundos/laterais) é mais precisa e está no JSONB; a versão genérica está na coluna.
+Histórico do problema: colunas genéricas `comprimento_alambrado`, `altura_alambrado`, `espacamento_postes_tubos` em `proposal_product_groups` coexistiam com as versões por lado em `Specs` (JSONB) e ficavam sempre NULL.
 
-**Observação:** a coluna genérica (`comprimento_alambrado`) não é preenchida porque não está em `NORMALIZED_KEYS` — `comprimento_alambrado` não é um campo do formulário; os campos reais são `comprimento_alambrado_fundos` e `comprimento_alambrado_laterais`. A coluna genérica está sempre NULL nos registros reais.
+Estado atual: as colunas genéricas foram dropadas (consolidação V002). As propriedades correspondentes saíram do Model/DTOs/Response/INSERT. A informação por lado (`comprimento_alambrado_fundos/laterais` etc.) continua em `Specs` (JSONB), como única fonte da verdade.

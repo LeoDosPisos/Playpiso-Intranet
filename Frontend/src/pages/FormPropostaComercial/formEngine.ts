@@ -291,8 +291,20 @@ function createInitialFormState(productId: string, variantId?: string): FormStat
   return createFormStateFromSections(sections, variant.defaultValues)
 }
 
+function getTodayIsoDate(): string {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 function createInitialGlobalFormState(): FormState {
-  return createFormStateFromSections(getSectionsByIds(GLOBAL_SECTION_IDS), {}, false)
+  return createFormStateFromSections(
+    getSectionsByIds(GLOBAL_SECTION_IDS),
+    { data_solicitacao: getTodayIsoDate() },
+    false,
+  )
 }
 
 function cloneFormState(state: FormState): FormState {
@@ -347,15 +359,11 @@ function createInitialProposalBuilderState(): ProposalBuilderState {
 }
 
 function updateFormValue(state: FormState, fieldId: string, value: FormValue): FormState {
-  const computedOverrides = {
-    ...state.computedOverrides,
-    ...(fieldId === 'area_total' ? { area_total: true } : {}),
-  }
   const values = {
     ...state.values,
     [fieldId]: value,
   }
-  const resolved = applyConditionalRules(values, state.visibleFields, state.requiredFields, computedOverrides)
+  const resolved = applyConditionalRules(values, state.visibleFields, state.requiredFields, state.computedOverrides)
   const errors = validateValues(resolved.values, resolved.requiredFields, resolved.visibleFields)
 
   return {
@@ -368,7 +376,6 @@ function updateFormValue(state: FormState, fieldId: string, value: FormValue): F
       ...state.dirty,
       [fieldId]: true,
     },
-    computedOverrides,
   }
 }
 

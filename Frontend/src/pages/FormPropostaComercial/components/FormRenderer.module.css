@@ -313,8 +313,7 @@
 }
 
 .productCardFooter > button,
-.splitControl button,
-.groupActions button {
+.splitControl button {
   min-height: 40px;
   border: 1px solid #ff0000;
   border-radius: 8px;
@@ -409,18 +408,146 @@
   transition: background 200ms ease, box-shadow 200ms ease, padding 200ms ease;
 }
 
-.tabs button {
+.tabItem {
+  display: inline-flex;
+  align-items: stretch;
   min-height: 40px;
   border: 1px solid rgba(74, 74, 74, 0.28);
   border-radius: 8px;
   background: #ffffff;
   color: #4a4a4a;
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.tabLabel {
+  border: none;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
-  padding: 8px 12px;
-  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+  padding: 6px 6px 6px 10px;
+}
+
+.tabQuantityControl {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.tabQuantity {
+  width: 32px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 2px;
+}
+
+.tabQuantity::-webkit-outer-spin-button,
+.tabQuantity::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tabQuantity {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.tabQuantitySteppers {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabStepper {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 1;
+  padding: 0;
+  transition: background 150ms ease;
+}
+
+.tabStepper:hover:not(:disabled),
+.tabStepper:focus-visible:not(:disabled) {
+  background: rgba(74, 74, 74, 0.08);
+  outline: none;
+}
+
+.tabStepper:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tabMenu {
+  position: relative;
+  display: inline-flex;
+}
+
+.tabMenuTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  transition: background 150ms ease;
+}
+
+.tabMenuTrigger:hover,
+.tabMenuTrigger:focus-visible {
+  background: rgba(74, 74, 74, 0.08);
+  outline: none;
+}
+
+.tabMenuDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid rgba(74, 74, 74, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(74, 74, 74, 0.18);
+  overflow: hidden;
+}
+
+.tabMenuItem {
+  border: none;
+  background: transparent;
+  color: #4a4a4a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  transition: background 150ms ease;
+}
+
+.tabMenuItem:hover,
+.tabMenuItem:focus-visible {
+  background: rgba(74, 74, 74, 0.08);
+  outline: none;
 }
 
 .tabs .activeTab {
@@ -435,10 +562,17 @@
   padding: 10px 12px;
 }
 
-.tabsStuck button {
+.tabsStuck .tabItem {
   border-color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
+}
+
+.tabsStuck .tabStepper:hover:not(:disabled),
+.tabsStuck .tabStepper:focus-visible:not(:disabled),
+.tabsStuck .tabMenuTrigger:hover,
+.tabsStuck .tabMenuTrigger:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .tabsStuck .activeTab {
@@ -453,36 +587,6 @@
   gap: 20px;
 }
 
-.groupPanelHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px;
-  border: 1px solid rgba(74, 74, 74, 0.24);
-  border-radius: 12px;
-  background: #ffffff;
-}
-
-.groupPanelHeader h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.groupPanelHeader p {
-  margin: 6px 0 0;
-  color: rgba(74, 74, 74, 0.78);
-  font-size: 14px;
-}
-
-.groupActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.groupActions label,
 .splitControl label {
   display: flex;
   flex-direction: column;
@@ -491,7 +595,6 @@
   font-weight: 700;
 }
 
-.groupActions input,
 .splitControl input {
   min-height: 40px;
   box-sizing: border-box;
@@ -500,16 +603,6 @@
   color: #4a4a4a;
   font: inherit;
   padding: 8px 10px;
-}
-
-.groupActions input {
-  width: 96px;
-}
-
-.groupActions button {
-  border-color: rgba(74, 74, 74, 0.28);
-  background: #ffffff;
-  color: #4a4a4a;
 }
 
 .splitControl {
@@ -593,6 +686,53 @@
 
 .field [aria-invalid='true'] {
   border-color: #ff0000;
+}
+
+.field input[readonly] {
+  background: rgba(74, 74, 74, 0.05);
+  color: rgba(74, 74, 74, 0.72);
+  cursor: not-allowed;
+}
+
+.field input[readonly]:focus {
+  border-color: rgba(74, 74, 74, 0.32);
+  outline: none;
+}
+
+.suggestionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.suggestionItem {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px dashed rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 0, 0, 0.04);
+  color: #4a4a4a;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestionItem:hover,
+.suggestionItem:focus {
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.08);
+  outline: none;
+}
+
+.suggestionItem::before {
+  content: 'Sugestão: ';
+  font-weight: 600;
+  color: rgba(74, 74, 74, 0.72);
 }
 
 .numberControl {
@@ -853,17 +993,11 @@
   }
 
   .productCardFooter,
-  .groupPanelHeader,
   .splitControl {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .groupActions {
-    justify-content: stretch;
-  }
-
-  .groupActions button,
   .splitControl button {
     width: 100%;
   }

@@ -108,10 +108,59 @@ function NumberInput({ field, value, error, describedBy, onBlur, onChange }: Num
         onChange={handleChange}
         onFocus={() => { focusedRef.current = true }}
         placeholder={field.placeholder}
+        readOnly={field.readOnly}
         type="text"
         value={raw}
       />
       {field.unit && <span className={styles.unit}>{field.unit}</span>}
+    </span>
+  )
+}
+
+type LocalObraInputProps = {
+  field: FieldDefinition
+  value: FormValue
+  suggestion: string
+  error: string | undefined
+  describedBy: string | undefined
+  onBlur: (fieldId: string) => void
+  onChange: (fieldId: string, value: FormValue) => void
+}
+
+function LocalObraInput({ field, value, suggestion, error, describedBy, onBlur, onChange }: LocalObraInputProps) {
+  const [isFocused, setIsFocused] = useState(false)
+  const stringValue = value === null ? '' : String(value)
+  const showSuggestion = isFocused && suggestion.length > 0 && suggestion !== stringValue
+
+  return (
+    <span className={styles.suggestionWrapper}>
+      <input
+        aria-describedby={describedBy}
+        aria-invalid={Boolean(error)}
+        id={field.id}
+        name={field.id}
+        onBlur={() => {
+          setIsFocused(false)
+          onBlur(field.id)
+        }}
+        onChange={(event) => onChange(field.id, event.target.value)}
+        onFocus={() => setIsFocused(true)}
+        placeholder={field.placeholder}
+        type="text"
+        value={stringValue}
+      />
+      {showSuggestion && (
+        <button
+          className={styles.suggestionItem}
+          onMouseDown={(event) => {
+            event.preventDefault()
+            onChange(field.id, suggestion)
+          }}
+          type="button"
+        >
+          {suggestion}
+        </button>
+      )}
     </span>
   )
 }
@@ -218,17 +267,29 @@ function FieldRenderer({ field, state, disabledOptionValues, onBlur, onChange }:
       ) : null}
 
       {(field.type === 'text' || field.type === 'date' || field.type === 'email') ? (
-        <input
-          aria-describedby={describedBy}
-          aria-invalid={Boolean(error)}
-          id={field.id}
-          name={field.id}
-          onBlur={() => onBlur(field.id)}
-          onChange={(event) => onChange(field.id, event.target.value)}
-          placeholder={field.placeholder}
-          type={field.type}
-          value={value === null ? '' : String(value)}
-        />
+        field.id === 'local_obra' ? (
+          <LocalObraInput
+            describedBy={describedBy}
+            error={error}
+            field={field}
+            onBlur={onBlur}
+            onChange={onChange}
+            suggestion={state.values['endereco_cliente'] === null ? '' : String(state.values['endereco_cliente'] ?? '')}
+            value={value}
+          />
+        ) : (
+          <input
+            aria-describedby={describedBy}
+            aria-invalid={Boolean(error)}
+            id={field.id}
+            name={field.id}
+            onBlur={() => onBlur(field.id)}
+            onChange={(event) => onChange(field.id, event.target.value)}
+            placeholder={field.placeholder}
+            type={field.type}
+            value={value === null ? '' : String(value)}
+          />
+        )
       ) : null}
 
       {field.type === 'textarea' ? (

@@ -12,7 +12,7 @@ Auditoria de todas as strings `{{ chave }}` encontradas nos arquivos `.pptx` do 
 |---|---|---|
 | `{{ nome_razao_social }}` | `globalValues.nome_razao_social` | ✅ |
 | `{{ nome_contato }}` | `globalValues.nome_contato` | ✅ |
-| `{{ endereco_obra }}` | `globalValues.endereco_obra` | ✅ |
+| `{{ endereco_cliente }}` | `globalValues.endereco_cliente` | ✅ |
 | `{{ local_obra }}` | `globalValues.local_obra` | ✅ |
 | `{{ telefone }}` | `globalValues.telefone` | ✅ |
 | `{{ email }}` | `globalValues.email` | ✅ |
@@ -23,7 +23,7 @@ Auditoria de todas as strings `{{ chave }}` encontradas nos arquivos `.pptx` do 
 | Placeholder (conforme no arquivo) | Campo do formulário | Status |
 |---|---|---|
 | `{{  nome_razao_social}}` | `globalValues.nome_razao_social` | ⚠️ **Typo**: espaço duplo antes de `nome` |
-| `{{ endereco_obra }}` | `globalValues.endereco_obra` | ✅ |
+| `{{ endereco_cliente }}` | `globalValues.endereco_cliente` | ✅ |
 | `{{ local_obra }}` | `globalValues.local_obra` | ✅ |
 | `{{ nome_contato }}` | `globalValues.nome_contato` | ✅ |
 | `{{ telefone }}` | `globalValues.telefone` | ✅ |

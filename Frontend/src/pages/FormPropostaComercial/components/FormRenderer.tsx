@@ -4,12 +4,11 @@ import { createPortal } from 'react-dom'
 
 import { productCatalog } from '../config/productCatalog'
 import { getGlobalSections, getVariantValue } from '../domain/proposalStructure'
-import { fetchAvailableProducts, generateProposal, saveProposalDraft, type ProductAvailability } from '../generation/buildPresentation'
+import { fetchAvailableProducts, generateProposal, type ProductAvailability } from '../generation/buildPresentation'
 import {
   addProductGroup,
   buildProposalBuilderPayload,
   createInitialProposalBuilderState,
-  mergeProductGroups,
   splitProductGroup,
   touchField,
   updateFormValue,
@@ -157,9 +156,6 @@ function FormRenderer() {
   const [generatedFile, setGeneratedFile] = useState<{ url: string; filename: string } | null>(null)
   const [generationCount, setGenerationCount] = useState(0)
   const [shouldScrollToError, setShouldScrollToError] = useState(false)
-  const [proposalId, setProposalId] = useState<string | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveNotice, setSaveNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
   useEffect(() => {
     const url = generatedFile?.url
@@ -310,33 +306,6 @@ function FormRenderer() {
     setBuilderState((currentState) => splitProductGroup(currentState, group.groupId, quantities))
   }
 
-  function handleMergeWithPrevious(group: ProposalProductGroup) {
-    const sameProductGroups = builderState.productGroups.filter((currentGroup) => currentGroup.productId === group.productId)
-    const groupIndex = sameProductGroups.findIndex((currentGroup) => currentGroup.groupId === group.groupId)
-    const previousGroup = sameProductGroups[groupIndex - 1]
-
-    if (!previousGroup) {
-      return
-    }
-
-    setBuilderState((currentState) => mergeProductGroups(currentState, [previousGroup.groupId, group.groupId]))
-  }
-
-  function handleSaveDraft() {
-    setSaveNotice(null)
-    setIsSaving(true)
-    const payload = buildProposalBuilderPayload(builderState)
-    saveProposalDraft(payload, proposalId)
-      .then((id) => {
-        setProposalId(id)
-        setSaveNotice({ type: 'success', message: 'Rascunho salvo.' })
-      })
-      .catch((err: unknown) => {
-        setSaveNotice({ type: 'error', message: err instanceof Error ? err.message : 'Erro ao salvar rascunho.' })
-      })
-      .finally(() => setIsSaving(false))
-  }
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setGenerationError(null)
@@ -382,11 +351,9 @@ function FormRenderer() {
 
     const payload = buildProposalBuilderPayload(validatedState)
     setGeneratedFile(null)
-    setSaveNotice(null)
     setIsGenerating(true)
-    generateProposal(payload, proposalId)
-      .then(({ url, filename, proposalId: savedId }) => {
-        setProposalId(savedId)
+    generateProposal(payload)
+      .then(({ url, filename }) => {
         setGeneratedFile({ url, filename })
         setGenerationCount((c) => c + 1)
       })
@@ -472,7 +439,6 @@ function FormRenderer() {
           onBuilderStateChange={setBuilderState}
           onGroupBlur={handleGroupBlur}
           onGroupChange={handleGroupChange}
-          onMergeWithPrevious={handleMergeWithPrevious}
           onSplitGroup={handleSplitGroup}
           onSplitInputChange={(groupId, value) =>
             setSplitInputByGroup((currentInputs) => ({
@@ -485,23 +451,10 @@ function FormRenderer() {
       </div>
 
       <div className={styles.actionBar}>
-        <button type="button">Cancelar</button>
-        <button disabled={isSaving} onClick={handleSaveDraft} type="button">
-          {isSaving ? 'Salvando...' : 'Salvar rascunho'}
-        </button>
         <button data-testid="btn-gerar-proposta" disabled={isGenerating || availabilityStatus !== 'ready'} type="submit">
           {isGenerating ? 'Gerando...' : 'Gerar proposta'}
         </button>
       </div>
-
-      {saveNotice && (
-        <p
-          className={saveNotice.type === 'success' ? styles.saveSuccess : styles.generationError}
-          role="status"
-        >
-          {saveNotice.message}
-        </p>
-      )}
 
       {generationError && (
         <p className={styles.generationError} data-testid="generation-error" role="alert">

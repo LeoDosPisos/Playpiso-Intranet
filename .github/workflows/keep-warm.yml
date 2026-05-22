@@ -1,0 +1,27 @@
+name: Keep Container Apps Warm
+
+# Mantém os Container Apps acordados durante horário comercial para evitar cold start
+# para usuários reais. Fora desse horário, deixam dormir normalmente (min_replicas=0).
+# Detalhes: docs/infra/azure/infra-azure-troubleshooting-runtime.md
+
+on:
+  schedule:
+    # A cada 10 min, das 11h às 22h UTC (08h-19h Brasil), seg-sex
+    - cron: '*/10 11-22 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm PPTX Generator (/health)
+        continue-on-error: true
+        run: |
+          curl -fsS --max-time 90 \
+            "${{ secrets.VITE_API_URL }}/health"
+
+      - name: Warm C# API (root, 401 esperado mas acorda container)
+        continue-on-error: true
+        run: |
+          curl -sS -o /dev/null -w "Status: %{http_code}\n" --max-time 90 \
+            "${{ secrets.VITE_PROPOSTA_API_URL }}/"

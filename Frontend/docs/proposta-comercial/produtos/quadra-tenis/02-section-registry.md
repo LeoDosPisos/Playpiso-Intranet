@@ -89,7 +89,7 @@ scope: global
 Campos esperados:
 
 ```txt
-- endereco_obra
+- endereco_cliente
 - cidade
 - estado
 - tipo_projeto
@@ -446,11 +446,41 @@ Campos exibidos apenas se `possui_alambrado = true`:
 4. comprimento_alambrado
 5. altura_alambrado
 6. espacamento_postes_tubos
-7. galvanizacao
-8. especificar_galvanizacao
-9. possui_trelica
-10. travamento
+7. sistema_alambrado  (opções: gaiola | trapezio | especial)
+8. galvanizacao
+9. especificar_galvanizacao
+10. possui_trelica
+11. travamento
 ```
+
+Campos adicionais exibidos apenas se `sistema_alambrado = especial`
+(organizados em subsections via `subsectionTitle` no layout):
+
+```txt
+Subsection "Lateral esquerda":
+  - comprimento_alambrado_lateral_esquerda
+  - altura_alambrado_lateral_esquerda
+  - espacamento_postes_tubos_lateral_esquerda
+
+Subsection "Lateral direita":
+  - comprimento_alambrado_lateral_direita
+  - altura_alambrado_lateral_direita
+  - espacamento_postes_tubos_lateral_direita
+
+Subsection "Fundo frontal":
+  - comprimento_alambrado_fundo_frontal
+  - altura_alambrado_fundo_frontal
+  - espacamento_postes_tubos_fundo_frontal
+
+Subsection "Fundo traseiro":
+  - comprimento_alambrado_fundo_traseiro
+  - altura_alambrado_fundo_traseiro
+  - espacamento_postes_tubos_fundo_traseiro
+```
+
+Os campos por-lado complementam (não substituem) os 6 campos lumped
+de Laterais/Fundos quando o sistema "Especial" está selecionado.
+Quando especial, todos os 12 campos por-lado são obrigatórios.
 
 Regras internas:
 

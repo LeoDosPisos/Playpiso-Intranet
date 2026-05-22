@@ -53,7 +53,7 @@ async function preencherFormulario(page: import('@playwright/test').Page) {
   await page.locator('#telefone').fill('11999990000')
 
   // Dados da obra
-  await page.locator('#endereco_obra').fill('Rua das Quadras, 100')
+  await page.locator('#endereco_cliente').fill('Rua das Quadras, 100')
   await page.locator('#local_obra').fill('Galpão A')
   await page.locator('#cidade').fill('São Paulo')
   await page.locator('#estado').fill('SP')

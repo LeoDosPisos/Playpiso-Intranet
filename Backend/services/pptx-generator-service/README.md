@@ -81,7 +81,7 @@ Retorna os bytes do arquivo `.pptx` com `Content-Type: application/vnd.openxmlfo
   "globalValues": {
     "nome_razao_social": "Condomínio Exemplo",
     "nome_contato": "Maria Silva",
-    "endereco_obra": "Rua Exemplo, 100",
+    "endereco_cliente": "Rua Exemplo, 100",
     "local_obra": "São Paulo, SP",
     "telefone": "(11) 99999-9999",
     "email": "maria@exemplo.com",
@@ -131,7 +131,7 @@ Ainda suportado, mas depreciado. Substitui `slides` por uma lista de strings:
 |---|---|---|
 | `nome_razao_social` | string | |
 | `nome_contato` | string | |
-| `endereco_obra` | string | |
+| `endereco_cliente` | string | |
 | `local_obra` | string | |
 | `telefone` | string | |
 | `email` | string | |
@@ -212,7 +212,7 @@ Aceita ambas as formas: `{{ chave }}` e `{{chave}}`.
 
 ```
 {{ nome_razao_social }}        {{ nome_contato }}            {{ telefone }}
-{{ email }}                    {{ endereco_obra }}            {{ local_obra }}
+{{ email }}                    {{ endereco_cliente }}            {{ local_obra }}
 {{ numero_proposta }}          {{ data_solicitacao }}         {{ data_envio }}
 {{ sumario }}
 
