@@ -7,8 +7,10 @@ set -euo pipefail
 RESET_PASSWORD="playpiso-reset"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SETTINGS="$SCRIPT_DIR/PlaypisoIntranet/appsettings.Development.json"
-[[ -f "$SETTINGS" ]] || SETTINGS="$SCRIPT_DIR/PlaypisoIntranet/appsettings.json"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+SETTINGS="$PROJECT_DIR/PlaypisoIntranet/appsettings.Development.json"
+[[ -f "$SETTINGS" ]] || SETTINGS="$PROJECT_DIR/PlaypisoIntranet/appsettings.json"
 
 CONN=$(python3 -c "
 import json

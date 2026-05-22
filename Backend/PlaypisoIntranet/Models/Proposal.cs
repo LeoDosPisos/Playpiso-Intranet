@@ -13,9 +13,9 @@ public class Proposal
     public string? CpfCnpj { get; set; }
     public string? NomeContato { get; set; }
     public string? Telefone { get; set; }
-    public string? Email { get; set; }
+    public string? EmailCliente { get; set; }
 
-    public string EnderecoObra { get; set; } = "";
+    public string EnderecoCliente { get; set; } = "";
     public string LocalObra { get; set; } = ""; 
     public string Cidade { get; set; } = "";
     public string Estado { get; set; } = "";
@@ -26,8 +26,10 @@ public class Proposal
 
     public string CreatedByUserId { get; set; } = "";
     public string? CreatedByEmail { get; set; }
+    public string? CreatedByName { get; set; }
     public string? GeneratedByUserId { get; set; }
     public string? GeneratedByEmail { get; set; }
+    public string? GeneratedByName { get; set; }
     public DateTime? GeneratedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

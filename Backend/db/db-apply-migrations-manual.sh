@@ -7,11 +7,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MIGRATIONS_DIR="$SCRIPT_DIR/PlaypisoIntranet/Migrations"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+MIGRATIONS_DIR="$PROJECT_DIR/PlaypisoIntranet/Migrations"
 
 # ── Parse connection string ──────────────────────────────────────────────────
-SETTINGS="$SCRIPT_DIR/PlaypisoIntranet/appsettings.Development.json"
-[[ -f "$SETTINGS" ]] || SETTINGS="$SCRIPT_DIR/PlaypisoIntranet/appsettings.json"
+SETTINGS="$PROJECT_DIR/PlaypisoIntranet/appsettings.Development.json"
+[[ -f "$SETTINGS" ]] || SETTINGS="$PROJECT_DIR/PlaypisoIntranet/appsettings.json"
 
 CONN=$(python3 -c "
 import json, sys

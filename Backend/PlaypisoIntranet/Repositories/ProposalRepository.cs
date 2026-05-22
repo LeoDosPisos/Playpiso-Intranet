@@ -8,22 +8,49 @@ public class ProposalRepository(string connectionString) : IProposalRepository
 {
     private NpgsqlConnection Connect() => new(connectionString);
 
+    private const string ProposalColumns = """
+        id, numero_proposta, status,
+        data_solicitacao, data_envio,
+        nome_razao_social, cpf_cnpj, nome_contato, telefone, email_cliente,
+        endereco_cliente, local_obra, cidade, estado, tipo_projeto,
+        pptx_url, xlsx_url,
+        created_by_user_id, created_by_email, created_by_name,
+        generated_by_user_id, generated_by_email, generated_by_name, generated_at,
+        created_at, updated_at
+        """;
+
+    private const string ProductGroupColumns = """
+        id, proposal_id,
+        product_id, variant_id, quantity, group_index,
+        largura, comprimento, area_total,
+        tipo_terreno, dificuldade_acesso, responsavel_material_pedreira,
+        possui_iluminacao, iluminacao_fixada_alambrado, quantidade_postes_iluminacao,
+        altura_postes_iluminacao, quantidade_projetores, potencia_projetores,
+        especificar_potencia_projetores, quantidade_cruzetas,
+        responsavel_ligacao_eletrica, tipo_coligacao,
+        possui_alambrado, galvanizacao, especificar_galvanizacao,
+        possui_trelica, travamento,
+        possui_tela_superior, possui_tela_sombreamento,
+        largura_sombreamento, comprimento_sombreamento,
+        quantidade_portoes, altura_portoes, largura_portoes,
+        observacoes, specs,
+        created_at, updated_at
+        """;
+
     public async Task<Proposal?> GetByIdAsync(Guid id)
     {
         using var conn = Connect();
         await conn.OpenAsync();
 
         var proposal = await conn.QuerySingleOrDefaultAsync<Proposal>(
-            """
-            SELECT * FROM proposals WHERE id = @Id
-            """, new { Id = id });
+            $"SELECT {ProposalColumns} FROM proposals WHERE id = @Id",
+            new { Id = id });
 
         if (proposal is null) return null;
 
         var groups = await conn.QueryAsync<ProposalProductGroup>(
-            """
-            SELECT * FROM proposal_product_groups WHERE proposal_id = @ProposalId ORDER BY group_index
-            """, new { ProposalId = id });
+            $"SELECT {ProductGroupColumns} FROM proposal_product_groups WHERE proposal_id = @ProposalId ORDER BY group_index",
+            new { ProposalId = id });
 
         proposal.ProductGroups = groups;
         return proposal;
@@ -39,10 +66,14 @@ public class ProposalRepository(string connectionString) : IProposalRepository
         if (status is not null) where.Add("p.status = @Status");
         var whereClause = where.Count > 0 ? "WHERE " + string.Join(" AND ", where) : "";
 
+        var prefixedColumns = string.Join(", ",
+            ProposalColumns.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(c => $"p.{c}"));
+
         return await conn.QueryAsync<Proposal>(
             $"""
             SELECT
-                p.*,
+                {prefixedColumns},
                 COUNT(ppg.id)::int AS total_products
             FROM proposals p
             LEFT JOIN proposal_product_groups ppg ON ppg.proposal_id = p.id
@@ -65,15 +96,15 @@ public class ProposalRepository(string connectionString) : IProposalRepository
             INSERT INTO proposals (
                 numero_proposta, status,
                 data_solicitacao, data_envio,
-                nome_razao_social, cpf_cnpj, nome_contato, telefone, email,
-                endereco_obra, local_obra, cidade, estado, tipo_projeto,
-                created_by_user_id, created_by_email
+                nome_razao_social, cpf_cnpj, nome_contato, telefone, email_cliente,
+                endereco_cliente, local_obra, cidade, estado, tipo_projeto,
+                created_by_user_id, created_by_email, created_by_name
             ) VALUES (
                 @NumeroProposta, @Status,
                 @DataSolicitacao, @DataEnvio,
-                @NomeRazaoSocial, @CpfCnpj, @NomeContato, @Telefone, @Email,
-                @EnderecoObra, @LocalObra, @Cidade, @Estado, @TipoProjeto,
-                @CreatedByUserId, @CreatedByEmail
+                @NomeRazaoSocial, @CpfCnpj, @NomeContato, @Telefone, @EmailCliente,
+                @EnderecoCliente, @LocalObra, @Cidade, @Estado, @TipoProjeto,
+                @CreatedByUserId, @CreatedByEmail, @CreatedByName
             ) RETURNING id
             """, proposal, tx);
 
@@ -103,8 +134,8 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 cpf_cnpj = @CpfCnpj,
                 nome_contato = @NomeContato,
                 telefone = @Telefone,
-                email = @Email,
-                endereco_obra = @EnderecoObra,
+                email_cliente = @EmailCliente,
+                endereco_cliente = @EnderecoCliente,
                 local_obra = @LocalObra,
                 cidade = @Cidade,
                 estado = @Estado,
@@ -126,7 +157,7 @@ public class ProposalRepository(string connectionString) : IProposalRepository
         await tx.CommitAsync();
     }
 
-    public async Task<bool> UpdateGeneratedOutputsAsync(Guid id, string? pptxUrl, string? xlsxUrl, string generatedByUserId, string? generatedByEmail)
+    public async Task<bool> UpdateGeneratedOutputsAsync(Guid id, string? pptxUrl, string? xlsxUrl, string generatedByUserId, string? generatedByEmail, string? generatedByName)
     {
         using var conn = Connect();
         var rows = await conn.ExecuteAsync(
@@ -136,11 +167,12 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 xlsx_url = @XlsxUrl,
                 generated_by_user_id = @GeneratedByUserId,
                 generated_by_email = @GeneratedByEmail,
+                generated_by_name = @GeneratedByName,
                 generated_at = NOW(),
                 status = 'gerada',
                 updated_at = NOW()
             WHERE id = @Id
-            """, new { Id = id, PptxUrl = pptxUrl, XlsxUrl = xlsxUrl, GeneratedByUserId = generatedByUserId, GeneratedByEmail = generatedByEmail });
+            """, new { Id = id, PptxUrl = pptxUrl, XlsxUrl = xlsxUrl, GeneratedByUserId = generatedByUserId, GeneratedByEmail = generatedByEmail, GeneratedByName = generatedByName });
         return rows > 0;
     }
 
@@ -166,9 +198,9 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 altura_postes_iluminacao, quantidade_projetores, potencia_projetores,
                 especificar_potencia_projetores, quantidade_cruzetas,
                 responsavel_ligacao_eletrica, tipo_coligacao,
-                possui_alambrado, comprimento_alambrado, altura_alambrado,
-                espacamento_postes_tubos, galvanizacao, especificar_galvanizacao,
-                possui_trelica, travamento, quantidade_portoes, altura_portoes, largura_portoes,
+                possui_alambrado, galvanizacao, especificar_galvanizacao,
+                possui_trelica, travamento,
+                quantidade_portoes, altura_portoes, largura_portoes,
                 possui_tela_superior,
                 possui_tela_sombreamento, largura_sombreamento, comprimento_sombreamento,
                 observacoes, specs
@@ -180,9 +212,9 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 @AlturaPostesIluminacao, @QuantidadeProjetores, @PotenciaProjetores,
                 @EspecificarPotenciaProjetores, @QuantidadeCruzetas,
                 @ResponsavelLigacaoEletrica, @TipoColigacao,
-                @PossuiAlambrado, @ComprimentoAlambrado, @AlturaAlambrado,
-                @EspacamentoPostesTubos, @Galvanizacao, @EspecificarGalvanizacao,
-                @PossuiTrelica, @Travamento, @QuantidadePortoes, @AlturaPortoes, @LarguraPortoes,
+                @PossuiAlambrado, @Galvanizacao, @EspecificarGalvanizacao,
+                @PossuiTrelica, @Travamento,
+                @QuantidadePortoes, @AlturaPortoes, @LarguraPortoes,
                 @PossuiTelaSuperior,
                 @PossuiTelaSombreamento, @LarguraSombreamento, @ComprimentoSombreamento,
                 @Observacoes, @Specs::jsonb

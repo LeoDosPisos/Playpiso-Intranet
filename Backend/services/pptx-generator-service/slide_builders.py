@@ -30,7 +30,7 @@ def build_dados_cliente(prs: Presentation, values: dict) -> None:
         ("Contato", values.get("nome_contato")),
         ("Telefone", values.get("telefone")),
         ("E-mail", values.get("email")),
-        ("Local da obra", values.get("endereco_obra")),
+        ("Local da obra", values.get("endereco_cliente")),
     ]
     for i, (label, value) in enumerate(fields):
         row_y = 1.3 + i * 0.9

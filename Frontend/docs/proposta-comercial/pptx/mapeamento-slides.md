@@ -143,7 +143,7 @@ Aparecem somente quando o campo de controle satisfaz a condição.
 | `{{cliente_contato}}` | `nome_contato` |
 | `{{cliente_telefone}}` | `telefone` |
 | `{{cliente_email}}` | `email` |
-| `{{obra_endereco}}` | `endereco_obra` + `cidade` + `estado` (concatenação) |
+| `{{obra_endereco}}` | `endereco_cliente` + `cidade` + `estado` (concatenação) |
 | Solicitação / Envio / Proposta | Metadados externos ao formulário (data e código da proposta) |
 
 ### Slide `sumario` — template de texto por produto/variante

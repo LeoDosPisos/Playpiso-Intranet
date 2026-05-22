@@ -89,6 +89,8 @@ docker compose down -v       # Igual ao acima + remove volumes (dados do banco)
 docker compose stop          # Apenas para, mantém os containers pausados
 ```
 
+> Para a referência completa (ativar, desativar, deletar imagens, limpar cache, comandos `docker` genéricos): ver [`docs/infra/docker-comandos-locais.md`](docs/infra/docker-comandos-locais.md).
+
 ### Reconstruir apenas um serviço
 
 ```bash
@@ -202,90 +204,14 @@ Para produção, as variáveis são injetadas via Railway (ver seção de deploy
 
 ## Limpeza de imagens e cache Docker
 
-Docker acumula imagens, layers e cache de build ao longo do tempo. Os comandos abaixo controlam esse consumo e garantem que um rebuild parta do zero quando necessário.
-
-### Atualizar um container após mudança de código
-
-O fluxo padrão para testar uma alteração em um serviço específico:
+Para o conjunto completo de comandos de operação local — ativar, desativar, remover imagens, limpar cache de build e limpeza geral — ver [`docs/infra/docker-comandos-locais.md`](docs/infra/docker-comandos-locais.md). Atalhos mais usados no dia a dia:
 
 ```bash
-# Reconstrói só o serviço alterado e reinicia
-docker compose up --build <nome-do-serviço>
-
-# Exemplos:
-docker compose up --build proposta-api
-docker compose up --build pptx-generator
-docker compose up --build frontend
+docker compose up --build <serviço>   # rebuild + reinicia um serviço alterado
+docker compose down --rmi local       # remove containers + imagens do projeto
+docker builder prune                  # libera cache de build
+docker system prune                   # limpeza geral (containers/imagens não usados)
 ```
-
-Se quiser forçar o rebuild **sem usar nenhum cache** (útil quando uma dependência mudou mas o Docker não detectou):
-
-```bash
-docker compose build --no-cache <nome-do-serviço>
-docker compose up <nome-do-serviço>
-
-# Ou os dois juntos:
-docker compose up --build --no-deps <nome-do-serviço>
-```
-
-> `--no-deps` evita reiniciar serviços que o alvo depende (ex: não reinicia o `postgres` ao atualizar a `proposta-api`).
-
-### Remover imagens criadas pelo Compose
-
-Remove os containers e as imagens que o Compose construiu (não afeta imagens baixadas como `postgres:16-alpine`):
-
-```bash
-docker compose down --rmi local
-```
-
-Para remover **todas** as imagens referenciadas no compose (incluindo as baixadas):
-
-```bash
-docker compose down --rmi all
-```
-
-### Limpar o cache de build
-
-O cache de build do Docker pode ocupar vários GBs ao longo do tempo. Para liberá-lo:
-
-```bash
-# Ver quanto espaço o cache está ocupando
-docker builder du
-
-# Remover todo o cache de build
-docker builder prune
-
-# Remover cache mais antigo que 48 horas (mais conservador)
-docker builder prune --filter "until=48h"
-```
-
-### Limpeza geral do Docker (mais agressiva)
-
-Remove tudo que não está sendo usado: containers parados, imagens sem uso, networks e cache de build:
-
-```bash
-# Vê o que seria removido antes de agir
-docker system df
-
-# Remove tudo não utilizado (pede confirmação)
-docker system prune
-
-# Remove tudo incluindo volumes (apaga dados do banco local!)
-docker system prune --volumes
-```
-
-> **Atenção com `--volumes`:** apaga os dados persistidos no PostgreSQL local. Use apenas quando quiser um ambiente completamente limpo, ou quando precisar testar as migrações do zero.
-
-### Resumo rápido
-
-| Objetivo | Comando |
-|---|---|
-| Atualizar um serviço | `docker compose up --build <serviço>` |
-| Rebuild sem cache | `docker compose build --no-cache <serviço>` |
-| Remover imagens do projeto | `docker compose down --rmi local` |
-| Limpar cache de build | `docker builder prune` |
-| Limpeza geral (segura) | `docker system prune` |
-| Limpeza total + banco | `docker system prune --volumes` |
 
 ---
 

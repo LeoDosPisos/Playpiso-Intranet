@@ -18,7 +18,7 @@ from context_builder import _build_base_context, _build_group_context
 GLOBAL_VALUES = {
     "nome_razao_social": "Condomínio Teste",
     "nome_contato": "João Silva",
-    "endereco_obra": "Rua Teste, 123",
+    "endereco_cliente": "Rua Teste, 123",
     "local_obra": "São Paulo, SP",
     "telefone": "(11) 99999-0000",
     "email": "joao@teste.com",
@@ -155,6 +155,34 @@ class TestBuildGroupContext:
         group = _make_group("quadra_tenis", values)
         ctx = _build_group_context(group)
         assert ctx["area_alambrado"] == "—"
+
+    def test_alambrado_especial(self):
+        values = {
+            **QUADRA_TENIS_VALUES,
+            "sistema_alambrado": "especial",
+            "comprimento_alambrado_lateral_esquerda": 23.77,
+            "altura_alambrado_lateral_esquerda": 4.0,
+            "espacamento_postes_tubos_lateral_esquerda": 2.5,
+            "comprimento_alambrado_lateral_direita": 23.77,
+            "altura_alambrado_lateral_direita": 3.5,
+            "espacamento_postes_tubos_lateral_direita": 2.5,
+            "comprimento_alambrado_fundo_frontal": 10.97,
+            "altura_alambrado_fundo_frontal": 4.0,
+            "espacamento_postes_tubos_fundo_frontal": 2.0,
+            "comprimento_alambrado_fundo_traseiro": 10.97,
+            "altura_alambrado_fundo_traseiro": 3.0,
+            "espacamento_postes_tubos_fundo_traseiro": 2.0,
+        }
+        group = _make_group("quadra_tenis", values)
+        ctx = _build_group_context(group)
+
+        assert ctx["sistema_alambrado"] == "Especial"
+        descricao = ctx["alambrado_descricao"].lower()
+        assert "especial" in descricao
+        assert "lateral esquerda" in descricao
+        assert "fundo traseiro" in descricao
+        # área = 23.77*4 + 23.77*3.5 + 10.97*4 + 10.97*3 = 95.08+83.20+43.88+32.91 = 255.07
+        assert ctx["area_alambrado"] != "—"
 
     def test_eva_qtde_computed(self):
         group = _make_group("beach_tenis", BEACH_TENIS_VALUES)

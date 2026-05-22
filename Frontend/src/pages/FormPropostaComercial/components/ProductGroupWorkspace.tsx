@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { productCatalog } from '../config/productCatalog'
 import { VARIANT_FIELD_IDS, getVariantValue, isGlobalSectionId } from '../domain/proposalStructure'
@@ -19,7 +19,6 @@ type ProductGroupWorkspaceProps = {
   onBuilderStateChange: (updater: (currentState: ProposalBuilderState) => ProposalBuilderState) => void
   onGroupBlur: (groupId: string, fieldId: string) => void
   onGroupChange: (groupId: string, fieldId: string, value: FormValue) => void
-  onMergeWithPrevious: (group: ProposalProductGroup) => void
   onSplitGroup: (group: ProposalProductGroup) => void
   onSplitInputChange: (groupId: string, value: string) => void
 }
@@ -28,13 +27,13 @@ function getGroupLabel(group: ProposalProductGroup, groups: readonly ProposalPro
   const sameProductGroups = groups.filter((currentGroup) => currentGroup.productId === group.productId)
 
   if (sameProductGroups.length <= 1) {
-    return `${group.productLabel} x${group.quantity}`
+    return group.productLabel
   }
 
   const groupIndex = sameProductGroups.findIndex((currentGroup) => currentGroup.groupId === group.groupId)
   const suffix = String.fromCharCode(65 + Math.max(0, groupIndex))
 
-  return `${group.productLabel} ${suffix} x${group.quantity}`
+  return `${group.productLabel} ${suffix}`
 }
 
 function getDisabledVariantOptions(
@@ -68,26 +67,48 @@ function ProductGroupWorkspace({
   onBuilderStateChange,
   onGroupBlur,
   onGroupChange,
-  onMergeWithPrevious,
   onSplitGroup,
   onSplitInputChange,
 }: ProductGroupWorkspaceProps) {
   const tabsRef = useRef<HTMLDivElement>(null)
   const groupPanelRef = useRef<HTMLDivElement>(null)
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const menuContainerRef = useRef<HTMLDivElement>(null)
   const [isTabsStuck, setIsTabsStuck] = useState(false)
+  const [openMenuGroupId, setOpenMenuGroupId] = useState<string | null>(null)
 
   useEffect(() => {
-    const sentinel = sentinelRef.current
-    if (!sentinel) return
+    if (!openMenuGroupId) return
+
+    function handlePointerDown(event: MouseEvent) {
+      if (!menuContainerRef.current?.contains(event.target as Node)) {
+        setOpenMenuGroupId(null)
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpenMenuGroupId(null)
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [openMenuGroupId])
+
+  const setSentinelRef = useCallback((node: HTMLDivElement | null) => {
+    observerRef.current?.disconnect()
+    observerRef.current = null
+
+    if (!node) return
 
     const observer = new IntersectionObserver(
       ([entry]) => setIsTabsStuck(!entry.isIntersecting),
       { threshold: 0 },
     )
-
-    observer.observe(sentinel)
-    return () => observer.disconnect()
+    observer.observe(node)
+    observerRef.current = observer
   }, [])
 
   function handleTabClick(groupId: string) {
@@ -121,65 +142,111 @@ function ProductGroupWorkspace({
 
   return (
     <section className={styles.productWorkspace}>
-      <div ref={sentinelRef} className={styles.tabsSentinel} />
+      <div ref={setSentinelRef} className={styles.tabsSentinel} />
       <div
         className={isTabsStuck ? `${styles.tabs} ${styles.tabsStuck}` : styles.tabs}
         ref={tabsRef}
         role="tablist"
         aria-label="Grupos de produtos"
       >
-        {builderState.productGroups.map((group) => (
-          <button
-            aria-selected={activeGroup?.groupId === group.groupId}
-            className={activeGroup?.groupId === group.groupId ? styles.activeTab : undefined}
-            data-testid={`group-tab-${group.groupId}`}
-            key={group.groupId}
-            onClick={() => handleTabClick(group.groupId)}
-            role="tab"
-            type="button"
-          >
-            {getGroupLabel(group, builderState.productGroups)}
-          </button>
-        ))}
+        {builderState.productGroups.map((group) => {
+          const isActive = activeGroup?.groupId === group.groupId
+          const isMenuOpen = openMenuGroupId === group.groupId
+
+          function changeQuantity(delta: number) {
+            onBuilderStateChange((currentState) =>
+              updateProductGroupQuantity(currentState, group.groupId, Math.max(1, group.quantity + delta)),
+            )
+          }
+
+          return (
+            <div
+              className={`${styles.tabItem} ${isActive ? styles.activeTab : ''}`}
+              data-testid={`group-tab-${group.groupId}`}
+              key={group.groupId}
+            >
+              <button
+                aria-selected={isActive}
+                className={styles.tabLabel}
+                onClick={() => handleTabClick(group.groupId)}
+                role="tab"
+                type="button"
+              >
+                {getGroupLabel(group, builderState.productGroups)}
+              </button>
+              <div className={styles.tabQuantityControl}>
+                <input
+                  aria-label="Quantidade"
+                  className={styles.tabQuantity}
+                  min={1}
+                  onChange={(event) =>
+                    onBuilderStateChange((currentState) =>
+                      updateProductGroupQuantity(currentState, group.groupId, Number(event.target.value)),
+                    )
+                  }
+                  type="number"
+                  value={group.quantity}
+                />
+                <div className={styles.tabQuantitySteppers}>
+                  <button
+                    aria-label="Aumentar quantidade"
+                    className={styles.tabStepper}
+                    onClick={() => changeQuantity(1)}
+                    tabIndex={-1}
+                    type="button"
+                  >
+                    <span aria-hidden="true">▲</span>
+                  </button>
+                  <button
+                    aria-label="Diminuir quantidade"
+                    className={styles.tabStepper}
+                    disabled={group.quantity <= 1}
+                    onClick={() => changeQuantity(-1)}
+                    tabIndex={-1}
+                    type="button"
+                  >
+                    <span aria-hidden="true">▼</span>
+                  </button>
+                </div>
+              </div>
+              <div
+                className={styles.tabMenu}
+                ref={isMenuOpen ? menuContainerRef : undefined}
+              >
+                <button
+                  aria-expanded={isMenuOpen}
+                  aria-haspopup="menu"
+                  aria-label="Mais ações"
+                  className={styles.tabMenuTrigger}
+                  onClick={() => setOpenMenuGroupId(isMenuOpen ? null : group.groupId)}
+                  type="button"
+                >
+                  <span aria-hidden="true">⋮</span>
+                </button>
+                {isMenuOpen && (
+                  <div className={styles.tabMenuDropdown} role="menu">
+                    <button
+                      className={styles.tabMenuItem}
+                      data-testid="btn-remove-group"
+                      onClick={() => {
+                        setOpenMenuGroupId(null)
+                        onBuilderStateChange((currentState) => removeProductGroup(currentState, group.groupId))
+                      }}
+                      role="menuitem"
+                      type="button"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {activeGroup && (
         <div className={styles.groupPanel} ref={groupPanelRef} role="tabpanel">
-          <header className={styles.groupPanelHeader}>
-            <div>
-              <h2>{getGroupLabel(activeGroup, builderState.productGroups)}</h2>
-              <p>Configure as especificações deste grupo de produtos.</p>
-            </div>
-
-            <div className={styles.groupActions}>
-              <label>
-                Quantidade
-                <input
-                  min={1}
-                  onChange={(event) =>
-                    onBuilderStateChange((currentState) =>
-                      updateProductGroupQuantity(currentState, activeGroup.groupId, Number(event.target.value)),
-                    )
-                  }
-                  type="number"
-                  value={activeGroup.quantity}
-                />
-              </label>
-              <button onClick={() => onMergeWithPrevious(activeGroup)} type="button">
-                Agrupar anterior
-              </button>
-              <button
-                data-testid="btn-remove-group"
-                onClick={() =>
-                  onBuilderStateChange((currentState) => removeProductGroup(currentState, activeGroup.groupId))
-                }
-                type="button"
-              >
-                Remover
-              </button>
-            </div>
-          </header>
-
           {activeGroup.quantity > 1 && (
             <div className={styles.splitControl}>
               <label>

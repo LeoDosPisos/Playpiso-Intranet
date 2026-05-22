@@ -16,8 +16,10 @@ type ProposalSummary = {
   pptxUrl: string | null
   xlsxUrl: string | null
   createdByEmail: string
+  createdByName: string | null
   generatedByUserId: string | null
   generatedByEmail: string | null
+  generatedByName: string | null
   generatedAt: string | null
   createdAt: string
   totalProducts: number
@@ -35,11 +37,13 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 
 async function listProposals(params: {
   status?: string
+  scope?: 'mine' | 'all'
   page?: number
   pageSize?: number
 } = {}): Promise<ProposalSummary[]> {
   const query = new URLSearchParams()
   if (params.status) query.set('status', params.status)
+  if (params.scope) query.set('scope', params.scope)
   if (params.page) query.set('page', String(params.page))
   if (params.pageSize) query.set('pageSize', String(params.pageSize))
 
@@ -103,7 +107,7 @@ type ProposalDetail = {
   nomeContato: string | null
   telefone: string | null
   email: string | null
-  enderecoObra: string
+  enderecoCliente: string
   localObra: string
   cidade: string
   estado: string
@@ -112,7 +116,9 @@ type ProposalDetail = {
   dataEnvio: string | null
   pptxUrl: string | null
   createdByEmail: string | null
+  createdByName: string | null
   generatedByEmail: string | null
+  generatedByName: string | null
   generatedAt: string | null
   createdAt: string
   productGroups: ProductGroupDetail[]

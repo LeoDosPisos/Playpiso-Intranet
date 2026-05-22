@@ -7,7 +7,9 @@ Tarefas manuais necessárias: [`../docs/infra/azure/infra-azure-tarefas-manuais.
 Plano Terraform e variáveis esperadas: [`../docs/infra/azure/infra-azure-terraform-plan.md`](../docs/infra/azure/infra-azure-terraform-plan.md)
 Outputs reais do ambiente dev: [`../docs/infra/azure/infra-azure-outputs-dev.md`](../docs/infra/azure/infra-azure-outputs-dev.md)
 Pipeline CI/CD (GitHub Actions): [`../docs/infra/azure/infra-azure-cicd.md`](../docs/infra/azure/infra-azure-cicd.md)
+Atualizar a aplicação após mudanças: [`../docs/infra/azure/infra-azure-atualizar-aplicacao.md`](../docs/infra/azure/infra-azure-atualizar-aplicacao.md)
 Pausar e desprovisionar (economizar custos): [`../docs/infra/azure/infra-azure-pausar-destruir.md`](../docs/infra/azure/infra-azure-pausar-destruir.md)
+Troubleshooting de problemas em produção: [`../docs/infra/azure/infra-azure-troubleshooting-runtime.md`](../docs/infra/azure/infra-azure-troubleshooting-runtime.md)
 Domínio customizado (não implementado): [`../docs/infra/azure/infra-azure-dominio-customizado.md`](../docs/infra/azure/infra-azure-dominio-customizado.md)
 
 ## Pré-requisitos

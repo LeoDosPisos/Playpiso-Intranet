@@ -538,6 +538,10 @@ const sistemaAlambradoOptions = [
     value: "trapezio",
     label: "Trapézio",
   },
+  {
+    value: "especial",
+    label: "Especial",
+  },
 ] as const satisfies readonly FieldOption[];
 
 const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {

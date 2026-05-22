@@ -43,7 +43,7 @@ services:
       args:
         VITE_API_URL: "http://localhost:8000"
         VITE_PROPOSTA_API_URL: "http://localhost:8080"
-        VITE_API_SCOPE: ""
+        VITE_API_SCOPE: "api://d59319c0-6b41-497f-b233-447c78d9d391/access_as_user"
         VITE_AZURE_CLIENT_ID: "d59319c0-6b41-497f-b233-447c78d9d391"
         VITE_AZURE_TENANT_ID: "a75f3ed1-64d2-4473-b836-0b7cb2db1542"
     ports:

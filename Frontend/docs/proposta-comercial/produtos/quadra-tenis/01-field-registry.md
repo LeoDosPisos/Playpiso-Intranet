@@ -23,7 +23,7 @@ O `fieldRegistry` define campos, tipos, componentes, obrigatoriedade base, defau
 ## Campos da Seção Dados da Obra
 | Chave técnica | Label na UI | Tipo | Componente | Obrigatório | Valor padrão | Observação |
 | ------------- | ----------- | ---- | ---------- | ----------- | ------------ | ---------- |
-| `endereco_obra` | Endereço da obra | string | TextInput | Sim | - | - |
+| `endereco_cliente` | Endereço do cliente | string | TextInput | Sim | - | - |
 | `cidade` | Cidade | string | TextInput | Sim | - | - |
 | `estado` | Estado | string | TextInput | Sim | - | - |
 | `tipo_projeto` | Tipo de projeto | enum | SelectField | Sim | - | Opções em `tipo_projeto_options`. |
@@ -100,6 +100,10 @@ O `fieldRegistry` define campos, tipos, componentes, obrigatoriedade base, defau
 | `comprimento_alambrado`    | Comprimento do alambrado       | number  | NumberInput                  | Sim quando visível | Se `possui_alambrado = true` | Unidade em metros. Não vem pré-preenchido.       |
 | `altura_alambrado`         | Altura do alambrado            | number  | NumberInput                  | Sim quando visível | Se `possui_alambrado = true` | Unidade em metros. Campo livre.                  |
 | `espacamento_postes_tubos` | Espaçamento entre postes/tubos | number  | NumberInput                  | Sim quando visível | Se `possui_alambrado = true` | Unidade em metros.                               |
+| `sistema_alambrado`        | Sistema do alambrado           | enum    | SelectField                  | Sim quando visível | Se `possui_alambrado = true` | Opções em `sistemaAlambradoOptions`: `gaiola`, `trapezio`, `especial`. O valor `especial` ativa dimensões individuais para cada um dos 4 lados (ver abaixo). |
+| `comprimento_alambrado_lateral_esquerda` / `_lateral_direita` / `_fundo_frontal` / `_fundo_traseiro` | Comprimento | number | NumberInput | Sim quando visível | Se `possui_alambrado = true` E `sistema_alambrado = especial` | 4 campos análogos, um por lado. Unidade em metros. |
+| `altura_alambrado_lateral_esquerda` / `_lateral_direita` / `_fundo_frontal` / `_fundo_traseiro` | Altura | number | NumberInput | Sim quando visível | Se `possui_alambrado = true` E `sistema_alambrado = especial` | 4 campos análogos, um por lado. Unidade em metros. |
+| `espacamento_postes_tubos_lateral_esquerda` / `_lateral_direita` / `_fundo_frontal` / `_fundo_traseiro` | Espaçamento entre postes | number | NumberInput | Sim quando visível | Se `possui_alambrado = true` E `sistema_alambrado = especial` | 4 campos análogos, um por lado. Unidade em metros. |
 | `galvanizacao`             | Galvanização                   | enum    | SelectField                       | Sim quando visível | Se `possui_alambrado = true` | Opções em `galvanizacao_options`. Possui opção Outro. |
 | `especificar_galvanizacao` | Especificar galvanização       | string  | TextInput                    | Sim quando visível | Se `galvanizacao = outro`    | Campo complementar obrigatório.                  |
 | `possui_trelica`           | Possui treliça?                | boolean | Checkbox                     | Não                | Se `possui_alambrado = true` | Campo opcional.                                  |

@@ -75,7 +75,7 @@ Seção `dados_obra`, obrigatória.
 
 | Campo | Tipo | Obrigatório base | Opções |
 | --- | --- | --- | --- |
-| `endereco_obra` | `text` | Sim | - |
+| `endereco_cliente` | `text` | Sim | - |
 | `cidade` | `text` | Sim | - |
 | `estado` | `text` | Sim | - |
 | `tipo_projeto` | `select` | Sim | `obra_nova`, `reforma` |

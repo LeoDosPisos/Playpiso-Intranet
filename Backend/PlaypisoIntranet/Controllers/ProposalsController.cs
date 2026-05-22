@@ -19,21 +19,41 @@ public class ProposalsController(
     PptxGeneratorClient pptxClient,
     IOptions<AllowedUsersOptions> allowedUsersOptions) : ControllerBase
 {
-    private string UserId => User.FindFirstValue("oid") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "dev-anonymous";
-    private string? UserEmail => User.FindFirstValue("email") ?? User.FindFirstValue("preferred_username");
+    private string UserId => User.FindFirstValue("oid") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+    private string? UserEmail => User.FindFirstValue("email")
+        ?? User.FindFirstValue("preferred_username")
+        ?? User.FindFirstValue("upn")
+        ?? User.FindFirstValue("unique_name");
+    private string? UserName => User.FindFirstValue("name") ?? UserEmail;
     private bool IsAdmin => allowedUsersOptions.Value.AdminObjectIds.Contains(UserId);
 
     [HttpGet]
-    public async Task<IActionResult> List([FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public async Task<IActionResult> List([FromQuery] string? status, [FromQuery] string? scope, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var proposals = await repo.ListAsync(IsAdmin ? null : UserId, status, page, pageSize);
+        string? userFilter;
+        switch (scope)
+        {
+            case "mine":
+                userFilter = UserId;
+                break;
+            case "all":
+                if (!IsAdmin) return Forbid();
+                userFilter = null;
+                break;
+            default:
+                userFilter = IsAdmin ? null : UserId;
+                break;
+        }
+
+        var proposals = await repo.ListAsync(userFilter, status, page, pageSize);
         var result = proposals.Select(p => new ProposalSummaryResponse(
             p.Id, p.NumeroProposta, p.Status,
             p.NomeRazaoSocial, p.Cidade, p.Estado,
             p.DataSolicitacao, p.DataEnvio,
             p.PptxUrl, p.XlsxUrl,
             p.CreatedByEmail ?? "",
-            p.GeneratedByUserId, p.GeneratedByEmail, p.GeneratedAt,
+            p.CreatedByName,
+            p.GeneratedByUserId, p.GeneratedByEmail, p.GeneratedByName, p.GeneratedAt,
             p.CreatedAt,
             p.TotalProducts
         ));
@@ -56,6 +76,7 @@ public class ProposalsController(
         var proposal = MapToModel(dto);
         proposal.CreatedByUserId = UserId;
         proposal.CreatedByEmail = UserEmail;
+        proposal.CreatedByName = UserName;
 
         var id = await repo.CreateAsync(proposal);
         return CreatedAtAction(nameof(Get), new { id }, new { id });
@@ -106,7 +127,7 @@ public class ProposalsController(
         // por ora, salva localmente e retorna o conteudo direto para o cliente
         var filename = $"proposta_{existing.NumeroProposta}_{DateTime.UtcNow:yyyyMMddHHmmss}.pptx";
         var pptxUrl = $"/files/{filename}";
-        await repo.UpdateGeneratedOutputsAsync(id, pptxUrl, xlsxUrl: null, UserId, UserEmail);
+        await repo.UpdateGeneratedOutputsAsync(id, pptxUrl, xlsxUrl: null, UserId, UserEmail, UserName);
 
         return File(pptxBytes, "application/vnd.openxmlformats-officedocument.presentationml.presentation", filename);
     }
@@ -121,8 +142,8 @@ public class ProposalsController(
         CpfCnpj = dto.CpfCnpj,
         NomeContato = dto.NomeContato,
         Telefone = dto.Telefone,
-        Email = dto.Email,
-        EnderecoObra = dto.EnderecoObra,
+        EmailCliente = dto.EmailCliente,
+        EnderecoCliente = dto.EnderecoCliente,
         LocalObra = dto.LocalObra,
         Cidade = dto.Cidade,
         Estado = dto.Estado,
@@ -150,9 +171,6 @@ public class ProposalsController(
             ResponsavelLigacaoEletrica = g.ResponsavelLigacaoEletrica ?? "cliente",
             TipoColigacao = g.TipoColigacao,
             PossuiAlambrado = g.PossuiAlambrado,
-            ComprimentoAlambrado = g.ComprimentoAlambrado,
-            AlturaAlambrado = g.AlturaAlambrado,
-            EspacamentoPostesTubos = g.EspacamentoPostesTubos,
             Galvanizacao = g.Galvanizacao,
             EspecificarGalvanizacao = g.EspecificarGalvanizacao,
             PossuiTrelica = g.PossuiTrelica,
@@ -172,11 +190,11 @@ public class ProposalsController(
     private static ProposalDetailResponse ToDetailResponse(Proposal p) => new(
         p.Id, p.NumeroProposta, p.Status,
         p.DataSolicitacao, p.DataEnvio,
-        p.NomeRazaoSocial, p.CpfCnpj, p.NomeContato, p.Telefone, p.Email,
-        p.EnderecoObra, p.LocalObra, p.Cidade, p.Estado, p.TipoProjeto,
+        p.NomeRazaoSocial, p.CpfCnpj, p.NomeContato, p.Telefone, p.EmailCliente,
+        p.EnderecoCliente, p.LocalObra, p.Cidade, p.Estado, p.TipoProjeto,
         p.PptxUrl, p.XlsxUrl,
-        p.CreatedByUserId, p.CreatedByEmail,
-        p.GeneratedByUserId, p.GeneratedByEmail, p.GeneratedAt,
+        p.CreatedByUserId, p.CreatedByEmail, p.CreatedByName,
+        p.GeneratedByUserId, p.GeneratedByEmail, p.GeneratedByName, p.GeneratedAt,
         p.CreatedAt, p.UpdatedAt,
         p.ProductGroups.Select(g => new ProductGroupResponse(
             g.Id, g.ProductId, g.VariantId, g.Quantity, g.GroupIndex,
@@ -186,8 +204,7 @@ public class ProposalsController(
             g.QuantidadePostesIluminacao, g.AlturaPostesIluminacao,
             g.QuantidadeProjetores, g.PotenciaProjetores, g.EspecificarPotenciaProjetores,
             g.QuantidadeCruzetas, g.ResponsavelLigacaoEletrica, g.TipoColigacao,
-            g.PossuiAlambrado, g.ComprimentoAlambrado, g.AlturaAlambrado,
-            g.EspacamentoPostesTubos, g.Galvanizacao, g.EspecificarGalvanizacao,
+            g.PossuiAlambrado, g.Galvanizacao, g.EspecificarGalvanizacao,
             g.PossuiTrelica, g.Travamento, g.QuantidadePortoes, g.AlturaPortoes, g.LarguraPortoes, g.PossuiTelaSuperior,
             g.PossuiTelaSombreamento, g.LarguraSombreamento, g.ComprimentoSombreamento,
             g.Observacoes, g.Specs

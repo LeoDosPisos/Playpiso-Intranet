@@ -30,8 +30,12 @@ function includeSlideForGroup(slide: SlideEntry, group: ProductGroupPayload): bo
   }
 
   if (slide.category === 'conditional') {
+    const conditionalSlide = slide as ConditionalSlide
+    if (conditionalSlide.variantIds && !conditionalSlide.variantIds.includes(String(group.variantId))) {
+      return false
+    }
     return evaluateCondition(
-      (slide as ConditionalSlide).condition,
+      conditionalSlide.condition,
       getProductGroupValues(group) as Record<string, import('../types/proposalForm').FormValue>,
     )
   }

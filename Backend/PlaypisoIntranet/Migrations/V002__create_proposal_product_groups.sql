@@ -30,10 +30,9 @@ CREATE TABLE proposal_product_groups (
   tipo_coligacao                    VARCHAR(20),
 
   -- fechamentos_protecoes
+  -- As variantes por lado (fundos/laterais) ficam em specs (JSONB), por isso
+  -- nao ha colunas dedicadas para comprimento/altura/espacamento genericos.
   possui_alambrado              BOOLEAN DEFAULT FALSE,
-  comprimento_alambrado         NUMERIC(10,2),
-  altura_alambrado              NUMERIC(10,2),
-  espacamento_postes_tubos      NUMERIC(10,2),
   galvanizacao                  VARCHAR(50),
   especificar_galvanizacao      VARCHAR(255),
   possui_trelica                BOOLEAN,
@@ -42,6 +41,11 @@ CREATE TABLE proposal_product_groups (
   possui_tela_sombreamento      BOOLEAN,
   largura_sombreamento          NUMERIC(10,2),
   comprimento_sombreamento      NUMERIC(10,2),
+
+  -- portoes
+  quantidade_portoes            INTEGER,
+  altura_portoes                NUMERIC(8,2),
+  largura_portoes               NUMERIC(8,2),
 
   observacoes TEXT,
 
