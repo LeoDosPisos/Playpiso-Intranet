@@ -15,6 +15,7 @@ import {
   updateProductGroupFormValue,
   validateForm,
 } from '../formEngine'
+import { useEnforcePptxAvailability } from '../hooks/useEnforcePptxAvailability'
 import type { FormState, FormValue, ProposalProductGroup, SectionDefinition } from '../types/proposalForm'
 import styles from './FormRenderer.module.css'
 import { ProductCarousel } from './ProductCarousel'
@@ -181,6 +182,7 @@ function FormRenderer() {
 
   const [availabilityStatus, setAvailabilityStatus] = useState<AvailabilityStatus>('loading')
   const [availableProducts, setAvailableProducts] = useState<ProductAvailability[]>([])
+  const [enforcePptxAvailability, setEnforcePptxAvailability] = useEnforcePptxAvailability()
   const globalSections = useMemo(() => getGlobalSections(), [])
   const globalSectionStatuses = useMemo(
     () =>
@@ -285,14 +287,16 @@ function FormRenderer() {
   }
 
   function handleAddProduct(productId: string) {
-    if (availabilityStatus !== 'ready') {
-      setGenerationError('A disponibilidade de geração PPTX ainda não foi confirmada.')
-      return
-    }
+    if (enforcePptxAvailability) {
+      if (availabilityStatus !== 'ready') {
+        setGenerationError('A disponibilidade de geração PPTX ainda não foi confirmada.')
+        return
+      }
 
-    if (!availabilityByProduct[productId]?.size) {
-      setGenerationError('Este produto ainda não possui geração PPTX disponível.')
-      return
+      if (!availabilityByProduct[productId]?.size) {
+        setGenerationError('Este produto ainda não possui geração PPTX disponível.')
+        return
+      }
     }
 
     const quantity = productQuantities[productId] ?? 0
@@ -338,15 +342,17 @@ function FormRenderer() {
       return
     }
 
-    if (availabilityStatus !== 'ready') {
-      setGenerationError('Não foi possível confirmar a disponibilidade de geração PPTX.')
-      return
-    }
+    if (enforcePptxAvailability) {
+      if (availabilityStatus !== 'ready') {
+        setGenerationError('Não foi possível confirmar a disponibilidade de geração PPTX.')
+        return
+      }
 
-    const unsupportedGroups = getUnsupportedGroupLabels(validatedState.productGroups, availabilityByProduct)
-    if (unsupportedGroups.length > 0) {
-      setGenerationError(`Geração PPTX indisponível para: ${unsupportedGroups.join(', ')}.`)
-      return
+      const unsupportedGroups = getUnsupportedGroupLabels(validatedState.productGroups, availabilityByProduct)
+      if (unsupportedGroups.length > 0) {
+        setGenerationError(`Geração PPTX indisponível para: ${unsupportedGroups.join(', ')}.`)
+        return
+      }
     }
 
     const payload = buildProposalBuilderPayload(validatedState)
@@ -370,13 +376,31 @@ function FormRenderer() {
         <p>Preencha os dados gerais, selecione os produtos e configure cada grupo da proposta.</p>
       </div>
 
-      {availabilityStatus === 'loading' && (
+      <div className={styles.enforcementToggle}>
+        <label className={styles.enforcementToggleLabel}>
+          <input
+            checked={enforcePptxAvailability}
+            data-testid="toggle-enforce-pptx"
+            onChange={(event) => setEnforcePptxAvailability(event.target.checked)}
+            role="switch"
+            type="checkbox"
+          />
+          <span>Bloquear produtos sem PPTX disponível</span>
+        </label>
+        {!enforcePptxAvailability && (
+          <p className={styles.enforcementDisabledNotice} role="status">
+            Restrição desativada — produtos sem template PPTX podem falhar na geração.
+          </p>
+        )}
+      </div>
+
+      {enforcePptxAvailability && availabilityStatus === 'loading' && (
         <p className={styles.availabilityNotice} data-testid="availability-loading">
           Verificando disponibilidade de geração PPTX.
         </p>
       )}
 
-      {availabilityStatus === 'error' && (
+      {enforcePptxAvailability && availabilityStatus === 'error' && (
         <p className={styles.availabilityError} data-testid="availability-error" role="alert">
           Não foi possível verificar quais produtos geram proposta PPTX. A geração ficará bloqueada até a
           disponibilidade ser confirmada.
@@ -415,6 +439,7 @@ function FormRenderer() {
           <ProductCarousel
             availabilityByProduct={availabilityByProduct}
             availabilityStatus={availabilityStatus}
+            enforcePptxAvailability={enforcePptxAvailability}
             onAdd={handleAddProduct}
             onQuantityChange={(productId, quantity) =>
               setProductQuantities((currentQuantities) => ({
@@ -430,6 +455,7 @@ function FormRenderer() {
         <ProductGroupWorkspace
           availabilityByProduct={availabilityByProduct}
           builderState={builderState}
+          enforcePptxAvailability={enforcePptxAvailability}
           onActivateGroup={(groupId) =>
             setBuilderState((currentState) => ({
               ...currentState,
@@ -451,7 +477,11 @@ function FormRenderer() {
       </div>
 
       <div className={styles.actionBar}>
-        <button data-testid="btn-gerar-proposta" disabled={isGenerating || availabilityStatus !== 'ready'} type="submit">
+        <button
+          data-testid="btn-gerar-proposta"
+          disabled={isGenerating || (enforcePptxAvailability && availabilityStatus !== 'ready')}
+          type="submit"
+        >
           {isGenerating ? 'Gerando...' : 'Gerar proposta'}
         </button>
       </div>
