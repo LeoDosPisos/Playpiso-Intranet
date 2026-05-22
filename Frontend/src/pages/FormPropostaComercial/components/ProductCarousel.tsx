@@ -16,6 +16,7 @@ type ProductCarouselProps = {
   quantities: Record<string, number>
   availabilityByProduct: Record<string, Set<string>>
   availabilityStatus: 'loading' | 'ready' | 'error'
+  enforcePptxAvailability: boolean
   onAdd: (productId: string) => void
   onQuantityChange: (productId: string, quantity: number) => void
 }
@@ -81,7 +82,12 @@ function getDisabledReason(
   product: ProductDefinition,
   availabilityByProduct: Record<string, Set<string>>,
   availabilityStatus: ProductCarouselProps['availabilityStatus'],
+  enforcePptxAvailability: boolean,
 ) {
+  if (!enforcePptxAvailability) {
+    return undefined
+  }
+
   if (availabilityStatus === 'loading') {
     return 'Verificando disponibilidade'
   }
@@ -103,6 +109,7 @@ function ProductCarousel({
   quantities,
   availabilityByProduct,
   availabilityStatus,
+  enforcePptxAvailability,
   onAdd,
   onQuantityChange,
 }: ProductCarouselProps) {
@@ -150,7 +157,7 @@ function ProductCarousel({
         {products.map((product) => (
           <div className={styles.productSlide} key={product.id}>
             <ProductCard
-              disabledReason={getDisabledReason(product, availabilityByProduct, availabilityStatus)}
+              disabledReason={getDisabledReason(product, availabilityByProduct, availabilityStatus, enforcePptxAvailability)}
               onAdd={() => onAdd(product.id)}
               onQuantityChange={(quantity) => onQuantityChange(product.id, quantity)}
               product={product}

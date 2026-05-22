@@ -15,6 +15,7 @@ type ProductGroupWorkspaceProps = {
   builderState: ProposalBuilderState
   splitInputByGroup: Record<string, string>
   availabilityByProduct: Record<string, Set<string>>
+  enforcePptxAvailability: boolean
   onActivateGroup: (groupId: string) => void
   onBuilderStateChange: (updater: (currentState: ProposalBuilderState) => ProposalBuilderState) => void
   onGroupBlur: (groupId: string, fieldId: string) => void
@@ -39,7 +40,12 @@ function getGroupLabel(group: ProposalProductGroup, groups: readonly ProposalPro
 function getDisabledVariantOptions(
   group: ProposalProductGroup,
   availabilityByProduct: Record<string, Set<string>>,
+  enforcePptxAvailability: boolean,
 ): Record<string, Set<string>> {
+  if (!enforcePptxAvailability) {
+    return {}
+  }
+
   const product = productCatalog[group.productId]
   const availableVariants = availabilityByProduct[group.productId] ?? new Set<string>()
   const variantFieldId = VARIANT_FIELD_IDS.find((fieldId) => group.formState.visibleFields.has(fieldId))
@@ -63,6 +69,7 @@ function ProductGroupWorkspace({
   builderState,
   splitInputByGroup,
   availabilityByProduct,
+  enforcePptxAvailability,
   onActivateGroup,
   onBuilderStateChange,
   onGroupBlur,
@@ -133,7 +140,7 @@ function ProductGroupWorkspace({
       )
     : []
   const disabledOptionValuesByFieldId = activeGroup
-    ? getDisabledVariantOptions(activeGroup, availabilityByProduct)
+    ? getDisabledVariantOptions(activeGroup, availabilityByProduct, enforcePptxAvailability)
     : undefined
 
   if (builderState.productGroups.length === 0) {

@@ -23,6 +23,41 @@
   line-height: 1.5;
 }
 
+.enforcementToggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.enforcementToggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(74, 74, 74, 0.88);
+  cursor: pointer;
+  user-select: none;
+}
+
+.enforcementToggleLabel input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.enforcementDisabledNotice {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(202, 138, 4, 0.4);
+  background: rgba(202, 138, 4, 0.08);
+  border-radius: 8px;
+  color: #a16207;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .availabilityNotice,
 .availabilityError {
   margin: 0 0 16px;
