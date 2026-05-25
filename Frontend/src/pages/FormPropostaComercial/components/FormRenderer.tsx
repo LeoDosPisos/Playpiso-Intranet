@@ -157,6 +157,7 @@ function FormRenderer() {
   const [generatedFile, setGeneratedFile] = useState<{ url: string; filename: string } | null>(null)
   const [generationCount, setGenerationCount] = useState(0)
   const [shouldScrollToError, setShouldScrollToError] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   useEffect(() => {
     const url = generatedFile?.url
@@ -329,18 +330,38 @@ function FormRenderer() {
       productGroups: validatedGroups,
     }
 
-    setBuilderState(validatedState)
-
     if (hasErrors) {
+      setSubmitAttempted(true)
       const firstGlobalError = findFirstErrorField(globalSections, validatedGlobalForm)
       if (firstGlobalError) {
         setCollapsedGlobalSections((prev) =>
           prev[firstGlobalError.sectionId] ? { ...prev, [firstGlobalError.sectionId]: false } : prev
         )
+        setBuilderState(validatedState)
+      } else {
+        const firstBrokenGroup = validatedGroups.find(
+          (group) => Object.keys(group.formState.errors).length > 0,
+        )
+        if (firstBrokenGroup) {
+          const groupCount = validatedGroups.filter(
+            (group) => Object.keys(group.formState.errors).length > 0,
+          ).length
+          setGenerationError(
+            groupCount === 1
+              ? 'Há campos obrigatórios pendentes no produto destacado. Você foi levado até ele.'
+              : `Há campos obrigatórios pendentes em ${groupCount} produtos. Você foi levado ao primeiro.`,
+          )
+          setBuilderState({ ...validatedState, activeGroupId: firstBrokenGroup.groupId })
+        } else {
+          setBuilderState(validatedState)
+        }
       }
       setShouldScrollToError(true)
       return
     }
+
+    setSubmitAttempted(false)
+    setBuilderState(validatedState)
 
     if (enforcePptxAvailability) {
       if (availabilityStatus !== 'ready') {
@@ -456,6 +477,7 @@ function FormRenderer() {
           availabilityByProduct={availabilityByProduct}
           builderState={builderState}
           enforcePptxAvailability={enforcePptxAvailability}
+          submitAttempted={submitAttempted}
           onActivateGroup={(groupId) =>
             setBuilderState((currentState) => ({
               ...currentState,

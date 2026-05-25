@@ -72,6 +72,8 @@ const padelSections = [
   "dimensoes",
   "condicoes_obra",
   "especificacoes_padel",
+  "acessorios_padel",
+  "iluminacao",
   "fechamentos_padel",
   "observacoes",
 ] as const;
@@ -169,17 +171,22 @@ const productCatalog: Record<string, ProductDefinition> = {
           "{?possui_alambrado:, alambrado}{?possui_kit_saibro:, acessórios}{?possui_iluminacao:, iluminação}, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
-      grama: {
-        id: "grama",
-        label: "Grama",
+      grama_natural: {
+        id: "grama_natural",
+        label: "Grama Natural",
         sections: quadraTenisSections,
         defaultValues: {
-          variante_quadra_tenis: "grama",
+          variante_quadra_tenis: "grama_natural",
           quantidade_postes_iluminacao: 4,
           altura_postes_iluminacao: 8,
           quantidade_projetores: 16,
           quantidade_cruzetas: 4,
         },
+        sumarioTemplate:
+          "{quantity} quadra(s) de tênis em grama natural de {area_total}m² ({largura}m x {comprimento}m), " +
+          "composta por piso em grama natural" +
+          "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}, " +
+          "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
     },
   },
@@ -233,6 +240,18 @@ const productCatalog: Record<string, ProductDefinition> = {
           quantidade_projetores: 12,
           quantidade_cruzetas: 3,
         },
+        sumarioTemplate:
+          "{quantity} quadra(s) poliesportiva(s) em assoalho de madeira de {area_total}m² ({largura}m x {comprimento}m), " +
+          "composta por piso em madeira {tipo_madeira}" +
+          "{?anti_chama:, com tratamento anti-chama}" +
+          "{?possui_basquete_adulto:, acessório basquete adulto}" +
+          "{?possui_basquete_juvenil:, basquete juvenil}" +
+          "{?possui_volei:, vôlei}" +
+          "{?possui_futebol_futsal:, futebol/futsal}" +
+          "{?possui_tenis:, tênis}" +
+          "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}" +
+          "{?possui_tela_superior:, tela superior}{?possui_tela_sombreamento:, tela de sombreamento}, " +
+          "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
       epoxi: {
         id: "epoxi",
@@ -246,17 +265,29 @@ const productCatalog: Record<string, ProductDefinition> = {
           quantidade_cruzetas: 3,
         },
       },
-      pu_200_b: {
-        id: "pu_200_b",
-        label: "P.U. 200 B",
+      poliuretano: {
+        id: "poliuretano",
+        label: "Poliuretano",
         sections: quadraPoliesportivaSections,
         defaultValues: {
-          variante_quadra_poliesportiva: "pu_200_b",
+          variante_quadra_poliesportiva: "poliuretano",
           quantidade_postes_iluminacao: 4,
           altura_postes_iluminacao: 6,
           quantidade_projetores: 12,
           quantidade_cruzetas: 3,
         },
+        sumarioTemplate:
+          "{quantity} quadra(s) poliesportiva(s) em poliuretano {tipo_poliuretano} de {area_total}m² ({largura}m x {comprimento}m), " +
+          "aplicado sobre {tipo_terreno}" +
+          "{?anti_chama:, com tratamento anti-chama}" +
+          "{?possui_basquete_adulto:, acessório basquete adulto}" +
+          "{?possui_basquete_juvenil:, basquete juvenil}" +
+          "{?possui_volei:, vôlei}" +
+          "{?possui_futebol_futsal:, futebol/futsal}" +
+          "{?possui_tenis:, tênis}" +
+          "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}" +
+          "{?possui_tela_superior:, tela superior}{?possui_tela_sombreamento:, tela de sombreamento}, " +
+          "com acesso {dificuldade_acesso}.",
       },
     },
   },
@@ -348,6 +379,10 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: pickleballSections,
         defaultValues: {
           variante_pickleball: "padrao",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 8,
+          quantidade_cruzetas: 2,
         },
       },
     },
@@ -376,6 +411,10 @@ const productCatalog: Record<string, ProductDefinition> = {
           variante_padel: "grama_sintetica",
           largura: 10,
           comprimento: 20,
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 8,
+          quantidade_cruzetas: 2,
         },
       },
     },

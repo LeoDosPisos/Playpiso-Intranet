@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { fieldRegistry } from '../config/fieldRegistry'
 import { productCatalog } from '../config/productCatalog'
 import { VARIANT_FIELD_IDS, getVariantValue, isGlobalSectionId } from '../domain/proposalStructure'
 import {
@@ -16,12 +17,19 @@ type ProductGroupWorkspaceProps = {
   splitInputByGroup: Record<string, string>
   availabilityByProduct: Record<string, Set<string>>
   enforcePptxAvailability: boolean
+  submitAttempted: boolean
   onActivateGroup: (groupId: string) => void
   onBuilderStateChange: (updater: (currentState: ProposalBuilderState) => ProposalBuilderState) => void
   onGroupBlur: (groupId: string, fieldId: string) => void
   onGroupChange: (groupId: string, fieldId: string, value: FormValue) => void
   onSplitGroup: (group: ProposalProductGroup) => void
   onSplitInputChange: (groupId: string, value: string) => void
+}
+
+function getGroupErrorLabels(group: ProposalProductGroup): string[] {
+  return Object.keys(group.formState.errors).map(
+    (fieldId) => fieldRegistry[fieldId]?.label ?? fieldId,
+  )
 }
 
 function getGroupLabel(group: ProposalProductGroup, groups: readonly ProposalProductGroup[]) {
@@ -70,6 +78,7 @@ function ProductGroupWorkspace({
   splitInputByGroup,
   availabilityByProduct,
   enforcePptxAvailability,
+  submitAttempted,
   onActivateGroup,
   onBuilderStateChange,
   onGroupBlur,
@@ -159,6 +168,8 @@ function ProductGroupWorkspace({
         {builderState.productGroups.map((group) => {
           const isActive = activeGroup?.groupId === group.groupId
           const isMenuOpen = openMenuGroupId === group.groupId
+          const errorLabels = submitAttempted ? getGroupErrorLabels(group) : []
+          const errorCount = errorLabels.length
 
           function changeQuantity(delta: number) {
             onBuilderStateChange((currentState) =>
@@ -180,6 +191,17 @@ function ProductGroupWorkspace({
                 type="button"
               >
                 {getGroupLabel(group, builderState.productGroups)}
+                {errorCount > 0 && (
+                  <span
+                    aria-label={`${errorCount} ${errorCount === 1 ? 'campo pendente' : 'campos pendentes'}`}
+                    className={styles.tabErrorBadge}
+                    data-testid={`group-tab-errors-${group.groupId}`}
+                    title={`Campos pendentes: ${errorLabels.join(', ')}`}
+                  >
+                    <span aria-hidden="true">⚠</span>
+                    {errorCount}
+                  </span>
+                )}
               </button>
               <div className={styles.tabQuantityControl}>
                 <input

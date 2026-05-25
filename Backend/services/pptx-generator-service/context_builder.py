@@ -5,10 +5,10 @@ _GALVANIZACAO_LABELS = {'fogo': 'a fogo', 'eletrolitico': 'eletroliticamente'}
 _SISTEMA_ALAMBRADO_LABELS = {'gaiola': 'Gaiola', 'trapezio': 'Trapézio', 'especial': 'Especial'}
 
 _ALAMBRADO_LADOS = (
-    ('lateral_esquerda', 'lateral esquerda'),
-    ('lateral_direita', 'lateral direita'),
-    ('fundo_frontal', 'fundo frontal'),
-    ('fundo_traseiro', 'fundo traseiro'),
+    ('lateral_1', 'lateral 1'),
+    ('lateral_2', 'lateral 2'),
+    ('fundo_1', 'fundo 1'),
+    ('fundo_2', 'fundo 2'),
 )
 
 _ILUMINACAO_FALLBACK_KEYS = (
@@ -18,6 +18,8 @@ _ILUMINACAO_FALLBACK_KEYS = (
 )
 
 _ESTRUTURA_BASQUETE_LABELS = {'metalica': 'Metálica', 'hidraulica': 'Hidráulica', 'comum': 'Comum'}
+
+_TIPO_REDE_PICKLEBALL_LABELS = {'fixo': 'Fixo', 'removivel': 'Removível'}
 
 _TRAVAMENTO_ORDER = ['travamento_superior', 'travamento_intermediario', 'travamento_inferior']
 _TRAVAMENTO_LABELS = {
@@ -216,6 +218,26 @@ def _build_group_context(group) -> dict:
             _sports.append('Futebol/Futsal')
         ctx['acessorios_esportivos_descricao'] = f'Acessórios – {", ".join(_sports)}' if _sports else '—'
         ctx['qtde_acessorios_esportivos'] = _fmt_numero(len(_sports)) if _sports else '—'
+
+    if group.productId == 'padel':
+        if _is_truthy(values.get('possui_acessorio_padel')):
+            ctx['acessorios_esportivos_descricao'] = 'Acessórios – Rede oficial e postes'
+            ctx['qtde_acessorios_esportivos'] = '1,00'
+        else:
+            ctx['acessorios_esportivos_descricao'] = '—'
+            ctx['qtde_acessorios_esportivos'] = '—'
+
+    if group.productId == 'pickleball':
+        if _is_truthy(values.get('possui_rede_pickleball')):
+            _tipo = str(values.get('tipo_rede_pickleball') or '')
+            _lbl = _TIPO_REDE_PICKLEBALL_LABELS.get(_tipo, _tipo)
+            ctx['acessorios_esportivos_descricao'] = (
+                f'Acessórios – Rede ({_lbl})' if _lbl else 'Acessórios – Rede'
+            )
+            ctx['qtde_acessorios_esportivos'] = '1,00'
+        else:
+            ctx['acessorios_esportivos_descricao'] = '—'
+            ctx['qtde_acessorios_esportivos'] = '—'
 
     ctx['qtde_tela_superior'] = '1,00' if values.get('possui_tela_superior') else '—'
     if not ctx.get('cor_tela_superior'):

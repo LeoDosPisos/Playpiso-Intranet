@@ -457,30 +457,33 @@ Campos adicionais exibidos apenas se `sistema_alambrado = especial`
 (organizados em subsections via `subsectionTitle` no layout):
 
 ```txt
-Subsection "Lateral esquerda":
-  - comprimento_alambrado_lateral_esquerda
-  - altura_alambrado_lateral_esquerda
-  - espacamento_postes_tubos_lateral_esquerda
+Subsection "Lateral 1":
+  - comprimento_alambrado_lateral_1
+  - altura_alambrado_lateral_1
+  - espacamento_postes_tubos_lateral_1
 
-Subsection "Lateral direita":
-  - comprimento_alambrado_lateral_direita
-  - altura_alambrado_lateral_direita
-  - espacamento_postes_tubos_lateral_direita
+Subsection "Lateral 2":
+  - comprimento_alambrado_lateral_2
+  - altura_alambrado_lateral_2
+  - espacamento_postes_tubos_lateral_2
 
-Subsection "Fundo frontal":
-  - comprimento_alambrado_fundo_frontal
-  - altura_alambrado_fundo_frontal
-  - espacamento_postes_tubos_fundo_frontal
+Subsection "Fundo 1":
+  - comprimento_alambrado_fundo_1
+  - altura_alambrado_fundo_1
+  - espacamento_postes_tubos_fundo_1
 
-Subsection "Fundo traseiro":
-  - comprimento_alambrado_fundo_traseiro
-  - altura_alambrado_fundo_traseiro
-  - espacamento_postes_tubos_fundo_traseiro
+Subsection "Fundo 2":
+  - comprimento_alambrado_fundo_2
+  - altura_alambrado_fundo_2
+  - espacamento_postes_tubos_fundo_2
 ```
 
-Os campos por-lado complementam (não substituem) os 6 campos lumped
-de Laterais/Fundos quando o sistema "Especial" está selecionado.
-Quando especial, todos os 12 campos por-lado são obrigatórios.
+Quando `sistema_alambrado = especial`, os 12 campos por-lado **substituem**
+os 6 campos lumped de Laterais/Fundos: a regra condicional `show_sistema_alambrado_especial_fields`
+oculta e limpa as subsections genéricas (`comprimento_alambrado_laterais`,
+`altura_alambrado_laterais`, `espacamento_postes_tubos_laterais`,
+`comprimento_alambrado_fundos`, `altura_alambrado_fundos`,
+`espacamento_postes_tubos_fundos`) e exige preenchimento das 4 subsections individuais.
 
 Regras internas:
 

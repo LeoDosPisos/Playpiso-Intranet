@@ -26,25 +26,53 @@ SLIDE_FILE_MAP: dict[str, str] = {
     # ── quadra_tenis ──────────────────────────────────────────────────────
     "hero_piso_asfaltico_quadra_tenis":   "quadra_tenis/hero_piso_asfaltico.pptx",
     "hero_saibro_quadra_tenis":           "quadra_tenis/hero_saibro.pptx",
-    "hero_grama_quadra_tenis":            "quadra_tenis/hero_grama.pptx",
+    "hero_grama_natural_quadra_tenis":    "quadra_tenis/hero_grama_natural.pptx",
     "specs_piso_asfaltico":               "quadra_tenis/specs_piso_asfaltico.pptx",
     "specs_saibro":                       "quadra_tenis/specs_saibro.pptx",
-    "specs_grama":                        "quadra_tenis/specs_grama.pptx",
+    "specs_grama_natural":                "quadra_tenis/specs_grama_natural.pptx",
     "playcushion_quadra_tenis":           "quadra_tenis/playcushion.pptx",
     # fechamentos_quadra_tenis: resolvido dinamicamente via compose_fechamentos
     "cores_piso_asfaltico":               "quadra_tenis/cores_piso_asfaltico.pptx",
     "detalhe_construtivo_sem_playcushion":"quadra_tenis/detalhe_construtivo_sem_playcushion.pptx",
     "detalhe_construtivo_com_playcushion":"quadra_tenis/detalhe_construtivo.pptx",
-    "investimento_piso_asfaltico_quadra_tenis": "quadra_tenis/investimento_piso_asfaltico.pptx",
-    "investimento_saibro_quadra_tenis":         "quadra_tenis/investimento_saibro.pptx",
-    "investimento_grama_quadra_tenis":          "quadra_tenis/investimento_grama.pptx",
+    "detalhe_construtivo_grama_natural":  "quadra_tenis/detalhe_construtivo_grama_natural.pptx",
+    "investimento_piso_asfaltico_quadra_tenis":  "quadra_tenis/investimento_piso_asfaltico.pptx",
+    "investimento_saibro_quadra_tenis":          "quadra_tenis/investimento_saibro.pptx",
+    "investimento_grama_natural_quadra_tenis":   "quadra_tenis/investimento_grama_natural.pptx",
     # ── quadra_poliesportiva ──────────────────────────────────────────────
-    "hero_piso_asfaltico_quadra_poliesportiva":          "quadra_poli/hero_piso_asfaltico.pptx",
-    "specs_piso_asfaltico_quadra_poliesportiva":         "quadra_poli/specs_piso_asfaltico.pptx",
+    "hero_piso_asfaltico_quadra_poliesportiva":           "quadra_poli/hero_piso_asfaltico.pptx",
+    "hero_assoalho_quadra_poliesportiva":                 "quadra_poli/hero_assoalho.pptx",
+    "hero_poliuretano_quadra_poliesportiva":              "quadra_poli/hero_poliuretano.pptx",
+    "specs_piso_asfaltico_quadra_poliesportiva":          "quadra_poli/specs_piso_asfaltico.pptx",
+    "specs_assoalho_quadra_poliesportiva":                "quadra_poli/specs_assoalho.pptx",
+    "specs_poliuretano_quadra_poliesportiva":             "quadra_poli/specs_poliuretano.pptx",
+    "detalhe_construtivo_assoalho_quadra_poliesportiva":  "quadra_poli/detalhe_construtivo_assoalho.pptx",
+    "detalhe_construtivo_poliuretano_quadra_poliesportiva":   "quadra_poli/detalhe_construtivo_poliuretano.pptx",
+    "recomendacao_execucao_poliuretano_quadra_poliesportiva": "quadra_poli/recomendacao_execucao_poliuretano.pptx",
     # acessorios_quadra_poliesportiva: resolvido dinamicamente via compose_acessorios
     # fechamentos_quadra_poliesportiva: resolvido dinamicamente via compose_fechamentos
-    "cores_piso_asfaltico_quadra_poliesportiva":         "quadra_poli/cores_piso_asfaltico.pptx",
-    "investimento_piso_asfaltico_quadra_poliesportiva":  "quadra_poli/investimento_piso_asfaltico.pptx",
+    "cores_piso_asfaltico_quadra_poliesportiva":          "quadra_poli/cores_piso_asfaltico.pptx",
+    "investimento_piso_asfaltico_quadra_poliesportiva":   "quadra_poli/investimento_piso_asfaltico.pptx",
+    "investimento_assoalho_quadra_poliesportiva":         "quadra_poli/investimento_assoalho.pptx",
+    "investimento_poliuretano_quadra_poliesportiva":      "quadra_poli/investimento_poliuretano.pptx",
+    # ── padel ─────────────────────────────────────────────────────────────
+    "hero_padel":              "padel/hero.pptx",
+    "specs_padel":             "padel/specs_padel.pptx",
+    # acessorios_padel: resolvido dinamicamente via compose_acessorios
+    # fechamentos_padel: resolvido dinamicamente via compose_fechamentos
+    "investimento_padel":      "padel/investimento.pptx",
+    # ── pickleball ────────────────────────────────────────────────────────
+    "hero_pickleball":         "pickleball/hero.pptx",
+    "specs_pickleball":        "pickleball/specs_pickleball.pptx",
+    # acessorios_pickleball: resolvido dinamicamente via compose_acessorios
+    # fechamentos_pickleball: resolvido dinamicamente via compose_fechamentos
+    "investimento_pickleball": "pickleball/investimento.pptx",
+    # ── softplay ──────────────────────────────────────────────────────────
+    "hero_softplay":           "softplay/hero.pptx",
+    "specs_softplay":          "softplay/specs_softplay.pptx",
+    "amostra_softplay":        "softplay/amostra.pptx",
+    "cores_softplay":          "softplay/cores.pptx",
+    "investimento_softplay":   "softplay/investimento.pptx",
     # ── Global pós-produto ────────────────────────────────────────────────
     "condicoes_pagamento_direto_a":       "global/condicoes_pagamento_direto_a.pptx",
     "condicoes_pagamento_direto_b":       "global/condicoes_pagamento_direto_b.pptx",
@@ -60,6 +88,9 @@ _PRODUCT_SLIDES_DIR: dict[str, str] = {
     "beach_tenis":          "beach_tenis",
     "quadra_tenis":         "quadra_tenis",
     "quadra_poliesportiva": "quadra_poli",
+    "padel":                "padel",
+    "pickleball":           "pickleball",
+    "softplay":             "softplay",
 }
 
 

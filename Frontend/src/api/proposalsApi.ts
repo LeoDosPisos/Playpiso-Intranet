@@ -81,9 +81,6 @@ type ProductGroupDetail = {
   responsavelLigacaoEletrica: string | null
   tipoColigacao: string | null
   possuiAlambrado: boolean
-  comprimentoAlambrado: number | null
-  alturaAlambrado: number | null
-  espacamentoPostesTubos: number | null
   galvanizacao: string | null
   especificarGalvanizacao: string | null
   possuiTrelica: boolean | null

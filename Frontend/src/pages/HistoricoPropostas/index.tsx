@@ -271,7 +271,7 @@ function formatDate(isoString: string) {
 }
 
 function formatDec(value: number | null): string | null {
-  if (value === null) return null
+  if (value == null) return null
   return value.toLocaleString('pt-BR', { maximumFractionDigits: 2 })
 }
 
@@ -356,12 +356,6 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     || alambradoJsonbKeys.some(k => specsObj[k] != null && specsObj[k] !== '')
   if (hasAlambradoData) {
     const fechEntries: SpecEntry[] = []
-    if (g.comprimentoAlambrado !== null)
-      fechEntries.push({ label: 'Comprimento', value: `${formatDec(g.comprimentoAlambrado)}m` })
-    if (g.alturaAlambrado !== null)
-      fechEntries.push({ label: 'Altura', value: `${formatDec(g.alturaAlambrado)}m` })
-    if (g.espacamentoPostesTubos !== null)
-      fechEntries.push({ label: 'Espaçamento postes', value: `${formatDec(g.espacamentoPostesTubos)}m` })
     if (g.galvanizacao) fechEntries.push({ label: 'Galvanização', value: formatSpecValue(g.galvanizacao) })
     if (g.travamento) fechEntries.push({ label: 'Travamento', value: formatSpecValue(g.travamento) })
     if (g.possuiTrelica !== null)
