@@ -1,7 +1,13 @@
+import re
+
 from pptx.dml.color import RGBColor
 
 _PRETO = RGBColor(0x1C, 0x1C, 0x1C)
 _RESET_COLOR_KEYS = frozenset({"sumario"})
+
+# \s matches NBSP (\xa0), tab, regular space etc., tolerating whitespace artifacts
+# that PowerPoint sometimes injects when editing placeholder text.
+_PLACEHOLDER_RE = re.compile(r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}")
 
 
 def _replace_placeholders(slide, context: dict) -> None:
@@ -22,14 +28,19 @@ def _replace_in_paragraph(paragraph, context: dict) -> None:
     full_text = "".join(run.text for run in paragraph.runs)
     if "{{" not in full_text:
         return
-    replaced = full_text
-    matched_key = None
-    for key, value in context.items():
-        new = replaced.replace(f"{{{{ {key} }}}}", str(value) if value is not None else "")
-        new = new.replace(f"{{{{{key}}}}}", str(value) if value is not None else "")
-        if new != replaced:
+
+    matched_key: str | None = None
+
+    def _sub(match: re.Match) -> str:
+        nonlocal matched_key
+        key = match.group(1)
+        if key in context:
             matched_key = key
-            replaced = new
+            value = context[key]
+            return str(value) if value is not None else ""
+        return match.group(0)
+
+    replaced = _PLACEHOLDER_RE.sub(_sub, full_text)
     if replaced == full_text:
         return
     paragraph.runs[0].text = replaced

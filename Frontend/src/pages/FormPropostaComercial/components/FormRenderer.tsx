@@ -61,13 +61,6 @@ function findFirstErrorField(
   return null
 }
 
-function parseSplitQuantities(rawValue: string) {
-  return rawValue
-    .split(',')
-    .map((part) => Number(part.trim()))
-    .filter((quantity) => Number.isFinite(quantity) && quantity > 0)
-}
-
 function touchErrors(state: FormState): FormState {
   const touched = { ...state.touched }
 
@@ -151,7 +144,6 @@ function FormRenderer() {
       Object.values(productCatalog).map((product) => [product.id, product.selection?.defaultQuantity ?? 0]),
     ),
   )
-  const [splitInputByGroup, setSplitInputByGroup] = useState<Record<string, string>>({})
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [generatedFile, setGeneratedFile] = useState<{ url: string; filename: string } | null>(null)
@@ -305,10 +297,8 @@ function FormRenderer() {
     setBuilderState((currentState) => addProductGroup(currentState, productId, quantity))
   }
 
-  function handleSplitGroup(group: ProposalProductGroup) {
-    const quantities = parseSplitQuantities(splitInputByGroup[group.groupId] ?? '')
-
-    setBuilderState((currentState) => splitProductGroup(currentState, group.groupId, quantities))
+  function handleSplitGroup(group: ProposalProductGroup, parts: number[]) {
+    setBuilderState((currentState) => splitProductGroup(currentState, group.groupId, parts))
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -488,13 +478,6 @@ function FormRenderer() {
           onGroupBlur={handleGroupBlur}
           onGroupChange={handleGroupChange}
           onSplitGroup={handleSplitGroup}
-          onSplitInputChange={(groupId, value) =>
-            setSplitInputByGroup((currentInputs) => ({
-              ...currentInputs,
-              [groupId]: value,
-            }))
-          }
-          splitInputByGroup={splitInputByGroup}
         />
       </div>
 

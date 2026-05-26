@@ -137,7 +137,7 @@ const slideRegistry: SlideRegistry = [
     label: "Investimento",
     productId: "beach_tenis",
     orderWithinProduct: 70,
-    templateFile: "slides/beach_tenis/investimento.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 
@@ -279,7 +279,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_tenis",
     variantIds: ["piso_asfaltico"],
     orderWithinProduct: 80,
-    templateFile: "slides/quadra_tenis/investimento_piso_asfaltico.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
   {
@@ -289,7 +289,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_tenis",
     variantIds: ["saibro"],
     orderWithinProduct: 80,
-    templateFile: "slides/quadra_tenis/investimento_saibro.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
   {
@@ -299,7 +299,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_tenis",
     variantIds: ["grama_natural"],
     orderWithinProduct: 80,
-    templateFile: "slides/quadra_tenis/investimento_grama_natural.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 
@@ -443,7 +443,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_poliesportiva",
     variantIds: ["piso_asfaltico"],
     orderWithinProduct: 60,
-    templateFile: "slides/quadra_poli/investimento_piso_asfaltico.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
   {
@@ -453,7 +453,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_poliesportiva",
     variantIds: ["assoalho"],
     orderWithinProduct: 60,
-    templateFile: "slides/quadra_poli/investimento_assoalho.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
   {
@@ -463,7 +463,7 @@ const slideRegistry: SlideRegistry = [
     productId: "quadra_poliesportiva",
     variantIds: ["poliuretano"],
     orderWithinProduct: 60,
-    templateFile: "slides/quadra_poli/investimento_poliuretano.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 
@@ -510,7 +510,7 @@ const slideRegistry: SlideRegistry = [
     label: "Investimento",
     productId: "padel",
     orderWithinProduct: 70,
-    templateFile: "slides/padel/investimento.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 
@@ -565,7 +565,7 @@ const slideRegistry: SlideRegistry = [
     label: "Investimento",
     productId: "pickleball",
     orderWithinProduct: 70,
-    templateFile: "slides/pickleball/investimento.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 
@@ -609,7 +609,7 @@ const slideRegistry: SlideRegistry = [
     label: "Investimento",
     productId: "softplay",
     orderWithinProduct: 70,
-    templateFile: "slides/softplay/investimento.pptx",
+    templateFile: "slides/global/investimento_base.pptx",
     dynamic: "investimento",
   },
 

@@ -11,10 +11,10 @@ import {
 import type { FormValue, ProposalBuilderState, ProposalProductGroup } from '../types/proposalForm'
 import styles from './FormRenderer.module.css'
 import { SectionRenderer } from './SectionRenderer'
+import { SplitGroupDialog } from './SplitGroupDialog'
 
 type ProductGroupWorkspaceProps = {
   builderState: ProposalBuilderState
-  splitInputByGroup: Record<string, string>
   availabilityByProduct: Record<string, Set<string>>
   enforcePptxAvailability: boolean
   submitAttempted: boolean
@@ -22,8 +22,7 @@ type ProductGroupWorkspaceProps = {
   onBuilderStateChange: (updater: (currentState: ProposalBuilderState) => ProposalBuilderState) => void
   onGroupBlur: (groupId: string, fieldId: string) => void
   onGroupChange: (groupId: string, fieldId: string, value: FormValue) => void
-  onSplitGroup: (group: ProposalProductGroup) => void
-  onSplitInputChange: (groupId: string, value: string) => void
+  onSplitGroup: (group: ProposalProductGroup, parts: number[]) => void
 }
 
 function getGroupErrorLabels(group: ProposalProductGroup): string[] {
@@ -75,7 +74,6 @@ function getDisabledVariantOptions(
 
 function ProductGroupWorkspace({
   builderState,
-  splitInputByGroup,
   availabilityByProduct,
   enforcePptxAvailability,
   submitAttempted,
@@ -84,7 +82,6 @@ function ProductGroupWorkspace({
   onGroupBlur,
   onGroupChange,
   onSplitGroup,
-  onSplitInputChange,
 }: ProductGroupWorkspaceProps) {
   const tabsRef = useRef<HTMLDivElement>(null)
   const groupPanelRef = useRef<HTMLDivElement>(null)
@@ -92,6 +89,7 @@ function ProductGroupWorkspace({
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const [isTabsStuck, setIsTabsStuck] = useState(false)
   const [openMenuGroupId, setOpenMenuGroupId] = useState<string | null>(null)
+  const [splitDialogGroupId, setSplitDialogGroupId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!openMenuGroupId) return
@@ -150,6 +148,9 @@ function ProductGroupWorkspace({
     : []
   const disabledOptionValuesByFieldId = activeGroup
     ? getDisabledVariantOptions(activeGroup, availabilityByProduct, enforcePptxAvailability)
+    : undefined
+  const splitDialogGroup = splitDialogGroupId
+    ? builderState.productGroups.find((group) => group.groupId === splitDialogGroupId)
     : undefined
 
   if (builderState.productGroups.length === 0) {
@@ -266,6 +267,20 @@ function ProductGroupWorkspace({
                     >
                       Remover
                     </button>
+                    {group.quantity > 1 && (
+                      <button
+                        className={styles.tabMenuItem}
+                        data-testid="btn-split-group"
+                        onClick={() => {
+                          setOpenMenuGroupId(null)
+                          setSplitDialogGroupId(group.groupId)
+                        }}
+                        role="menuitem"
+                        type="button"
+                      >
+                        Dividir
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -276,23 +291,6 @@ function ProductGroupWorkspace({
 
       {activeGroup && (
         <div className={styles.groupPanel} ref={groupPanelRef} role="tabpanel">
-          {activeGroup.quantity > 1 && (
-            <div className={styles.splitControl}>
-              <label>
-                Dividir grupo
-                <input
-                  onChange={(event) => onSplitInputChange(activeGroup.groupId, event.target.value)}
-                  placeholder={`Ex: ${activeGroup.quantity - 1},1`}
-                  type="text"
-                  value={splitInputByGroup[activeGroup.groupId] ?? ''}
-                />
-              </label>
-              <button onClick={() => onSplitGroup(activeGroup)} type="button">
-                Aplicar divisão
-              </button>
-            </div>
-          )}
-
           <div className={styles.sectionStack}>
             {activeGroupSections.map((section) => (
               <SectionRenderer
@@ -306,6 +304,17 @@ function ProductGroupWorkspace({
             ))}
           </div>
         </div>
+      )}
+
+      {splitDialogGroup && (
+        <SplitGroupDialog
+          group={splitDialogGroup}
+          onClose={() => setSplitDialogGroupId(null)}
+          onConfirm={(parts) => {
+            onSplitGroup(splitDialogGroup, parts)
+            setSplitDialogGroupId(null)
+          }}
+        />
       )}
     </section>
   )
