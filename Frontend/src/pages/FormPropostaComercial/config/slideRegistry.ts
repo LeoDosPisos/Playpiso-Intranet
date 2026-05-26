@@ -409,7 +409,7 @@ const slideRegistry: SlideRegistry = [
     label: "Detalhe construtivo — Poliuretano",
     productId: "quadra_poliesportiva",
     variantIds: ["poliuretano"],
-    orderWithinProduct: 45,
+    orderWithinProduct: 25,
     templateFile: "slides/quadra_poli/detalhe_construtivo_poliuretano.pptx",
   },
   {
