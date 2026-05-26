@@ -164,6 +164,16 @@ class TestQuadraTenisCatalogo:
         assert "alambrado" in ids
         assert "iluminacao" in ids
 
+    def test_telas_condicionais(self):
+        values = {
+            **self.BASE,
+            "possui_tela_superior": True,
+            "possui_tela_sombreamento": True,
+        }
+        ids = [i.id for i in get_items("quadra_tenis", "piso_asfaltico", values)]
+        assert "tela_superior" in ids
+        assert "tela_sombreamento" in ids
+
     def test_grama_natural_completo(self):
         values = {
             **self.BASE,

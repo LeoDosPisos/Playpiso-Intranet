@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 _GALVANIZACAO_LABELS = {'fogo': 'a fogo', 'eletrolitico': 'eletroliticamente'}
@@ -47,6 +48,20 @@ def _fmt_date(iso: str) -> str:
         return datetime.strptime(iso, "%Y-%m-%d").strftime("%d/%m/%Y")
     except (ValueError, TypeError):
         return iso or ""
+
+
+def _doc_parts(raw) -> tuple[str, str]:
+    """Deriva (tipo_doc, n_doc) a partir do cpf_cnpj. tipo_doc = 'CPF'|'CNPJ'|''.
+
+    Reaplica a máscara a partir dos dígitos, então funciona mesmo se o valor
+    chegar sem pontuação. Comprimento inesperado/vazio: rótulo vazio e número como veio.
+    """
+    digits = re.sub(r"\D", "", str(raw or ""))
+    if len(digits) == 14:
+        return "CNPJ", f"{digits[:2]}.{digits[2:5]}.{digits[5:8]}/{digits[8:12]}-{digits[12:]}"
+    if len(digits) == 11:
+        return "CPF", f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:]}"
+    return "", str(raw or "")
 
 
 def _fmt_dimension(value) -> str:
@@ -109,6 +124,7 @@ def _fmt_travamento(value) -> str:
 
 
 def _build_base_context(global_values: dict, product_groups: list) -> dict:
+    tipo_doc, n_doc = _doc_parts(global_values.get("cpf_cnpj", ""))
     return {
         "nome_razao_social": global_values.get("nome_razao_social", ""),
         "nome_contato":      global_values.get("nome_contato", ""),
@@ -122,6 +138,8 @@ def _build_base_context(global_values: dict, product_groups: list) -> dict:
         "np":                global_values.get("numero_proposta", ""),
         "ds":                _fmt_date(global_values.get("data_solicitacao", "")),
         "de":                _fmt_date(global_values.get("data_envio", "")),
+        "tipo_doc":          tipo_doc,
+        "n_doc":             n_doc,
         "sumario":           (
             product_groups[0].sumarioText
             if len(product_groups) == 1

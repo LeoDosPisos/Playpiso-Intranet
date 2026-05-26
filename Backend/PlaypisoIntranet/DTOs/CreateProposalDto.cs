@@ -59,7 +59,7 @@ public class CreateProductGroupDto
     public decimal? ComprimentoPortoes { get; init; }
     public bool? PossuiTelaSuperior { get; init; }
     public bool? PossuiTelaSombreamento { get; init; }
-    public decimal? LarguraSombreamento { get; init; }
+    public decimal? AlturaSombreamento { get; init; }
     public decimal? ComprimentoSombreamento { get; init; }
 
     public string? Observacoes { get; init; }

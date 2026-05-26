@@ -90,6 +90,8 @@ ITEMS: list[InvestItem] = [
     # ── Fechamentos compartilhados ───────────────────────────────────────────
     _common.alambrado_item(),
     _common.iluminacao_item(),
+    _common.tela_superior_item(),
+    _common.tela_sombreamento_item(),
     # ── Itens opcionais específicos por variante ────────────────────────────
     InvestItem(
         id="playcushion",

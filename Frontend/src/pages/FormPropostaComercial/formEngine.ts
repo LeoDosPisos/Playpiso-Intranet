@@ -2,6 +2,7 @@ import { conditionalRules } from './config/conditionalRules'
 import { fieldRegistry } from './config/fieldRegistry'
 import { productCatalog } from './config/productCatalog'
 import { sectionRegistry } from './config/sectionRegistry'
+import { validateCpfCnpj } from './domain/cpfCnpj'
 import { GLOBAL_SECTION_IDS, getVariantValue, isGlobalSectionId } from './domain/proposalStructure'
 import type {
   ConditionalEffect,
@@ -237,6 +238,11 @@ function validateValues(values: Record<string, FormValue>, requiredFields: Set<s
   const emailValue = values['email']
   if (visibleFields.has('email') && emailValue && !EMAIL_REGEX.test(String(emailValue))) {
     errors['email'] = 'E-mail inválido.'
+  }
+
+  const documentValue = values['cpf_cnpj']
+  if (visibleFields.has('cpf_cnpj') && documentValue && validateCpfCnpj(String(documentValue)) === 'invalid') {
+    errors['cpf_cnpj'] = 'CPF/CNPJ inválido.'
   }
 
   return errors

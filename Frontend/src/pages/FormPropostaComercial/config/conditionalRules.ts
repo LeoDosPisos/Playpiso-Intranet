@@ -868,24 +868,24 @@ const conditionalRules: readonly ConditionalRule[] = [
   {
     id: "show_dimensoes_sombreamento",
     description:
-      "Tela de sombreamento exibe largura e comprimento do sombreamento.",
+      "Tela de sombreamento exibe altura e comprimento do sombreamento.",
     when: {
       field: "possui_tela_sombreamento",
       operator: "equals",
       value: true,
     },
     effects: [
-      { type: "show", field: "largura_sombreamento" },
+      { type: "show", field: "altura_sombreamento" },
       { type: "show", field: "comprimento_sombreamento" },
-      { type: "require", field: "largura_sombreamento" },
+      { type: "require", field: "altura_sombreamento" },
       { type: "require", field: "comprimento_sombreamento" },
     ],
     elseEffects: [
-      { type: "hide", field: "largura_sombreamento" },
-      { type: "clear", field: "largura_sombreamento" },
+      { type: "hide", field: "altura_sombreamento" },
+      { type: "clear", field: "altura_sombreamento" },
       { type: "hide", field: "comprimento_sombreamento" },
       { type: "clear", field: "comprimento_sombreamento" },
-      { type: "unrequire", field: "largura_sombreamento" },
+      { type: "unrequire", field: "altura_sombreamento" },
       { type: "unrequire", field: "comprimento_sombreamento" },
     ],
   },

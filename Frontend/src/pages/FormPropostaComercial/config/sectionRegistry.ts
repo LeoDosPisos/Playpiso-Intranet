@@ -312,7 +312,7 @@ const sectionRegistry: Record<string, SectionDefinition> = {
       "possui_tela_superior",
       "cor_tela_superior",
       "possui_tela_sombreamento",
-      "largura_sombreamento",
+      "altura_sombreamento",
       "comprimento_sombreamento",
     ],
     groups: [

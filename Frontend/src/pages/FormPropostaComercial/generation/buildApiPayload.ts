@@ -12,7 +12,7 @@ const NORMALIZED_KEYS = new Set([
   'possui_alambrado',
   'galvanizacao', 'especificar_galvanizacao', 'travamento',
   'quantidade_portoes', 'altura_portoes', 'comprimento_portoes',
-  'possui_tela_superior', 'possui_tela_sombreamento', 'largura_sombreamento',
+  'possui_tela_superior', 'possui_tela_sombreamento', 'altura_sombreamento',
   'comprimento_sombreamento',
   'observacoes',
 ])
@@ -103,7 +103,7 @@ export function buildApiPayload(payload: ProposalBuilderPayload): object {
         comprimentoPortoes: num(v.comprimento_portoes),
         possuiTelaSuperior: boolOrNull(v.possui_tela_superior),
         possuiTelaSombreamento: boolOrNull(v.possui_tela_sombreamento),
-        larguraSombreamento: num(v.largura_sombreamento),
+        alturaSombreamento: num(v.altura_sombreamento),
         comprimentoSombreamento: num(v.comprimento_sombreamento),
 
         observacoes: str(v.observacoes),

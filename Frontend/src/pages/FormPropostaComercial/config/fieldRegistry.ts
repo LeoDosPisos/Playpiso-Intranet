@@ -14,7 +14,7 @@ const fieldRegistry: Record<string, FieldDefinition> = {
     id: "cpf_cnpj",
     label: "CPF/CNPJ",
     type: "text",
-    placeholder: "Ex: 00.000.000/0001-00",
+    placeholder: "Ex: 000.000.000-00 ou 00.000.000/0001-00",
     required: true,
     xlsxKey: "cliente_documento",
     pptxKey: "cliente_documento",
@@ -852,13 +852,13 @@ const fieldRegistry: Record<string, FieldDefinition> = {
     xlsxKey: "possui_tela_sombreamento",
     pptxKey: "possui_tela_sombreamento",
   },
-  largura_sombreamento: {
-    id: "largura_sombreamento",
-    label: "Largura do sombreamento",
+  altura_sombreamento: {
+    id: "altura_sombreamento",
+    label: "Altura do sombreamento",
     type: "number",
     unit: "m",
-    xlsxKey: "largura_sombreamento",
-    pptxKey: "largura_sombreamento",
+    xlsxKey: "altura_sombreamento",
+    pptxKey: "altura_sombreamento",
   },
   comprimento_sombreamento: {
     id: "comprimento_sombreamento",

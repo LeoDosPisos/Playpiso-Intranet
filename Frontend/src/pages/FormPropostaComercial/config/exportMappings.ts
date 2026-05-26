@@ -202,8 +202,8 @@ const exportMappings: ExportMappings = {
         columnName: "Tela de sombreamento",
       },
       {
-        fieldId: "largura_sombreamento",
-        columnName: "Largura do sombreamento",
+        fieldId: "altura_sombreamento",
+        columnName: "Altura do sombreamento",
       },
       {
         fieldId: "comprimento_sombreamento",

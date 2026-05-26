@@ -180,7 +180,7 @@ public class ProposalsController(
             ComprimentoPortoes = g.ComprimentoPortoes,
             PossuiTelaSuperior = g.PossuiTelaSuperior,
             PossuiTelaSombreamento = g.PossuiTelaSombreamento,
-            LarguraSombreamento = g.LarguraSombreamento,
+            AlturaSombreamento = g.AlturaSombreamento,
             ComprimentoSombreamento = g.ComprimentoSombreamento,
             Observacoes = g.Observacoes,
             Specs = g.Specs is not null ? JsonSerializer.Serialize(g.Specs) : "{}"
@@ -206,7 +206,7 @@ public class ProposalsController(
             g.QuantidadeCruzetas, g.ResponsavelLigacaoEletrica, g.TipoColigacao,
             g.PossuiAlambrado, g.Galvanizacao, g.EspecificarGalvanizacao,
             g.PossuiTrelica, g.Travamento, g.QuantidadePortoes, g.AlturaPortoes, g.ComprimentoPortoes, g.PossuiTelaSuperior,
-            g.PossuiTelaSombreamento, g.LarguraSombreamento, g.ComprimentoSombreamento,
+            g.PossuiTelaSombreamento, g.AlturaSombreamento, g.ComprimentoSombreamento,
             g.Observacoes, g.Specs
         ))
     );

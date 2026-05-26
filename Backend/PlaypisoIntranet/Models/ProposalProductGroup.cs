@@ -40,7 +40,7 @@ public class ProposalProductGroup
     public string? Travamento { get; set; }
     public bool? PossuiTelaSuperior { get; set; }
     public bool? PossuiTelaSombreamento { get; set; }
-    public decimal? LarguraSombreamento { get; set; }
+    public decimal? AlturaSombreamento { get; set; }
     public decimal? ComprimentoSombreamento { get; set; }
 
     // portoes
