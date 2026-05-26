@@ -142,6 +142,18 @@ def _build_group_context(group) -> dict:
     elif galv == 'outro':
         ctx['galvanizacao'] = ctx.get('especificar_galvanizacao') or '—'
 
+    # Quadra Poliesportiva — Poliuretano: extrair espessura numérica do tipo.
+    #   "b7"  → {{tipo_poliuretano}}="7",  {{espessura_poliuretano}}="7"
+    #   "b9"  → "9" / "9"
+    #   "b11" → "11" / "11"
+    tipo_pol_raw = values.get('tipo_poliuretano') or ''
+    if isinstance(tipo_pol_raw, str) and tipo_pol_raw.startswith('b') and tipo_pol_raw[1:].isdigit():
+        espessura = tipo_pol_raw[1:]
+        ctx['tipo_poliuretano'] = espessura
+        ctx['espessura_poliuretano'] = espessura
+    else:
+        ctx.setdefault('espessura_poliuretano', '')
+
     altura = values.get('altura_portoes')
     largura = values.get('largura_portoes')
     qtd = values.get('quantidade_portoes', 0)

@@ -9,9 +9,12 @@ from pptx.util import Inches, Pt
 
 from context_builder import _build_base_context, _build_group_context, _build_context, _is_truthy
 from dynamic_composer import compose_fechamentos, compose_acessorios
+from investimento import compose_investimento
 from placeholder_engine import _replace_placeholders
 from slide_copier import _copy_slide
 from slide_registry import SLIDES_DIR, SLIDE_W, SLIDE_H, _slide_template_path
+
+_INVESTIMENTO_BASE_REL = "global/investimento_base.pptx"
 
 logger = logging.getLogger("pptx_generator.merger")
 
@@ -125,6 +128,30 @@ def build_presentation(req) -> bytes:
                 base_rel  = slide_entry.templateFile.removeprefix("slides/")
                 base_path = os.path.join(SLIDES_DIR, base_rel)
                 compose_acessorios(merged, base_path, product_id, values, ctx, img_counter)
+            elif dynamic == "investimento":
+                group  = groups_by_index.get(group_idx or 0)
+                if group is None:
+                    _add_placeholder_slide(merged, slide_id)
+                    continue
+                values = dict(group.values)
+                # group.quantity é metadado do grupo, não do form values — injetar
+                # com prefixo _ para itens do catálogo que usam quantity como qtde
+                # (ex: Acessório Tênis da quadra_tenis).
+                values["_quantity"] = group.quantity
+                base_path = os.path.join(SLIDES_DIR, _INVESTIMENTO_BASE_REL)
+                try:
+                    compose_investimento(
+                        merged, base_path, group.productId, group.variantId,
+                        values, ctx, img_counter,
+                    )
+                except NotImplementedError:
+                    # Produto ainda não migrado para o catálogo dinâmico → cai no template legado.
+                    base_rel  = slide_entry.templateFile.removeprefix("slides/")
+                    file_path = os.path.join(SLIDES_DIR, base_rel)
+                    if os.path.exists(file_path):
+                        _add_from_file_with_replacement(merged, file_path, slide_id, ctx, img_counter)
+                    else:
+                        _add_placeholder_slide(merged, slide_id)
             else:
                 base_rel  = slide_entry.templateFile.removeprefix("slides/")
                 file_path = os.path.join(SLIDES_DIR, base_rel)

@@ -179,7 +179,7 @@ Defaults e regras:
 - `piso_asfaltico` não possui campos condicionais específicos.
 - `assoalho` exibe e obriga `tipo_madeira`; o valor é interpolado nos slides PPTX via placeholder `{{tipo_madeira}}` (slides `hero_assoalho.pptx` e `specs_assoalho.pptx`).
 - `epoxi` exibe e obriga `condicao_base_piso`.
-- `poliuretano` exibe e obriga `tipo_poliuretano`; o valor é interpolado no PPTX via placeholder `{{tipo_poliuretano}}` (slide `specs_poliuretano.pptx`).
+- `poliuretano` exibe e obriga `tipo_poliuretano`. No PPTX o backend extrai o número puro do tipo (`b7→"7"`, `b9→"9"`, `b11→"11"`) e usa esse valor em dois placeholders: `{{tipo_poliuretano}}` (slides `hero_poliuretano.pptx` e `specs_poliuretano.pptx`) e `{{espessura_poliuretano}}` (slide `detalhe_construtivo_poliuretano.pptx`, valor derivado em `context_builder._build_group_context`).
 - `anti_chama` aparece para `assoalho`, `poliuretano` e Squash, sempre opcional.
 - `possui_basquete_adulto = true` exibe e obriga `estrutura_basquete_adulto`.
 
@@ -607,7 +607,7 @@ O mapeamento `pptx.placeholders` cobre o estado atual de placeholders disponíve
 - campos principais de condições da obra;
 - campos específicos de Padel;
 - campos específicos de Quadra Poliesportiva Assoalho (`tipo_madeira`);
-- campos específicos de Quadra Poliesportiva Poliuretano (`tipo_poliuretano`);
+- campos específicos de Quadra Poliesportiva Poliuretano (`tipo_poliuretano` e `espessura_poliuretano` — ambos renderizam o número puro extraído do tipo selecionado; `espessura_poliuretano` é derivado no backend, não existe como campo do formulário);
 - observações.
 
 Novos placeholders de PowerPoint devem ser adicionados explicitamente em `exportMappings.ts` quando o template `.pptx` passar a esperá-los.

@@ -1,0 +1,249 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(31, 29, 26, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 48px);
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(74, 74, 74, 0.14);
+  box-shadow: 0 12px 40px rgba(31, 29, 26, 0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(74, 74, 74, 0.14);
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.closeButton {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: rgba(31, 29, 26, 0.6);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: rgba(74, 74, 74, 0.08);
+  color: var(--color-text);
+}
+
+.closeButton:focus-visible {
+  outline: 3px solid rgba(255, 0, 0, 0.2);
+  outline-offset: 2px;
+}
+
+.body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(31, 29, 26, 0.75);
+}
+
+.descriptionHighlight {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.partsLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.partsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.part {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.partInput {
+  width: 64px;
+  min-height: 40px;
+  box-sizing: border-box;
+  border: 1px solid rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 8px;
+}
+
+.partInput:focus {
+  border-color: var(--color-brand-primary);
+  outline: 3px solid rgba(255, 0, 0, 0.16);
+  outline-offset: 0;
+}
+
+.partInputInvalid {
+  border-color: var(--color-brand-primary);
+}
+
+.removePart {
+  width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: rgba(31, 29, 26, 0.55);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removePart:hover {
+  background: rgba(74, 74, 74, 0.1);
+  color: var(--color-text);
+}
+
+.plus {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(31, 29, 26, 0.5);
+  user-select: none;
+}
+
+.addPart {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px dashed rgba(74, 74, 74, 0.4);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addPart:hover:not(:disabled) {
+  background: rgba(74, 74, 74, 0.06);
+  border-color: rgba(74, 74, 74, 0.6);
+}
+
+.addPart:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sumIndicator {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sumOk {
+  color: #008a3a;
+}
+
+.sumError {
+  color: var(--color-brand-primary);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(74, 74, 74, 0.14);
+  background: rgba(74, 74, 74, 0.03);
+}
+
+.cancel {
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid rgba(74, 74, 74, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  background: rgba(74, 74, 74, 0.06);
+}
+
+.confirm {
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-brand-primary);
+  border-radius: 8px;
+  background: var(--color-brand-primary);
+  color: var(--color-brand-on-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.confirm:disabled {
+  background: rgba(74, 74, 74, 0.18);
+  border-color: rgba(74, 74, 74, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: not-allowed;
+}
+
+.confirm:focus-visible,
+.cancel:focus-visible {
+  outline: 3px solid rgba(255, 0, 0, 0.2);
+  outline-offset: 2px;
+}

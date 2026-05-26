@@ -285,6 +285,10 @@ const exportMappings: ExportMappings = {
       { fieldId: "dificuldade_acesso", placeholder: "{{dificuldade_acesso}}" },
       { fieldId: "tipo_madeira", placeholder: "{{tipo_madeira}}" },
       { fieldId: "tipo_poliuretano", placeholder: "{{tipo_poliuretano}}" },
+      {
+        fieldId: "espessura_poliuretano",
+        placeholder: "{{espessura_poliuretano}}",
+      },
       { fieldId: "tipo_grama_padel", placeholder: "{{tipo_grama_padel}}" },
       {
         fieldId: "tipo_estrutura_alambrado_padel",
