@@ -189,7 +189,7 @@ COMMIT
                 0
 ```
 
-### 9. Confirmar o audit log
+### 9. Confirmar o audit log 
 
 ```bash
 psql -c "SELECT executed_at, executed_by_postgres_user, proposals_deleted, product_groups_deleted
