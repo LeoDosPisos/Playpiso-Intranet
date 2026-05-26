@@ -61,13 +61,6 @@ function findFirstErrorField(
   return null
 }
 
-function parseSplitQuantities(rawValue: string) {
-  return rawValue
-    .split(',')
-    .map((part) => Number(part.trim()))
-    .filter((quantity) => Number.isFinite(quantity) && quantity > 0)
-}
-
 function touchErrors(state: FormState): FormState {
   const touched = { ...state.touched }
 
@@ -151,12 +144,12 @@ function FormRenderer() {
       Object.values(productCatalog).map((product) => [product.id, product.selection?.defaultQuantity ?? 0]),
     ),
   )
-  const [splitInputByGroup, setSplitInputByGroup] = useState<Record<string, string>>({})
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [generatedFile, setGeneratedFile] = useState<{ url: string; filename: string } | null>(null)
   const [generationCount, setGenerationCount] = useState(0)
   const [shouldScrollToError, setShouldScrollToError] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   useEffect(() => {
     const url = generatedFile?.url
@@ -304,10 +297,8 @@ function FormRenderer() {
     setBuilderState((currentState) => addProductGroup(currentState, productId, quantity))
   }
 
-  function handleSplitGroup(group: ProposalProductGroup) {
-    const quantities = parseSplitQuantities(splitInputByGroup[group.groupId] ?? '')
-
-    setBuilderState((currentState) => splitProductGroup(currentState, group.groupId, quantities))
+  function handleSplitGroup(group: ProposalProductGroup, parts: number[]) {
+    setBuilderState((currentState) => splitProductGroup(currentState, group.groupId, parts))
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -329,18 +320,38 @@ function FormRenderer() {
       productGroups: validatedGroups,
     }
 
-    setBuilderState(validatedState)
-
     if (hasErrors) {
+      setSubmitAttempted(true)
       const firstGlobalError = findFirstErrorField(globalSections, validatedGlobalForm)
       if (firstGlobalError) {
         setCollapsedGlobalSections((prev) =>
           prev[firstGlobalError.sectionId] ? { ...prev, [firstGlobalError.sectionId]: false } : prev
         )
+        setBuilderState(validatedState)
+      } else {
+        const firstBrokenGroup = validatedGroups.find(
+          (group) => Object.keys(group.formState.errors).length > 0,
+        )
+        if (firstBrokenGroup) {
+          const groupCount = validatedGroups.filter(
+            (group) => Object.keys(group.formState.errors).length > 0,
+          ).length
+          setGenerationError(
+            groupCount === 1
+              ? 'Há campos obrigatórios pendentes no produto destacado. Você foi levado até ele.'
+              : `Há campos obrigatórios pendentes em ${groupCount} produtos. Você foi levado ao primeiro.`,
+          )
+          setBuilderState({ ...validatedState, activeGroupId: firstBrokenGroup.groupId })
+        } else {
+          setBuilderState(validatedState)
+        }
       }
       setShouldScrollToError(true)
       return
     }
+
+    setSubmitAttempted(false)
+    setBuilderState(validatedState)
 
     if (enforcePptxAvailability) {
       if (availabilityStatus !== 'ready') {
@@ -456,6 +467,7 @@ function FormRenderer() {
           availabilityByProduct={availabilityByProduct}
           builderState={builderState}
           enforcePptxAvailability={enforcePptxAvailability}
+          submitAttempted={submitAttempted}
           onActivateGroup={(groupId) =>
             setBuilderState((currentState) => ({
               ...currentState,
@@ -466,13 +478,6 @@ function FormRenderer() {
           onGroupBlur={handleGroupBlur}
           onGroupChange={handleGroupChange}
           onSplitGroup={handleSplitGroup}
-          onSplitInputChange={(groupId, value) =>
-            setSplitInputByGroup((currentInputs) => ({
-              ...currentInputs,
-              [groupId]: value,
-            }))
-          }
-          splitInputByGroup={splitInputByGroup}
         />
       </div>
 

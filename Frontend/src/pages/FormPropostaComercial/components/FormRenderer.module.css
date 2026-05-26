@@ -347,8 +347,7 @@
   border-top: 1px solid rgba(74, 74, 74, 0.16);
 }
 
-.productCardFooter > button,
-.splitControl button {
+.productCardFooter > button {
   min-height: 40px;
   border: 1px solid #ff0000;
   border-radius: 8px;
@@ -463,6 +462,23 @@
   font-size: 14px;
   font-weight: 700;
   padding: 6px 6px 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabErrorBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .tabQuantityControl {
@@ -620,38 +636,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.splitControl label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.splitControl input {
-  min-height: 40px;
-  box-sizing: border-box;
-  border: 1px solid rgba(74, 74, 74, 0.32);
-  border-radius: 8px;
-  color: #4a4a4a;
-  font: inherit;
-  padding: 8px 10px;
-}
-
-.splitControl {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  padding: 16px;
-  border-left: 3px solid #ff0000;
-  border-radius: 10px;
-  background: rgba(74, 74, 74, 0.04);
-}
-
-.splitControl label {
-  flex: 1;
 }
 
 .fullSpan {
@@ -1027,14 +1011,9 @@
     flex-basis: min(82vw, 320px);
   }
 
-  .productCardFooter,
-  .splitControl {
+  .productCardFooter {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .splitControl button {
-    width: 100%;
   }
 
   .actionBar {

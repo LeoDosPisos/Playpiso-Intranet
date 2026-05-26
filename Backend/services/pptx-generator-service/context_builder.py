@@ -5,10 +5,10 @@ _GALVANIZACAO_LABELS = {'fogo': 'a fogo', 'eletrolitico': 'eletroliticamente'}
 _SISTEMA_ALAMBRADO_LABELS = {'gaiola': 'Gaiola', 'trapezio': 'Trapézio', 'especial': 'Especial'}
 
 _ALAMBRADO_LADOS = (
-    ('lateral_esquerda', 'lateral esquerda'),
-    ('lateral_direita', 'lateral direita'),
-    ('fundo_frontal', 'fundo frontal'),
-    ('fundo_traseiro', 'fundo traseiro'),
+    ('lateral_1', 'lateral 1'),
+    ('lateral_2', 'lateral 2'),
+    ('fundo_1', 'fundo 1'),
+    ('fundo_2', 'fundo 2'),
 )
 
 _ILUMINACAO_FALLBACK_KEYS = (
@@ -18,6 +18,8 @@ _ILUMINACAO_FALLBACK_KEYS = (
 )
 
 _ESTRUTURA_BASQUETE_LABELS = {'metalica': 'Metálica', 'hidraulica': 'Hidráulica', 'comum': 'Comum'}
+
+_TIPO_REDE_PICKLEBALL_LABELS = {'fixo': 'Fixo', 'removivel': 'Removível'}
 
 _TRAVAMENTO_ORDER = ['travamento_superior', 'travamento_intermediario', 'travamento_inferior']
 _TRAVAMENTO_LABELS = {
@@ -140,6 +142,18 @@ def _build_group_context(group) -> dict:
     elif galv == 'outro':
         ctx['galvanizacao'] = ctx.get('especificar_galvanizacao') or '—'
 
+    # Quadra Poliesportiva — Poliuretano: extrair espessura numérica do tipo.
+    #   "b7"  → {{tipo_poliuretano}}="7",  {{espessura_poliuretano}}="7"
+    #   "b9"  → "9" / "9"
+    #   "b11" → "11" / "11"
+    tipo_pol_raw = values.get('tipo_poliuretano') or ''
+    if isinstance(tipo_pol_raw, str) and tipo_pol_raw.startswith('b') and tipo_pol_raw[1:].isdigit():
+        espessura = tipo_pol_raw[1:]
+        ctx['tipo_poliuretano'] = espessura
+        ctx['espessura_poliuretano'] = espessura
+    else:
+        ctx.setdefault('espessura_poliuretano', '')
+
     altura = values.get('altura_portoes')
     largura = values.get('largura_portoes')
     qtd = values.get('quantidade_portoes', 0)
@@ -216,6 +230,26 @@ def _build_group_context(group) -> dict:
             _sports.append('Futebol/Futsal')
         ctx['acessorios_esportivos_descricao'] = f'Acessórios – {", ".join(_sports)}' if _sports else '—'
         ctx['qtde_acessorios_esportivos'] = _fmt_numero(len(_sports)) if _sports else '—'
+
+    if group.productId == 'padel':
+        if _is_truthy(values.get('possui_acessorio_padel')):
+            ctx['acessorios_esportivos_descricao'] = 'Acessórios – Rede oficial e postes'
+            ctx['qtde_acessorios_esportivos'] = '1,00'
+        else:
+            ctx['acessorios_esportivos_descricao'] = '—'
+            ctx['qtde_acessorios_esportivos'] = '—'
+
+    if group.productId == 'pickleball':
+        if _is_truthy(values.get('possui_rede_pickleball')):
+            _tipo = str(values.get('tipo_rede_pickleball') or '')
+            _lbl = _TIPO_REDE_PICKLEBALL_LABELS.get(_tipo, _tipo)
+            ctx['acessorios_esportivos_descricao'] = (
+                f'Acessórios – Rede ({_lbl})' if _lbl else 'Acessórios – Rede'
+            )
+            ctx['qtde_acessorios_esportivos'] = '1,00'
+        else:
+            ctx['acessorios_esportivos_descricao'] = '—'
+            ctx['qtde_acessorios_esportivos'] = '—'
 
     ctx['qtde_tela_superior'] = '1,00' if values.get('possui_tela_superior') else '—'
     if not ctx.get('cor_tela_superior'):

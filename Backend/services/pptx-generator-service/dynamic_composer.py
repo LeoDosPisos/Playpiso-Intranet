@@ -14,7 +14,7 @@ logger = logging.getLogger("pptx_generator.merger")
 _CM_TO_EMU                  = 914400 / 2.54
 _CONTENT_TOP_EMU            = round(0.5 * _CM_TO_EMU)
 _ACESSORIOS_CONTENT_TOP_EMU = round(2.25 * _CM_TO_EMU)
-_SECTION_GAP_EMU            = round(-0.5 * _CM_TO_EMU)
+_SECTION_GAP_EMU            = round(0 * _CM_TO_EMU)
 _ACESSORIOS_SECTION_GAP_EMU = round(-0.1 * _CM_TO_EMU)
 
 _FECHAMENTOS_SECTIONS: list[tuple[str, str]] = [
@@ -25,7 +25,13 @@ _FECHAMENTOS_SECTIONS: list[tuple[str, str]] = [
 ]
 
 
-def _get_active_acessorios_sections(values: dict) -> list[str]:
+def _get_active_acessorios_sections(product_id: str, values: dict) -> list[str]:
+    if product_id == "padel":
+        return ["padel"] if _is_truthy(values.get("possui_acessorio_padel")) else []
+
+    if product_id == "pickleball":
+        return ["pickleball"] if _is_truthy(values.get("possui_rede_pickleball")) else []
+
     sections: list[str] = []
 
     if _is_truthy(values.get("possui_basquete_adulto")):
@@ -62,7 +68,17 @@ def compose_fechamentos(
     active = [
         name for field, name in _FECHAMENTOS_SECTIONS if _is_truthy(values.get(field))
     ]
+
+    # Padel: alambrado é obrigatório, renderiza o slide base mesmo sem nenhuma
+    # das seções dinâmicas ativas (as informações de alambrado já estão no base).
     if not active:
+        if product_id == "padel":
+            if not os.path.exists(base_path):
+                logger.warning("fechamentos_base não encontrado: %s", base_path)
+                return
+            src_base = Presentation(base_path)
+            new_slide = _copy_slide(merged, src_base.slides[0], img_counter)
+            _replace_placeholders(new_slide, ctx)
         return
 
     pages = [active] if len(active) <= 3 else [active[:2], active[2:]]
@@ -111,7 +127,7 @@ def compose_acessorios(
     ctx: dict,
     img_counter: list[int],
 ) -> None:
-    active = _get_active_acessorios_sections(values)
+    active = _get_active_acessorios_sections(product_id, values)
     if not active:
         return
 

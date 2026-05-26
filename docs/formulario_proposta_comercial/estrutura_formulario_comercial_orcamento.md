@@ -120,7 +120,7 @@ Campo seletor de variante: `variante_quadra_tenis`
 | --- | --- | --- |
 | Piso Asfáltico | `piso_asfaltico` | Sim |
 | Saibro | `saibro` | Não |
-| Grama | `grama` | Não |
+| Grama Natural | `grama_natural` | Não |
 
 Seções:
 
@@ -142,9 +142,8 @@ Defaults e regras:
 - Todas as variantes de Quadra de Tênis iniciam com `largura = 18` e `comprimento = 36`.
 - `piso_asfaltico` exibe e obriga `cor_piso_asfaltico`; também exibe `possui_playcushion`.
 - `saibro` exibe `possui_kit_saibro`.
-- `grama` exibe e obriga `tipo_grama`.
+- `grama_natural` não exibe campos específicos (nenhum seletor de tipo de grama no formulário).
 - `cor_piso_asfaltico = nao_padrao` exibe e obriga `especificar_cor`.
-- `tipo_grama = outros` exibe e obriga `especificar_tipo_grama`.
 - A seção de acessórios contém apenas `incluir_rede_tenis`.
 
 ### Quadra Poliesportiva
@@ -158,7 +157,7 @@ Campo seletor de variante: `variante_quadra_poliesportiva`
 | Piso Asfáltica | `piso_asfaltico` | Sim |
 | Assoalho | `assoalho` | Não |
 | Epóxi | `epoxi` | Não |
-| P.U. 200 B | `pu_200_b` | Não |
+| Poliuretano | `poliuretano` | Não |
 
 Seções:
 
@@ -178,11 +177,19 @@ observacoes
 Defaults e regras:
 
 - `piso_asfaltico` não possui campos condicionais específicos.
-- `assoalho` exibe e obriga `tipo_madeira`.
+- `assoalho` exibe e obriga `tipo_madeira`; o valor é interpolado nos slides PPTX via placeholder `{{tipo_madeira}}` (slides `hero_assoalho.pptx` e `specs_assoalho.pptx`).
 - `epoxi` exibe e obriga `condicao_base_piso`.
-- `pu_200_b` exibe e obriga `tipo_poliuretano`.
-- `anti_chama` aparece para `assoalho` e `pu_200_b`, sempre opcional.
+- `poliuretano` exibe e obriga `tipo_poliuretano`. No PPTX o backend extrai o número puro do tipo (`b7→"7"`, `b9→"9"`, `b11→"11"`) e usa esse valor em dois placeholders: `{{tipo_poliuretano}}` (slides `hero_poliuretano.pptx` e `specs_poliuretano.pptx`) e `{{espessura_poliuretano}}` (slide `detalhe_construtivo_poliuretano.pptx`, valor derivado em `context_builder._build_group_context`).
+- `anti_chama` aparece para `assoalho`, `poliuretano` e Squash, sempre opcional.
 - `possui_basquete_adulto = true` exibe e obriga `estrutura_basquete_adulto`.
+
+Slides registrados (Frontend + Backend):
+
+- `piso_asfaltico`: `hero_piso_asfaltico_quadra_poliesportiva`, `specs_piso_asfaltico_quadra_poliesportiva`, `cores_piso_asfaltico_quadra_poliesportiva`, `investimento_piso_asfaltico_quadra_poliesportiva` (dynamic: investimento).
+- `assoalho`: `hero_assoalho_quadra_poliesportiva`, `specs_assoalho_quadra_poliesportiva`, `detalhe_construtivo_assoalho_quadra_poliesportiva`, `investimento_assoalho_quadra_poliesportiva` (dynamic: investimento).
+- `poliuretano`: `hero_poliuretano_quadra_poliesportiva`, `specs_poliuretano_quadra_poliesportiva`, `detalhe_construtivo_poliuretano_quadra_poliesportiva`, `recomendacao_execucao_poliuretano_quadra_poliesportiva` (conditional: `tipo_terreno == "laje_concreto"`), `investimento_poliuretano_quadra_poliesportiva` (dynamic: investimento).
+- Compartilhados (todas as variantes): `acessorios_quadra_poliesportiva` (dynamic: acessorios), `fechamentos_quadra_poliesportiva` (dynamic: fechamentos).
+- `epoxi`: ainda esqueletizada (sem slides registrados).
 
 Acessórios:
 
@@ -544,8 +551,8 @@ Campos:
 
 | `optionsKey` | Valores |
 | --- | --- |
-| `variante_quadra_tenis` | `piso_asfaltico`, `saibro`, `grama` |
-| `variante_quadra_poliesportiva` | `piso_asfaltico`, `assoalho`, `epoxi`, `pu_200_b` |
+| `variante_quadra_tenis` | `piso_asfaltico`, `saibro`, `grama_natural` |
+| `variante_quadra_poliesportiva` | `piso_asfaltico`, `assoalho`, `epoxi`, `poliuretano` |
 | `variante_beach_tenis` | `padrao` |
 | `variante_campo` | `natural`, `sintetico` |
 | `variante_pickleball` | `padrao` |
@@ -560,7 +567,6 @@ Campos:
 | `responsavel_material_pedreira` | `playpiso`, `cliente` |
 | `cor_piso_asfaltico` | `padrao`, `nao_padrao`, `azul` |
 | `cor_pickleball` | `padrao`, `nao_padrao`, `azul` |
-| `tipo_grama` | `esmeralda`, `bermuda`, `bermuda_celebration`, `outros` |
 | `tipo_grama_natural` | `esmeralda`, `bermuda`, `bermuda_celebration`, `outros` |
 | `tipo_grama_sintetica` | `soccer_pro`, `tturf`, `hero_shape`, `outros` |
 | `tipo_grama_padel` | `super_txt`, `txt`, `mondo` |
@@ -600,6 +606,8 @@ O mapeamento `pptx.placeholders` cobre o estado atual de placeholders disponíve
 - campos de Softplay;
 - campos principais de condições da obra;
 - campos específicos de Padel;
+- campos específicos de Quadra Poliesportiva Assoalho (`tipo_madeira`);
+- campos específicos de Quadra Poliesportiva Poliuretano (`tipo_poliuretano` e `espessura_poliuretano` — ambos renderizam o número puro extraído do tipo selecionado; `espessura_poliuretano` é derivado no backend, não existe como campo do formulário);
 - observações.
 
 Novos placeholders de PowerPoint devem ser adicionados explicitamente em `exportMappings.ts` quando o template `.pptx` passar a esperá-los.

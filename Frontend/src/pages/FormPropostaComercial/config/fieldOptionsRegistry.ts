@@ -19,8 +19,8 @@ const varianteQuadraTenisOptions = [
     label: "Saibro",
   },
   {
-    value: "grama",
-    label: "Grama",
+    value: "grama_natural",
+    label: "Grama Natural",
   },
 ] as const satisfies readonly FieldOption[];
 
@@ -42,9 +42,9 @@ const varianteQuadraPoliesportivaOptions = [
     aliases: ["Quadra Poliesportiva Epóxi"],
   },
   {
-    value: "pu_200_b",
-    label: "P.U. 200 B",
-    aliases: ["Quadra Poliesportiva P.U. 200 B"],
+    value: "poliuretano",
+    label: "Poliuretano",
+    aliases: ["Quadra Poliesportiva Poliuretano", "Quadra Poliesportiva P.U. 200 B"],
   },
 ] as const satisfies readonly FieldOption[];
 
@@ -268,25 +268,6 @@ const corPickleballOptions = [
   {
     value: "azul",
     label: "Azul",
-  },
-] as const satisfies readonly FieldOption[];
-
-const tipoGramaOptions = [
-  {
-    value: "esmeralda",
-    label: "Esmeralda",
-  },
-  {
-    value: "bermuda",
-    label: "Bermuda",
-  },
-  {
-    value: "bermuda_celebration",
-    label: "Bermuda Celebration",
-  },
-  {
-    value: "outros",
-    label: "Outros",
   },
 ] as const satisfies readonly FieldOption[];
 
@@ -562,7 +543,6 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   responsavel_material_pedreira: responsavelMaterialPedreiraOptions,
   cor_piso_asfaltico: corPisoAsfalticoOptions,
   cor_pickleball: corPickleballOptions,
-  tipo_grama: tipoGramaOptions,
   tipo_grama_natural: tipoGramaNaturalOptions,
   tipo_grama_sintetica: tipoGramaSinteticaOptions,
   tipo_grama_padel: tipoGramaPadelOptions,

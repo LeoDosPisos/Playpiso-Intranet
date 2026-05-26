@@ -160,18 +160,18 @@ class TestBuildGroupContext:
         values = {
             **QUADRA_TENIS_VALUES,
             "sistema_alambrado": "especial",
-            "comprimento_alambrado_lateral_esquerda": 23.77,
-            "altura_alambrado_lateral_esquerda": 4.0,
-            "espacamento_postes_tubos_lateral_esquerda": 2.5,
-            "comprimento_alambrado_lateral_direita": 23.77,
-            "altura_alambrado_lateral_direita": 3.5,
-            "espacamento_postes_tubos_lateral_direita": 2.5,
-            "comprimento_alambrado_fundo_frontal": 10.97,
-            "altura_alambrado_fundo_frontal": 4.0,
-            "espacamento_postes_tubos_fundo_frontal": 2.0,
-            "comprimento_alambrado_fundo_traseiro": 10.97,
-            "altura_alambrado_fundo_traseiro": 3.0,
-            "espacamento_postes_tubos_fundo_traseiro": 2.0,
+            "comprimento_alambrado_lateral_1": 23.77,
+            "altura_alambrado_lateral_1": 4.0,
+            "espacamento_postes_tubos_lateral_1": 2.5,
+            "comprimento_alambrado_lateral_2": 23.77,
+            "altura_alambrado_lateral_2": 3.5,
+            "espacamento_postes_tubos_lateral_2": 2.5,
+            "comprimento_alambrado_fundo_1": 10.97,
+            "altura_alambrado_fundo_1": 4.0,
+            "espacamento_postes_tubos_fundo_1": 2.0,
+            "comprimento_alambrado_fundo_2": 10.97,
+            "altura_alambrado_fundo_2": 3.0,
+            "espacamento_postes_tubos_fundo_2": 2.0,
         }
         group = _make_group("quadra_tenis", values)
         ctx = _build_group_context(group)
@@ -179,8 +179,8 @@ class TestBuildGroupContext:
         assert ctx["sistema_alambrado"] == "Especial"
         descricao = ctx["alambrado_descricao"].lower()
         assert "especial" in descricao
-        assert "lateral esquerda" in descricao
-        assert "fundo traseiro" in descricao
+        assert "lateral 1" in descricao
+        assert "fundo 2" in descricao
         # área = 23.77*4 + 23.77*3.5 + 10.97*4 + 10.97*3 = 95.08+83.20+43.88+32.91 = 255.07
         assert ctx["area_alambrado"] != "—"
 
