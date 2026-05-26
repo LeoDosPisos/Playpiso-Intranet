@@ -179,7 +179,7 @@ Defaults e regras:
 - `piso_asfaltico` não possui campos condicionais específicos.
 - `assoalho` exibe e obriga `tipo_madeira`; o valor é interpolado nos slides PPTX via placeholder `{{tipo_madeira}}` (slides `hero_assoalho.pptx` e `specs_assoalho.pptx`).
 - `epoxi` exibe e obriga `condicao_base_piso`.
-- `poliuretano` exibe e obriga `tipo_poliuretano`. No PPTX o backend extrai o número puro do tipo (`b7→"7"`, `b9→"9"`, `b11→"11"`) e usa esse valor em dois placeholders: `{{tipo_poliuretano}}` (slides `hero_poliuretano.pptx` e `specs_poliuretano.pptx`) e `{{espessura_poliuretano}}` (slide `detalhe_construtivo_poliuretano.pptx`, valor derivado em `context_builder._build_group_context`).
+- `poliuretano` exibe e obriga `tipo_poliuretano`. No PPTX o backend extrai o número puro do tipo (`b7→"7"`, `b9→"9"`, `b11→"11"`) e usa esse valor em dois placeholders: `{{tipo_poliuretano}}` (slides `hero_poliuretano.pptx` e `specs_poliuretano.pptx`) e `{{espessura_poliuretano}}` (slides `specs_poliuretano.pptx` e `detalhe_construtivo_poliuretano.pptx`, valor derivado em `context_builder._build_group_context`).
 - `anti_chama` aparece para `assoalho`, `poliuretano` e Squash, sempre opcional.
 - `possui_basquete_adulto = true` exibe e obriga `estrutura_basquete_adulto`.
 
