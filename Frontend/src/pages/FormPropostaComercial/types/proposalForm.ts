@@ -98,7 +98,7 @@ type ConditionalExpression =
   | { any: readonly ConditionalPredicate[] }
 
 type ConditionalEffect =
-  | { type: 'setDefault'; field: string; value: FormValue }
+  | { type: 'setDefault'; field: string; value?: FormValue; fromField?: string }
   | { type: 'compute'; field: string; expression: 'largura * comprimento'; overridable?: boolean }
   | { type: 'show'; field: string }
   | { type: 'hide'; field: string }

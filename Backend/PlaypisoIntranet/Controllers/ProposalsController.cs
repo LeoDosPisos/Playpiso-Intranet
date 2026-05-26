@@ -177,7 +177,7 @@ public class ProposalsController(
             Travamento = g.Travamento,
             QuantidadePortoes = g.QuantidadePortoes,
             AlturaPortoes = g.AlturaPortoes,
-            LarguraPortoes = g.LarguraPortoes,
+            ComprimentoPortoes = g.ComprimentoPortoes,
             PossuiTelaSuperior = g.PossuiTelaSuperior,
             PossuiTelaSombreamento = g.PossuiTelaSombreamento,
             LarguraSombreamento = g.LarguraSombreamento,
@@ -205,7 +205,7 @@ public class ProposalsController(
             g.QuantidadeProjetores, g.PotenciaProjetores, g.EspecificarPotenciaProjetores,
             g.QuantidadeCruzetas, g.ResponsavelLigacaoEletrica, g.TipoColigacao,
             g.PossuiAlambrado, g.Galvanizacao, g.EspecificarGalvanizacao,
-            g.PossuiTrelica, g.Travamento, g.QuantidadePortoes, g.AlturaPortoes, g.LarguraPortoes, g.PossuiTelaSuperior,
+            g.PossuiTrelica, g.Travamento, g.QuantidadePortoes, g.AlturaPortoes, g.ComprimentoPortoes, g.PossuiTelaSuperior,
             g.PossuiTelaSombreamento, g.LarguraSombreamento, g.ComprimentoSombreamento,
             g.Observacoes, g.Specs
         ))

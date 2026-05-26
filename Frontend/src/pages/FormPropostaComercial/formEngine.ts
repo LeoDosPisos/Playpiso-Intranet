@@ -165,8 +165,12 @@ function applyEffect(
   }
 
   if (effect.type === 'setDefault') {
-    if (state.values[effect.field] === undefined || state.values[effect.field] === null || state.values[effect.field] === '') {
-      state.values[effect.field] = effect.value
+    const current = state.values[effect.field]
+    if (current === undefined || current === null || current === '') {
+      const next = effect.fromField !== undefined ? state.values[effect.fromField] : effect.value
+      if (next !== undefined && next !== null && next !== '') {
+        state.values[effect.field] = next
+      }
     }
     return
   }

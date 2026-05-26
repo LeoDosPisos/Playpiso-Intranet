@@ -178,6 +178,11 @@ const varianteSoftplayOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
+const tipoEpdmOptions = [
+  { value: "1 a 3", label: "1 a 3", isDefault: true },
+  { value: "2 a 4", label: "2 a 4" },
+] as const satisfies readonly FieldOption[];
+
 const opcaoPu200BPistaOptions = [
   {
     value: "b7",
@@ -536,6 +541,7 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   variante_pista: variantePistaOptions,
   variante_garagem_epoxi: varianteGaragemEpoxiOptions,
   variante_softplay: varianteSoftplayOptions,
+  tipo_epdm: tipoEpdmOptions,
   opcao_pu_200_b_pista: opcaoPu200BPistaOptions,
   tipo_projeto: tipoProjetoOptions,
   tipo_terreno: tipoTerrenoOptions,

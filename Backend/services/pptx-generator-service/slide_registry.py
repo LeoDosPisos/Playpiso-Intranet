@@ -72,6 +72,7 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "specs_softplay":          "softplay/specs_softplay.pptx",
     "amostra_softplay":        "softplay/amostra.pptx",
     "cores_softplay":          "softplay/cores.pptx",
+    "recomendacao_execucao_softplay": "softplay/recomendacao_execucao_softplay.pptx",
     "investimento_softplay":   "softplay/investimento.pptx",
     # ── Global pós-produto ────────────────────────────────────────────────
     "condicoes_pagamento_direto_a":       "global/condicoes_pagamento_direto_a.pptx",

@@ -46,7 +46,7 @@ public class ProposalProductGroup
     // portoes
     public int? QuantidadePortoes { get; set; }
     public decimal? AlturaPortoes { get; set; }
-    public decimal? LarguraPortoes { get; set; }
+    public decimal? ComprimentoPortoes { get; set; }
 
     public string? Observacoes { get; set; }
 

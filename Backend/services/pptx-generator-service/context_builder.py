@@ -119,6 +119,9 @@ def _build_base_context(global_values: dict, product_groups: list) -> dict:
         "numero_proposta":   global_values.get("numero_proposta", ""),
         "data_solicitacao":  _fmt_date(global_values.get("data_solicitacao", "")),
         "data_envio":        _fmt_date(global_values.get("data_envio", "")),
+        "np":                global_values.get("numero_proposta", ""),
+        "ds":                _fmt_date(global_values.get("data_solicitacao", "")),
+        "de":                _fmt_date(global_values.get("data_envio", "")),
         "sumario":           (
             product_groups[0].sumarioText
             if len(product_groups) == 1
@@ -155,10 +158,10 @@ def _build_group_context(group) -> dict:
         ctx.setdefault('espessura_poliuretano', '')
 
     altura = values.get('altura_portoes')
-    largura = values.get('largura_portoes')
+    comprimento = values.get('comprimento_portoes')
     qtd = values.get('quantidade_portoes', 0)
-    if qtd and altura is not None and largura is not None:
-        ctx['dimensoes_portoes'] = f"{_fmt_dimension(altura)} x {_fmt_dimension(largura)}"
+    if qtd and altura is not None and comprimento is not None:
+        ctx['dimensoes_portoes'] = f"{_fmt_dimension(altura)} x {_fmt_dimension(comprimento)}"
     else:
         ctx['dimensoes_portoes'] = "—"
 
@@ -264,6 +267,24 @@ def _build_group_context(group) -> dict:
             ctx['qtde_eva'] = '1,00'
     else:
         ctx['qtde_eva'] = '—'
+
+    if group.productId == 'softplay':
+        # Espessura total = SBR + EPDM. Formatação espelha _espessura_total_cm
+        # em investimento/products/softplay.py para manter o slide de specs e a
+        # linha de investimento consistentes.
+        try:
+            _sbr = float(values.get('espessura_sbr') or 0)
+        except (TypeError, ValueError):
+            _sbr = 0.0
+        try:
+            _epdm = float(values.get('espessura_epdm') or 0)
+        except (TypeError, ValueError):
+            _epdm = 0.0
+        _total = _sbr + _epdm
+        ctx['espessura_total'] = (
+            str(int(_total)) if _total == int(_total)
+            else f"{_total:.1f}".replace('.', ',')
+        )
 
     return ctx
 

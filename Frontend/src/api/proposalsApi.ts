@@ -87,7 +87,7 @@ type ProductGroupDetail = {
   travamento: string | null
   quantidadePortoes: number | null
   alturaPortoes: number | null
-  larguraPortoes: number | null
+  comprimentoPortoes: number | null
   possuiTelaSuperior: boolean | null
   possuiTelaSombreamento: boolean | null
   larguraSombreamento: number | null

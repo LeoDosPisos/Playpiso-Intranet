@@ -80,7 +80,7 @@ public record ProductGroupResponse(
     string? Travamento,
     int? QuantidadePortoes,
     decimal? AlturaPortoes,
-    decimal? LarguraPortoes,
+    decimal? ComprimentoPortoes,
     bool? PossuiTelaSuperior,
     bool? PossuiTelaSombreamento,
     decimal? LarguraSombreamento,

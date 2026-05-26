@@ -66,7 +66,7 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
   // Portões (camelCase — mantido para exibição de registros históricos gravados antes da migração V004)
   quantidadePortoes: { label: 'Qtd. portões' },
   alturaPortoes: { label: 'Altura dos portões', unit: 'm' },
-  larguraPortoes: { label: 'Largura dos portões', unit: 'm' },
+  comprimentoPortoes: { label: 'Comprimento dos portões', unit: 'm' },
   // Cobertura
   cor_tela_superior: { label: 'Cor da tela superior' },
   // Piso & cores
@@ -370,10 +370,10 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     portEntries.push({ label: 'Qtd. portões', value: String(g.quantidadePortoes) })
   if (g.alturaPortoes != null)
     portEntries.push({ label: 'Altura dos portões', value: `${formatDec(g.alturaPortoes)}m` })
-  if (g.larguraPortoes != null)
-    portEntries.push({ label: 'Largura dos portões', value: `${formatDec(g.larguraPortoes)}m` })
+  if (g.comprimentoPortoes != null)
+    portEntries.push({ label: 'Comprimento dos portões', value: `${formatDec(g.comprimentoPortoes)}m` })
   if (portEntries.length === 0)
-    portEntries.push(...fromSpecs(['quantidadePortoes', 'alturaPortoes', 'larguraPortoes']))
+    portEntries.push(...fromSpecs(['quantidadePortoes', 'alturaPortoes', 'comprimentoPortoes']))
   if (portEntries.length) sections.push({ title: 'Portões', entries: portEntries })
 
   // Iluminação

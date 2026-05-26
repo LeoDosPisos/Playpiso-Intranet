@@ -108,6 +108,7 @@ const softplaySections = [
   "dados_cliente",
   "dados_obra",
   "dimensoes",
+  "condicoes_obra",
   "especificacoes_softplay",
   "observacoes",
 ] as const;
@@ -307,6 +308,11 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: beachTenisSections,
         defaultValues: {
           variante_beach_tenis: "padrao",
+          quantidade_postes_iluminacao: 4,
+          altura_postes_iluminacao: 6,
+          quantidade_projetores: 8,
+          potencia_projetores: "300",
+          quantidade_cruzetas: 4,
         },
         sumarioTemplate:
           "{quantity} quadra(s) de Beach Tennis de {area_total}m² ({largura}m x {comprimento}m), " +
@@ -551,6 +557,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         defaultValues: {
           variante_softplay: "padrao",
           espessura_epdm: 1,
+          tipo_epdm: "1 a 3",
         },
       },
     },

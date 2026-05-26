@@ -32,7 +32,7 @@ public class ProposalRepository(string connectionString) : IProposalRepository
         possui_trelica, travamento,
         possui_tela_superior, possui_tela_sombreamento,
         largura_sombreamento, comprimento_sombreamento,
-        quantidade_portoes, altura_portoes, largura_portoes,
+        quantidade_portoes, altura_portoes, comprimento_portoes,
         observacoes, specs,
         created_at, updated_at
         """;
@@ -200,7 +200,7 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 responsavel_ligacao_eletrica, tipo_coligacao,
                 possui_alambrado, galvanizacao, especificar_galvanizacao,
                 possui_trelica, travamento,
-                quantidade_portoes, altura_portoes, largura_portoes,
+                quantidade_portoes, altura_portoes, comprimento_portoes,
                 possui_tela_superior,
                 possui_tela_sombreamento, largura_sombreamento, comprimento_sombreamento,
                 observacoes, specs
@@ -214,7 +214,7 @@ public class ProposalRepository(string connectionString) : IProposalRepository
                 @ResponsavelLigacaoEletrica, @TipoColigacao,
                 @PossuiAlambrado, @Galvanizacao, @EspecificarGalvanizacao,
                 @PossuiTrelica, @Travamento,
-                @QuantidadePortoes, @AlturaPortoes, @LarguraPortoes,
+                @QuantidadePortoes, @AlturaPortoes, @ComprimentoPortoes,
                 @PossuiTelaSuperior,
                 @PossuiTelaSombreamento, @LarguraSombreamento, @ComprimentoSombreamento,
                 @Observacoes, @Specs::jsonb
