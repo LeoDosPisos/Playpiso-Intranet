@@ -496,10 +496,18 @@ const slideRegistry: SlideRegistry = [
     dynamic: "acessorios",
   },
   {
-    category: "product",
+    category: "conditional",
     slideId: "fechamentos_padel",
     label: "Alambrado, Proteções e Iluminação",
     productId: "padel",
+    condition: {
+      any: [
+        { field: "possui_alambrado", operator: "truthy" },
+        { field: "possui_iluminacao", operator: "truthy" },
+        { field: "possui_tela_superior", operator: "truthy" },
+        { field: "possui_tela_sombreamento", operator: "truthy" },
+      ],
+    },
     orderWithinProduct: 40,
     templateFile: "slides/padel/fechamentos_base.pptx",
     dynamic: "fechamentos",

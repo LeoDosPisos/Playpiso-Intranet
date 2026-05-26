@@ -29,7 +29,6 @@ const quadraPoliesportivaSections = [
 const beachTenisSections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_beach_tenis",
   "dimensoes",
   "condicoes_obra",
   "especificacoes_beach_tenis",
@@ -55,7 +54,6 @@ const campoSections = [
 const pickleballSections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_pickleball",
   "dimensoes",
   "condicoes_obra",
   "especificacoes_pickleball",
@@ -68,7 +66,6 @@ const pickleballSections = [
 const padelSections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_padel",
   "dimensoes",
   "condicoes_obra",
   "especificacoes_padel",
@@ -81,7 +78,6 @@ const padelSections = [
 const squashSections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_squash",
   "dimensoes",
   "condicoes_obra",
   "especificacoes_squash",
@@ -102,7 +98,6 @@ const pistaSections = [
 const garagemEpoxiSections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_garagem_epoxi",
   "dimensoes_garagem_epoxi",
   "especificacoes_garagem_epoxi",
   "vagas_garagem_epoxi",
@@ -112,7 +107,6 @@ const garagemEpoxiSections = [
 const softplaySections = [
   "dados_cliente",
   "dados_obra",
-  "produto_variante_softplay",
   "dimensoes",
   "especificacoes_softplay",
   "observacoes",
@@ -379,6 +373,8 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: pickleballSections,
         defaultValues: {
           variante_pickleball: "padrao",
+          largura: 6.10,
+          comprimento: 13.41,
           quantidade_postes_iluminacao: 4,
           altura_postes_iluminacao: 6,
           quantidade_projetores: 8,
