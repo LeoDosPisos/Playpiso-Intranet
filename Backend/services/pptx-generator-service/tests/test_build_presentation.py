@@ -115,6 +115,13 @@ class TestBuildBaseContext:
         assert ctx["data_solicitacao"] == "01/05/2026"
         assert ctx["data_envio"] == "20/05/2026"
 
+    def test_short_aliases_present(self):
+        group = _make_group("quadra_tenis", QUADRA_TENIS_VALUES, "Quadra de Tênis")
+        ctx = _build_base_context(GLOBAL_VALUES, [group])
+        assert ctx["np"] == "P-2026-001"
+        assert ctx["ds"] == "01/05/2026"
+        assert ctx["de"] == "20/05/2026"
+
     def test_sumario_single_product(self):
         group = _make_group("quadra_tenis", QUADRA_TENIS_VALUES, "Quadra de Tênis")
         ctx = _build_base_context(GLOBAL_VALUES, [group])
@@ -189,6 +196,16 @@ class TestBuildGroupContext:
         ctx = _build_group_context(group)
         # perímetro = 2*(6+13) = 38
         assert ctx["qtde_eva"] != "—"
+
+    def test_espessura_total_softplay(self):
+        group = _make_group("softplay", {"espessura_sbr": 3, "espessura_epdm": 1})
+        ctx = _build_group_context(group)
+        assert ctx["espessura_total"] == "4"
+
+    def test_espessura_total_softplay_decimal(self):
+        group = _make_group("softplay", {"espessura_sbr": 3, "espessura_epdm": 1.5})
+        ctx = _build_group_context(group)
+        assert ctx["espessura_total"] == "4,5"
 
     def test_contexts_are_isolated(self):
         """Each call to _build_group_context returns independent data."""

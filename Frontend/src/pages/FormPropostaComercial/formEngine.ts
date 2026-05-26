@@ -2,6 +2,7 @@ import { conditionalRules } from './config/conditionalRules'
 import { fieldRegistry } from './config/fieldRegistry'
 import { productCatalog } from './config/productCatalog'
 import { sectionRegistry } from './config/sectionRegistry'
+import { validateCpfCnpj } from './domain/cpfCnpj'
 import { GLOBAL_SECTION_IDS, getVariantValue, isGlobalSectionId } from './domain/proposalStructure'
 import type {
   ConditionalEffect,
@@ -165,8 +166,12 @@ function applyEffect(
   }
 
   if (effect.type === 'setDefault') {
-    if (state.values[effect.field] === undefined || state.values[effect.field] === null || state.values[effect.field] === '') {
-      state.values[effect.field] = effect.value
+    const current = state.values[effect.field]
+    if (current === undefined || current === null || current === '') {
+      const next = effect.fromField !== undefined ? state.values[effect.fromField] : effect.value
+      if (next !== undefined && next !== null && next !== '') {
+        state.values[effect.field] = next
+      }
     }
     return
   }
@@ -233,6 +238,11 @@ function validateValues(values: Record<string, FormValue>, requiredFields: Set<s
   const emailValue = values['email']
   if (visibleFields.has('email') && emailValue && !EMAIL_REGEX.test(String(emailValue))) {
     errors['email'] = 'E-mail inválido.'
+  }
+
+  const documentValue = values['cpf_cnpj']
+  if (visibleFields.has('cpf_cnpj') && documentValue && validateCpfCnpj(String(documentValue)) === 'invalid') {
+    errors['cpf_cnpj'] = 'CPF/CNPJ inválido.'
   }
 
   return errors

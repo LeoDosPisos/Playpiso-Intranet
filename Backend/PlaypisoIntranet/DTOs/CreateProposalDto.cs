@@ -56,10 +56,10 @@ public class CreateProductGroupDto
     public string? Travamento { get; init; }
     public int? QuantidadePortoes { get; init; }
     public decimal? AlturaPortoes { get; init; }
-    public decimal? LarguraPortoes { get; init; }
+    public decimal? ComprimentoPortoes { get; init; }
     public bool? PossuiTelaSuperior { get; init; }
     public bool? PossuiTelaSombreamento { get; init; }
-    public decimal? LarguraSombreamento { get; init; }
+    public decimal? AlturaSombreamento { get; init; }
     public decimal? ComprimentoSombreamento { get; init; }
 
     public string? Observacoes { get; init; }

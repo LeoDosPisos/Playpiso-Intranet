@@ -291,6 +291,68 @@ class TestAlturaDoHeader:
         assert alturas[0] == alturas[1] == alturas[2]
 
 
+class TestBordasTabela:
+    """Contorno externo + horizontais entre rows, sem verticais internas (preto 1pt)."""
+
+    def _table(self):
+        prs = _open(_build_quadra_poli_pptx())
+        return _find_table(prs.slides[0])
+
+    @staticmethod
+    def _edges(cell):
+        from pptx.oxml.ns import qn
+        tcPr = cell._tc.get_or_add_tcPr()
+        return {e for e in ("L", "R", "T", "B") if tcPr.find(qn(f"a:ln{e}")) is not None}
+
+    def test_celula_meio_tem_horizontais_sem_verticais(self):
+        table = self._table()
+        edges = self._edges(table.cell(1, 1))  # coluna do meio
+        assert "T" in edges and "B" in edges
+        assert "L" not in edges and "R" not in edges
+
+    def test_primeira_coluna_tem_borda_esquerda(self):
+        table = self._table()
+        edges = self._edges(table.cell(1, 0))
+        assert "L" in edges
+        assert "R" not in edges  # não é a última coluna
+
+    def test_ultima_coluna_tem_borda_direita(self):
+        table = self._table()
+        n_cols = len(table.columns)
+        edges = self._edges(table.cell(1, n_cols - 1))
+        assert "R" in edges
+        assert "L" not in edges
+
+    def test_todas_as_linhas_tem_borda_horizontal(self):
+        table = self._table()
+        n_cols = len(table.columns)
+        for r in range(len(table.rows)):
+            for c in range(n_cols):
+                edges = self._edges(table.cell(r, c))
+                assert "T" in edges and "B" in edges, f"célula ({r},{c}) sem horizontal"
+
+    def test_borda_cor_preta_1pt(self):
+        from pptx.oxml.ns import qn
+        table = self._table()
+        tcPr = table.cell(1, 0)._tc.get_or_add_tcPr()
+        lnL = tcPr.find(qn("a:lnL"))
+        assert lnL is not None
+        assert lnL.get("w") == "12700"  # 1pt
+        srgb = lnL.find(qn("a:solidFill")).find(qn("a:srgbClr"))
+        assert srgb.get("val") == "000000"
+
+    def test_ordem_dos_elementos_no_tcpr_valida(self):
+        # lnL,lnR,lnT,lnB devem vir antes do solidFill (schema OOXML)
+        from pptx.oxml.ns import qn
+        table = self._table()
+        tcPr = table.cell(1, 0)._tc.get_or_add_tcPr()
+        children = [el.tag for el in tcPr]
+        idx_lnB = children.index(qn("a:lnB"))
+        fills = [i for i, t in enumerate(children) if t == qn("a:solidFill")]
+        if fills:
+            assert idx_lnB < min(fills), "lnB deve preceder o solidFill"
+
+
 class TestPlaceholdersDescricao:
     """Resolução de {{ key }} nas descrições do catálogo a partir do ctx."""
 

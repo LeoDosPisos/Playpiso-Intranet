@@ -409,7 +409,7 @@ const slideRegistry: SlideRegistry = [
     label: "Detalhe construtivo — Poliuretano",
     productId: "quadra_poliesportiva",
     variantIds: ["poliuretano"],
-    orderWithinProduct: 45,
+    orderWithinProduct: 25,
     templateFile: "slides/quadra_poli/detalhe_construtivo_poliuretano.pptx",
   },
   {
@@ -594,6 +594,12 @@ const slideRegistry: SlideRegistry = [
     productId: "softplay",
     orderWithinProduct: 20,
     templateFile: "slides/softplay/specs_softplay.pptx",
+    placeholders: [
+      { placeholder: "{{espessura_sbr}}", fieldId: "espessura_sbr" },
+      { placeholder: "{{espessura_epdm}}", fieldId: "espessura_epdm" },
+      { placeholder: "{{espessura_total}}", fieldId: "espessura_total" },
+      { placeholder: "{{tipo_epdm}}", fieldId: "tipo_epdm" },
+    ],
   },
   {
     category: "product",
@@ -610,6 +616,19 @@ const slideRegistry: SlideRegistry = [
     productId: "softplay",
     orderWithinProduct: 40,
     templateFile: "slides/softplay/cores.pptx",
+  },
+  {
+    category: "conditional",
+    slideId: "recomendacao_execucao_softplay",
+    label: "Recomendação de execução — sobre laje/concreto",
+    productId: "softplay",
+    condition: {
+      field: "tipo_terreno",
+      operator: "equals",
+      value: "laje_concreto",
+    },
+    orderWithinProduct: 50,
+    templateFile: "slides/softplay/recomendacao_execucao_softplay.pptx",
   },
   {
     category: "product",

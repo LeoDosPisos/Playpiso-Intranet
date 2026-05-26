@@ -2,8 +2,10 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { fieldOptionsRegistry } from '../config/fieldOptionsRegistry'
 import { fieldRegistry } from '../config/fieldRegistry'
+import { detectDocumentType, formatCpfCnpj } from '../domain/cpfCnpj'
 import type { FieldDefinition, FormState, FormValue, SectionDefinition } from '../types/proposalForm'
 import styles from './FormRenderer.module.css'
+import { AddressFieldControl } from './maps/AddressFieldControl'
 
 type FieldRendererProps = {
   field: FieldDefinition
@@ -117,50 +119,52 @@ function NumberInput({ field, value, error, describedBy, onBlur, onChange }: Num
   )
 }
 
-type LocalObraInputProps = {
+type CpfCnpjInputProps = {
   field: FieldDefinition
   value: FormValue
-  suggestion: string
   error: string | undefined
   describedBy: string | undefined
   onBlur: (fieldId: string) => void
   onChange: (fieldId: string, value: FormValue) => void
 }
 
-function LocalObraInput({ field, value, suggestion, error, describedBy, onBlur, onChange }: LocalObraInputProps) {
-  const [isFocused, setIsFocused] = useState(false)
-  const stringValue = value === null ? '' : String(value)
-  const showSuggestion = isFocused && suggestion.length > 0 && suggestion !== stringValue
+function CpfCnpjInput({ field, value, error, describedBy, onBlur, onChange }: CpfCnpjInputProps) {
+  const [raw, setRaw] = useState(() => formatCpfCnpj(value === null ? '' : String(value)))
+  const focusedRef = useRef(false)
+
+  useEffect(() => {
+    if (!focusedRef.current) {
+      setRaw(formatCpfCnpj(value === null ? '' : String(value)))
+    }
+  }, [value])
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const formatted = formatCpfCnpj(event.target.value)
+    setRaw(formatted)
+    onChange(field.id, formatted)
+  }
+
+  const documentType = detectDocumentType(raw)
 
   return (
-    <span className={styles.suggestionWrapper}>
+    <span className={styles.documentControl}>
       <input
         aria-describedby={describedBy}
         aria-invalid={Boolean(error)}
         id={field.id}
+        inputMode="numeric"
         name={field.id}
         onBlur={() => {
-          setIsFocused(false)
+          focusedRef.current = false
           onBlur(field.id)
         }}
-        onChange={(event) => onChange(field.id, event.target.value)}
-        onFocus={() => setIsFocused(true)}
+        onChange={handleChange}
+        onFocus={() => { focusedRef.current = true }}
         placeholder={field.placeholder}
         type="text"
-        value={stringValue}
+        value={raw}
       />
-      {showSuggestion && (
-        <button
-          className={styles.suggestionItem}
-          onMouseDown={(event) => {
-            event.preventDefault()
-            onChange(field.id, suggestion)
-          }}
-          type="button"
-        >
-          {suggestion}
-        </button>
-      )}
+      {documentType && <span className={styles.documentBadge}>{documentType.toUpperCase()}</span>}
     </span>
   )
 }
@@ -267,14 +271,29 @@ function FieldRenderer({ field, state, disabledOptionValues, onBlur, onChange }:
       ) : null}
 
       {(field.type === 'text' || field.type === 'date' || field.type === 'email') ? (
-        field.id === 'local_obra' ? (
-          <LocalObraInput
+        field.id === 'local_obra' || field.id === 'endereco_cliente' ? (
+          <AddressFieldControl
             describedBy={describedBy}
             error={error}
             field={field}
             onBlur={onBlur}
             onChange={onChange}
-            suggestion={state.values['endereco_cliente'] === null ? '' : String(state.values['endereco_cliente'] ?? '')}
+            suggestion={
+              field.id === 'local_obra'
+                ? state.values['endereco_cliente'] === null
+                  ? ''
+                  : String(state.values['endereco_cliente'] ?? '')
+                : undefined
+            }
+            value={value}
+          />
+        ) : field.id === 'cpf_cnpj' ? (
+          <CpfCnpjInput
+            describedBy={describedBy}
+            error={error}
+            field={field}
+            onBlur={onBlur}
+            onChange={onChange}
             value={value}
           />
         ) : (

@@ -5,6 +5,8 @@ import re
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.oxml import parse_xml
+from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt
 
 from placeholder_engine import _replace_placeholders
@@ -37,6 +39,10 @@ _TOTAL_VALUE      = "R$"
 # da tabela igualmente entre as linhas — com poucos itens o header fica gigante.
 _HEADER_ROW_HEIGHT = Inches(0.5)
 _TOTAL_ROW_HEIGHT  = Inches(0.5)
+
+# Bordas: contorno externo + horizontais entre rows (sem verticais internas).
+_BORDER_COLOR_HEX = "000000"
+_BORDER_WIDTH_EMU = int(Pt(1))  # 12700 EMU = 1pt
 
 
 def compose_investimento(
@@ -80,6 +86,7 @@ def compose_investimento(
     for i, item in enumerate(items, start=1):
         _build_item_row(table, i, item, values, ctx)
     _build_total_row(table, n_rows - 1)
+    _apply_table_borders(table, n_rows)
 
 
 # ── internals ────────────────────────────────────────────────────────────────
@@ -120,6 +127,51 @@ def _apply_column_widths(table, total_width: int) -> None:
     widths[0] += drift  # corrige arredondamento na coluna maior
     for col, w in zip(table.columns, widths):
         col.width = w
+
+
+_BORDER_EDGE_ORDER = ("L", "R", "T", "B")  # ordem exigida pelo schema OOXML em <a:tcPr>
+
+
+def _make_border_element(edge: str):
+    xml = (
+        f'<a:ln{edge} xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+        f'w="{_BORDER_WIDTH_EMU}" cap="flat" cmpd="sng" algn="ctr">'
+        f'<a:solidFill><a:srgbClr val="{_BORDER_COLOR_HEX}"/></a:solidFill>'
+        f'<a:prstDash val="solid"/>'
+        f'</a:ln{edge}>'
+    )
+    return parse_xml(xml)
+
+
+def _set_cell_border(cell, edges: set[str]) -> None:
+    """Aplica bordas nas arestas indicadas (subconjunto de {L,R,T,B}).
+
+    Os elementos lnL/lnR/lnT/lnB devem vir no início do <a:tcPr>, antes do
+    <a:solidFill> de preenchimento. Inserindo na ordem reversa no índice 0,
+    o resultado final fica L,R,T,B (ordem do schema).
+    """
+    tcPr = cell._tc.get_or_add_tcPr()
+
+    # Idempotência: remove bordas pré-existentes
+    for edge in _BORDER_EDGE_ORDER:
+        for el in tcPr.findall(qn(f"a:ln{edge}")):
+            tcPr.remove(el)
+
+    for edge in reversed(_BORDER_EDGE_ORDER):  # B, T, R, L
+        if edge in edges:
+            tcPr.insert(0, _make_border_element(edge))
+
+
+def _apply_table_borders(table, n_rows: int, n_cols: int = 4) -> None:
+    """Contorno externo + horizontais entre rows; sem verticais internas."""
+    for r in range(n_rows):
+        for c in range(n_cols):
+            edges = {"T", "B"}
+            if c == 0:
+                edges.add("L")
+            if c == n_cols - 1:
+                edges.add("R")
+            _set_cell_border(table.cell(r, c), edges)
 
 
 def _build_header_row(table) -> None:

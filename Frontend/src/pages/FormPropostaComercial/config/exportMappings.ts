@@ -93,6 +93,7 @@ const exportMappings: ExportMappings = {
       { fieldId: "possui_eva", columnName: "Proteção EVA" },
       { fieldId: "espessura_sbr", columnName: "Espessura de SBR (cm)" },
       { fieldId: "espessura_epdm", columnName: "Espessura de EPDM (cm)" },
+      { fieldId: "tipo_epdm", columnName: "Tipo de EPDM (mm)" },
       { fieldId: "possui_iluminacao", columnName: "Iluminação" },
       {
         fieldId: "iluminacao_fixada_alambrado",
@@ -201,8 +202,8 @@ const exportMappings: ExportMappings = {
         columnName: "Tela de sombreamento",
       },
       {
-        fieldId: "largura_sombreamento",
-        columnName: "Largura do sombreamento",
+        fieldId: "altura_sombreamento",
+        columnName: "Altura do sombreamento",
       },
       {
         fieldId: "comprimento_sombreamento",
@@ -281,6 +282,7 @@ const exportMappings: ExportMappings = {
       { fieldId: "possui_eva", placeholder: "{{possui_eva}}" },
       { fieldId: "espessura_sbr", placeholder: "{{espessura_sbr}}" },
       { fieldId: "espessura_epdm", placeholder: "{{espessura_epdm}}" },
+      { fieldId: "tipo_epdm", placeholder: "{{tipo_epdm}}" },
       { fieldId: "tipo_terreno", placeholder: "{{tipo_terreno}}" },
       { fieldId: "dificuldade_acesso", placeholder: "{{dificuldade_acesso}}" },
       { fieldId: "tipo_madeira", placeholder: "{{tipo_madeira}}" },

@@ -724,6 +724,47 @@
   gap: 6px;
 }
 
+.addressInputRow {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.addressInputRow input {
+  flex: 1;
+  min-width: 0;
+}
+
+.mapPinButton {
+  flex: 0 0 auto;
+  width: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(74, 74, 74, 0.32);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-brand-primary);
+  cursor: pointer;
+}
+
+.mapPinButton:hover {
+  background: rgba(255, 0, 0, 0.06);
+  border-color: var(--color-brand-primary);
+}
+
+.mapPinButton:focus-visible {
+  outline: 3px solid rgba(255, 0, 0, 0.2);
+  outline-offset: 2px;
+}
+
+.mapPinButton svg {
+  width: 20px;
+  height: 20px;
+}
+
 .suggestionItem {
   align-self: flex-start;
   max-width: 100%;
@@ -770,6 +811,30 @@
   color: rgba(74, 74, 74, 0.72);
   font-size: 13px;
   transform: translateY(-50%);
+}
+
+.documentControl {
+  position: relative;
+  display: block;
+}
+
+.documentControl input {
+  padding-right: 64px;
+}
+
+.documentBadge {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff0000;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .checkboxField {
