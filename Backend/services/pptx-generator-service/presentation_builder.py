@@ -12,7 +12,7 @@ from dynamic_composer import compose_fechamentos, compose_acessorios
 from investimento import compose_investimento
 from placeholder_engine import _replace_placeholders
 from slide_copier import _copy_slide
-from slide_registry import SLIDES_DIR, SLIDE_W, SLIDE_H, _slide_template_path
+from slide_registry import SLIDES_DIR, SLIDE_W, SLIDE_H, _slide_template_path, _resolve_slide_path
 
 _INVESTIMENTO_BASE_REL = "global/investimento_base.pptx"
 
@@ -119,14 +119,14 @@ def build_presentation(req) -> bytes:
                 group  = groups_by_index.get(group_idx or 0)
                 values = dict(group.values) if group else {}
                 base_rel  = slide_entry.templateFile.removeprefix("slides/")
-                base_path = os.path.join(SLIDES_DIR, base_rel)
+                base_path = _resolve_slide_path(base_rel)
                 compose_fechamentos(merged, base_path, product_id, values, ctx, img_counter)
             elif dynamic == "acessorios":
                 product_id = slide_id.removeprefix("acessorios_")
                 group  = groups_by_index.get(group_idx or 0)
                 values = dict(group.values) if group else {}
                 base_rel  = slide_entry.templateFile.removeprefix("slides/")
-                base_path = os.path.join(SLIDES_DIR, base_rel)
+                base_path = _resolve_slide_path(base_rel)
                 compose_acessorios(merged, base_path, product_id, values, ctx, img_counter)
             elif dynamic == "investimento":
                 group  = groups_by_index.get(group_idx or 0)

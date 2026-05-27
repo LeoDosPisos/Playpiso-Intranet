@@ -202,12 +202,56 @@ const exportMappings: ExportMappings = {
         columnName: "Tela de sombreamento",
       },
       {
-        fieldId: "altura_sombreamento",
-        columnName: "Altura do sombreamento",
+        fieldId: "cor_tela_sombreamento",
+        columnName: "Cor da tela de sombreamento",
       },
       {
-        fieldId: "comprimento_sombreamento",
-        columnName: "Comprimento do sombreamento",
+        fieldId: "possui_sombreamento_lateral_1",
+        columnName: "Sombreamento — Lateral 1",
+      },
+      {
+        fieldId: "altura_sombreamento_lateral_1",
+        columnName: "Altura sombreamento — Lateral 1",
+      },
+      {
+        fieldId: "comprimento_sombreamento_lateral_1",
+        columnName: "Comprimento sombreamento — Lateral 1",
+      },
+      {
+        fieldId: "possui_sombreamento_lateral_2",
+        columnName: "Sombreamento — Lateral 2",
+      },
+      {
+        fieldId: "altura_sombreamento_lateral_2",
+        columnName: "Altura sombreamento — Lateral 2",
+      },
+      {
+        fieldId: "comprimento_sombreamento_lateral_2",
+        columnName: "Comprimento sombreamento — Lateral 2",
+      },
+      {
+        fieldId: "possui_sombreamento_fundo_1",
+        columnName: "Sombreamento — Fundo 1",
+      },
+      {
+        fieldId: "altura_sombreamento_fundo_1",
+        columnName: "Altura sombreamento — Fundo 1",
+      },
+      {
+        fieldId: "comprimento_sombreamento_fundo_1",
+        columnName: "Comprimento sombreamento — Fundo 1",
+      },
+      {
+        fieldId: "possui_sombreamento_fundo_2",
+        columnName: "Sombreamento — Fundo 2",
+      },
+      {
+        fieldId: "altura_sombreamento_fundo_2",
+        columnName: "Altura sombreamento — Fundo 2",
+      },
+      {
+        fieldId: "comprimento_sombreamento_fundo_2",
+        columnName: "Comprimento sombreamento — Fundo 2",
       },
       { fieldId: "incluir_rede_tenis", columnName: "Rede de tênis" },
       { fieldId: "possui_basquete_adulto", columnName: "Basquete adulto" },

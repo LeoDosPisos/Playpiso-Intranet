@@ -530,6 +530,17 @@ const sistemaAlambradoOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
+const corTelaSombreamentoOptions = [
+  {
+    value: "verde",
+    label: "Verde",
+  },
+  {
+    value: "preta",
+    label: "Preta",
+  },
+] as const satisfies readonly FieldOption[];
+
 const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   variante_quadra_tenis: varianteQuadraTenisOptions,
   variante_quadra_poliesportiva: varianteQuadraPoliesportivaOptions,
@@ -567,6 +578,7 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   travamento: travamentoOptions,
   tipo_estrutura_alambrado_padel: tipoEstruturaAlambradoPadelOptions,
   sistema_alambrado: sistemaAlambradoOptions,
+  cor_tela_sombreamento: corTelaSombreamentoOptions,
 };
 
 export { fieldOptionsRegistry };
