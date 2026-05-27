@@ -269,7 +269,7 @@ class TestBuildPresentation:
         slides = [
             _make_slide(
                 "fechamentos_quadra_tenis",
-                "slides/quadra_tenis/fechamentos_base.pptx",
+                "slides/_comum/fechamentos_base.pptx",
                 dynamic="fechamentos",
                 group_index=0,
             )

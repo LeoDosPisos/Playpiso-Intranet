@@ -7,7 +7,7 @@ from pptx import Presentation
 from context_builder import _is_truthy
 from placeholder_engine import _replace_placeholders
 from slide_copier import _copy_slide, _shift_shape_top
-from slide_registry import SLIDES_DIR, _PRODUCT_SLIDES_DIR
+from slide_registry import _PRODUCT_SLIDES_DIR, _resolve_slide_path
 
 logger = logging.getLogger("pptx_generator.merger")
 
@@ -97,7 +97,7 @@ def compose_fechamentos(
         gap = 0 if len(page_sections) == 2 else _SECTION_GAP_EMU
 
         for section_name in page_sections:
-            comp_path = os.path.join(SLIDES_DIR, product_subdir, f"secao_{section_name}.pptx")
+            comp_path = _resolve_slide_path(os.path.join(product_subdir, f"secao_{section_name}.pptx"))
             if not os.path.exists(comp_path):
                 logger.warning("componente não encontrado: %s", comp_path)
                 continue
@@ -145,8 +145,8 @@ def compose_acessorios(
         current_top = _ACESSORIOS_CONTENT_TOP_EMU
 
         for section_name in page_sections:
-            comp_path = os.path.join(
-                SLIDES_DIR, product_subdir, f"secao_acessorio_{section_name}.pptx"
+            comp_path = _resolve_slide_path(
+                os.path.join(product_subdir, f"secao_acessorio_{section_name}.pptx")
             )
             if not os.path.exists(comp_path):
                 logger.warning("componente acessório não encontrado: %s", comp_path)

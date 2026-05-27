@@ -120,7 +120,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 50,
-    templateFile: "slides/beach_tenis/fechamentos_base.pptx",
+    templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
   },
   {
@@ -240,7 +240,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 40,
-    templateFile: "slides/quadra_tenis/fechamentos_base.pptx",
+    templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
   },
   {
@@ -374,7 +374,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 30,
-    templateFile: "slides/quadra_poli/acessorios_base.pptx",
+    templateFile: "slides/_comum/acessorios_base.pptx",
     dynamic: "acessorios",
   },
   {
@@ -391,7 +391,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 40,
-    templateFile: "slides/quadra_poli/fechamentos_base.pptx",
+    templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
   },
   {
@@ -492,7 +492,7 @@ const slideRegistry: SlideRegistry = [
     productId: "padel",
     condition: { field: "possui_acessorio_padel", operator: "truthy" },
     orderWithinProduct: 30,
-    templateFile: "slides/padel/acessorios_base.pptx",
+    templateFile: "slides/_comum/acessorios_base.pptx",
     dynamic: "acessorios",
   },
   {
@@ -509,7 +509,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 40,
-    templateFile: "slides/padel/fechamentos_base.pptx",
+    templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
   },
   {
@@ -547,7 +547,7 @@ const slideRegistry: SlideRegistry = [
     productId: "pickleball",
     condition: { field: "possui_rede_pickleball", operator: "truthy" },
     orderWithinProduct: 30,
-    templateFile: "slides/pickleball/acessorios_base.pptx",
+    templateFile: "slides/_comum/acessorios_base.pptx",
     dynamic: "acessorios",
   },
   {
@@ -564,7 +564,7 @@ const slideRegistry: SlideRegistry = [
       ],
     },
     orderWithinProduct: 40,
-    templateFile: "slides/pickleball/fechamentos_base.pptx",
+    templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
   },
   {

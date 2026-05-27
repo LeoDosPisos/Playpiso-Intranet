@@ -6,6 +6,23 @@ SLIDES_DIR = os.path.join(os.path.dirname(__file__), "slides")
 SLIDE_W    = Inches(13.33)
 SLIDE_H    = Inches(7.5)
 
+# Pasta dos blocos reutilizáveis (fechamentos/acessórios) compartilhados entre esportes.
+_COMMON_SUBDIR = "_comum"
+
+
+def _resolve_slide_path(relative: str) -> str:
+    """Resolve um caminho relativo a ``slides/``.
+
+    Usa o arquivo específico do esporte quando existe; caso contrário cai no
+    bloco compartilhado em ``slides/_comum/`` (mesmo nome de arquivo). Assim um
+    esporte pode sobrescrever um bloco apenas adicionando o .pptx na própria
+    pasta, sem precisar duplicar os blocos comuns.
+    """
+    path = os.path.join(SLIDES_DIR, relative)
+    if os.path.exists(path):
+        return path
+    return os.path.join(SLIDES_DIR, _COMMON_SUBDIR, os.path.basename(relative))
+
 SLIDE_FILE_MAP: dict[str, str] = {
     # ── Global pré-produto ────────────────────────────────────────────────
     "capa":                               "global/capa.pptx",
@@ -22,7 +39,6 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "protecao_eva_beach_tenis":           "beach_tenis/protecao_eva.pptx",
     # fechamentos_beach_tenis: resolvido dinamicamente via compose_fechamentos
     "acessorio_beach_tenis":              "beach_tenis/acessorio.pptx",
-    "investimento_beach_tenis":           "beach_tenis/investimento.pptx",
     # ── quadra_tenis ──────────────────────────────────────────────────────
     "hero_piso_asfaltico_quadra_tenis":   "quadra_tenis/hero_piso_asfaltico.pptx",
     "hero_saibro_quadra_tenis":           "quadra_tenis/hero_saibro.pptx",
@@ -60,23 +76,21 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "specs_padel":             "padel/specs_padel.pptx",
     # acessorios_padel: resolvido dinamicamente via compose_acessorios
     # fechamentos_padel: resolvido dinamicamente via compose_fechamentos
-    "investimento_padel":      "padel/investimento.pptx",
+    # investimento_padel: resolvido dinamicamente via compose_investimento
     # ── pickleball ────────────────────────────────────────────────────────
     "hero_pickleball":         "pickleball/hero.pptx",
     "specs_pickleball":        "pickleball/specs_pickleball.pptx",
     # acessorios_pickleball: resolvido dinamicamente via compose_acessorios
     # fechamentos_pickleball: resolvido dinamicamente via compose_fechamentos
-    "investimento_pickleball": "pickleball/investimento.pptx",
+    # investimento_pickleball: resolvido dinamicamente via compose_investimento
     # ── softplay ──────────────────────────────────────────────────────────
     "hero_softplay":           "softplay/hero.pptx",
     "specs_softplay":          "softplay/specs_softplay.pptx",
     "amostra_softplay":        "softplay/amostra.pptx",
     "cores_softplay":          "softplay/cores.pptx",
     "recomendacao_execucao_softplay": "softplay/recomendacao_execucao_softplay.pptx",
-    "investimento_softplay":   "softplay/investimento.pptx",
+    # investimento_softplay: resolvido dinamicamente via compose_investimento
     # ── Global pós-produto ────────────────────────────────────────────────
-    "condicoes_pagamento_direto_a":       "global/condicoes_pagamento_direto_a.pptx",
-    "condicoes_pagamento_direto_b":       "global/condicoes_pagamento_direto_b.pptx",
     "condicoes_pagamento_playpiso":       "global/condicoes_pagamento_playpiso.pptx",
     "prazos_garantia":                    "global/prazos_garantia.pptx",
     "regras_contratada":                  "global/regras_contratada.pptx",

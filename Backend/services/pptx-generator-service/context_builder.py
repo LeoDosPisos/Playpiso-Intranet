@@ -12,6 +12,15 @@ _ALAMBRADO_LADOS = (
     ('fundo_2', 'fundo 2'),
 )
 
+_SOMBREAMENTO_LADOS = (
+    ('lateral_1', 'lateral 1'),
+    ('lateral_2', 'lateral 2'),
+    ('fundo_1', 'fundo 1'),
+    ('fundo_2', 'fundo 2'),
+)
+
+_COR_SOMBREAMENTO_LABELS = {'verde': 'verde', 'preta': 'preta'}
+
 _ILUMINACAO_FALLBACK_KEYS = (
     'quantidade_projetores', 'potencia_projetores',
     'quantidade_postes_iluminacao', 'altura_postes_iluminacao',
@@ -105,6 +114,38 @@ def _fmt_alambrado_descricao(values: dict) -> str:
     return '—'
 
 
+def _fmt_tela_sombreamento_descricao(values: dict) -> str:
+    """Frase descritiva da tela de sombreamento: cor + lados com dimensões.
+
+    Espelha _fmt_alambrado_descricao. Enumera apenas os lados marcados
+    (possui_sombreamento_<lado>) com comprimento x altura. Sem lados marcados,
+    devolve só a cor; sem tela, devolve '—'.
+    """
+    if not _is_truthy(values.get('possui_tela_sombreamento')):
+        return '—'
+
+    cor_raw = str(values.get('cor_tela_sombreamento') or '').lower()
+    cor = _COR_SOMBREAMENTO_LABELS.get(cor_raw, cor_raw)
+    cor_txt = f' na cor {cor}' if cor else ''
+    base = f'Tela de sombreamento (sombrite 80%){cor_txt}'
+
+    partes = []
+    for key, label in _SOMBREAMENTO_LADOS:
+        if not _is_truthy(values.get(f'possui_sombreamento_{key}')):
+            continue
+        comprimento = values.get(f'comprimento_sombreamento_{key}')
+        altura = values.get(f'altura_sombreamento_{key}')
+        partes.append(f'{label} ({_fmt_dimension(comprimento)} x {_fmt_dimension(altura)})')
+
+    if not partes:
+        return f'{base}.'
+    if len(partes) == 1:
+        locais = partes[0]
+    else:
+        locais = f"{', '.join(partes[:-1])} e {partes[-1]}"
+    return f'{base}, instalada em {locais}.'
+
+
 def _fmt_travamento(value) -> str:
     if isinstance(value, list):
         items = value
@@ -186,6 +227,11 @@ def _build_group_context(group) -> dict:
     ctx['travamento_descricao'] = _fmt_travamento(values.get('travamento'))
     ctx['alambrado_descricao'] = _fmt_alambrado_descricao(values)
     ctx['descricao_alambrado'] = ctx['alambrado_descricao']
+
+    ctx['descricao_tela_sombreamento'] = _fmt_tela_sombreamento_descricao(values)
+    ctx['tela_sombreamento_descricao'] = ctx['descricao_tela_sombreamento']
+    _cor_somb = str(values.get('cor_tela_sombreamento') or '').lower()
+    ctx['cor_tela_sombreamento'] = _COR_SOMBREAMENTO_LABELS.get(_cor_somb, _cor_somb) or '—'
 
     ctx['quantity']       = _fmt_numero(group.quantity)
     ctx['area_total_fmt'] = _fmt_numero(values.get('area_total'))
