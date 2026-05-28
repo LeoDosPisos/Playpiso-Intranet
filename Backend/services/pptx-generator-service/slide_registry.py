@@ -51,6 +51,7 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "cores_piso_asfaltico":               "quadra_tenis/cores_piso_asfaltico.pptx",
     "detalhe_construtivo_sem_playcushion":"quadra_tenis/detalhe_construtivo_sem_playcushion.pptx",
     "detalhe_construtivo_com_playcushion":"quadra_tenis/detalhe_construtivo.pptx",
+    "detalhe_construtivo_saibro":         "quadra_tenis/detalhe_construtivo_saibro.pptx",
     "detalhe_construtivo_grama_natural":  "quadra_tenis/detalhe_construtivo_grama_natural.pptx",
     "investimento_piso_asfaltico_quadra_tenis":  "quadra_tenis/investimento_piso_asfaltico.pptx",
     "investimento_saibro_quadra_tenis":          "quadra_tenis/investimento_saibro.pptx",

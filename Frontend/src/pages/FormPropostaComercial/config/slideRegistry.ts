@@ -219,6 +219,15 @@ const slideRegistry: SlideRegistry = [
   },
   {
     category: "variant",
+    slideId: "detalhe_construtivo_saibro",
+    label: "Detalhe construtivo — Saibro",
+    productId: "quadra_tenis",
+    variantIds: ["saibro"],
+    orderWithinProduct: 60,
+    templateFile: "slides/quadra_tenis/detalhe_construtivo_saibro.pptx",
+  },
+  {
+    category: "variant",
     slideId: "detalhe_construtivo_grama_natural",
     label: "Detalhe construtivo — Grama Natural",
     productId: "quadra_tenis",
