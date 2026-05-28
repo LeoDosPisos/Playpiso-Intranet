@@ -74,7 +74,7 @@ def alambrado_item(
                 text=(
                     "Alambrado – Sistema {{sistema_alambrado}}, "
                     "tubos galvanizados {{galvanizacao}}, "
-                    "tela revestida em PVC, {{travamento_descricao}}"
+                    "tela revestida em PVC {{cor_tela_malha}}, {{travamento_descricao}}"
                 ),
             ),
         ],

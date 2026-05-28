@@ -9,6 +9,8 @@ Textos das descrições são literais dos templates atuais (slides/quadra_tenis/
 investimento_*.pptx) com placeholders {{ key }} mantidos para interpolação
 via ctx no momento de renderizar.
 """
+from pptx.dml.color import RGBColor
+
 from context_builder import _is_truthy
 
 from ..catalog import InvestItem, TextRun
@@ -19,18 +21,19 @@ _ACESSORIO_TENIS_DETALHE = (
     "Postes galvanizados a fogo, catraca, cabo tensor, faixa central e rede"
 )
 
+# Vermelho do selo CBT na descrição do piso de quadra de tênis (parágrafo separado).
+_VERMELHO = RGBColor(0xFF, 0x00, 0x00)
+_PISO_OFICIAL_CBT_TENIS = "Piso oficial da CBT – Confederação Brasileira de Tênis"
+
 
 ITEMS: list[InvestItem] = [
     # ── Piso por variante ────────────────────────────────────────────────────
     InvestItem(
         id="piso_asfaltico",
         descricao_runs=[
-            TextRun(
-                text=(
-                    "Piso – Quadra de Tênis – Base Asfáltica Playpiso "
-                    "Piso oficial da CBT – Confederação Brasileira de Tênis"
-                ),
-            ),
+            TextRun(text="Piso – Quadra de Tênis – Base Asfáltica Playpiso"),
+            # "\n" inicia novo parágrafo (investimento/builder.py:266); cor preservada.
+            TextRun(text=f"\n{_PISO_OFICIAL_CBT_TENIS}", color=_VERMELHO),
         ],
         unidade="m²",
         qtde_resolver=_common._area_total,
@@ -39,12 +42,8 @@ ITEMS: list[InvestItem] = [
     InvestItem(
         id="piso_saibro",
         descricao_runs=[
-            TextRun(
-                text=(
-                    "Piso – Quadra de Tênis Saibro "
-                    "Piso oficial da CBT – Confederação Brasileira de Tênis"
-                ),
-            ),
+            TextRun(text="Piso – Quadra de Tênis Saibro"),
+            TextRun(text=f"\n{_PISO_OFICIAL_CBT_TENIS}", color=_VERMELHO),
         ],
         unidade="m²",
         qtde_resolver=_common._area_total,

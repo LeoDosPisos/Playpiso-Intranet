@@ -429,6 +429,17 @@ const tipoRedePickleballOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
+const tipoAcessorioBeachTenisOptions = [
+  {
+    value: "sem_regulagem",
+    label: "Sem regulagem",
+  },
+  {
+    value: "com_regulagem",
+    label: "Com regulagem",
+  },
+] as const satisfies readonly FieldOption[];
+
 const tipoColigacaoOptions = [
   {
     value: "sem_coligacao",
@@ -541,6 +552,44 @@ const corTelaSombreamentoOptions = [
   },
 ] as const satisfies readonly FieldOption[];
 
+const corAlambradoOptions = [
+  {
+    value: "galvanizado",
+    label: "Galvanizado",
+  },
+  {
+    value: "branco",
+    label: "Branco",
+  },
+  {
+    value: "preto",
+    label: "Preto",
+  },
+  {
+    value: "verde",
+    label: "Verde",
+  },
+] as const satisfies readonly FieldOption[];
+
+const corCruzetasOptions = [
+  {
+    value: "verde",
+    label: "Verde",
+  },
+  {
+    value: "branca",
+    label: "Branca",
+  },
+  {
+    value: "preta",
+    label: "Preta",
+  },
+  {
+    value: "galvanizada",
+    label: "Galvanizada",
+  },
+] as const satisfies readonly FieldOption[];
+
 const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   variante_quadra_tenis: varianteQuadraTenisOptions,
   variante_quadra_poliesportiva: varianteQuadraPoliesportivaOptions,
@@ -572,6 +621,7 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   estrutura_basquete: estruturaBasqueteOptions,
   tipo_futsal: tipoFutsalOptions,
   tipo_rede_pickleball: tipoRedePickleballOptions,
+  tipo_acessorio_beach_tenis: tipoAcessorioBeachTenisOptions,
   tipo_coligacao: tipoColigacaoOptions,
   potencia_projetores: potenciaProjetoresOptions,
   galvanizacao: galvanizacaoOptions,
@@ -579,6 +629,8 @@ const fieldOptionsRegistry: Record<string, readonly FieldOption[]> = {
   tipo_estrutura_alambrado_padel: tipoEstruturaAlambradoPadelOptions,
   sistema_alambrado: sistemaAlambradoOptions,
   cor_tela_sombreamento: corTelaSombreamentoOptions,
+  cor_alambrado: corAlambradoOptions,
+  cor_cruzetas: corCruzetasOptions,
 };
 
 export { fieldOptionsRegistry };

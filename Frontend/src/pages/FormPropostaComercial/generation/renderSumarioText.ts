@@ -18,6 +18,7 @@ export function renderSumarioText(
   return template
     .replace(/\{quantity\}/g, String(quantity))
     .replace(/\{\?(\w+):(.*?)\}/g, (_, fieldId, text) => (values[fieldId] ? text : ''))
+    .replace(/\(s\)/g, quantity === 1 ? '' : 's')
     .replace(/\{(\w+)\}/g, (_, fieldId) => {
       const raw = String(values[fieldId] ?? '')
       return DISPLAY_LABELS[raw] ?? raw

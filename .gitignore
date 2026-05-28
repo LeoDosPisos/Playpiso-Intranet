@@ -17,3 +17,6 @@ __pycache__/
 # .NET build outputs
 **/bin/
 **/obj/
+# Slides de "projetos realizados" — assets pesados (alguns >100MB).
+# Gerenciados fora do git (mantidos localmente / sincronizados por outro canal).
+Backend/services/pptx-generator-service/slides/*/projetos/

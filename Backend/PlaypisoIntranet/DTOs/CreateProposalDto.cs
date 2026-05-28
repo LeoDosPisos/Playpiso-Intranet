@@ -16,8 +16,8 @@ public record CreateProposalDto(
 
     [Required] string EnderecoCliente,
     [Required] string LocalObra,
-    [Required] string Cidade,
-    [Required] string Estado,
+    string? Cidade,
+    string? Estado,
     [Required] string TipoProjeto,
 
     IEnumerable<CreateProductGroupDto> ProductGroups
@@ -46,6 +46,7 @@ public class CreateProductGroupDto
     public string? PotenciaProjetores { get; init; }
     public string? EspecificarPotenciaProjetores { get; init; }
     public int? QuantidadeCruzetas { get; init; }
+    public string? CorCruzetas { get; init; }
     public string? ResponsavelLigacaoEletrica { get; init; }
     public string? TipoColigacao { get; init; }
 

@@ -124,12 +124,32 @@ const slideRegistry: SlideRegistry = [
     dynamic: "fechamentos",
   },
   {
-    category: "product",
-    slideId: "acessorio_beach_tenis",
-    label: "Acessório",
+    category: "conditional",
+    slideId: "acessorio_beach_tenis_sem_regulagem",
+    label: "Acessório — sem regulagem",
     productId: "beach_tenis",
+    condition: {
+      all: [
+        { field: "possui_acessorio_beach_tenis", operator: "equals", value: true },
+        { field: "tipo_acessorio_beach_tenis", operator: "equals", value: "sem_regulagem" },
+      ],
+    },
     orderWithinProduct: 60,
-    templateFile: "slides/beach_tenis/acessorio.pptx",
+    templateFile: "slides/beach_tenis/acessorio_sem_regulagem.pptx",
+  },
+  {
+    category: "conditional",
+    slideId: "acessorio_beach_tenis_com_regulagem",
+    label: "Acessório — com regulagem",
+    productId: "beach_tenis",
+    condition: {
+      all: [
+        { field: "possui_acessorio_beach_tenis", operator: "equals", value: true },
+        { field: "tipo_acessorio_beach_tenis", operator: "equals", value: "com_regulagem" },
+      ],
+    },
+    orderWithinProduct: 60,
+    templateFile: "slides/beach_tenis/acessorio_com_regulagem.pptx",
   },
   {
     category: "product",
@@ -393,6 +413,15 @@ const slideRegistry: SlideRegistry = [
     orderWithinProduct: 40,
     templateFile: "slides/_comum/fechamentos_base.pptx",
     dynamic: "fechamentos",
+  },
+  {
+    category: "variant",
+    slideId: "detalhe_construtivo_piso_asfaltico_quadra_poliesportiva",
+    label: "Detalhe construtivo — Piso Asfáltico",
+    productId: "quadra_poliesportiva",
+    variantIds: ["piso_asfaltico"],
+    orderWithinProduct: 45,
+    templateFile: "slides/quadra_poli/detalhe_construtivo_piso_asfaltico.pptx",
   },
   {
     category: "variant",

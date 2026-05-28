@@ -365,6 +365,7 @@ class TestPlaceholdersDescricao:
             "comprimento_alambrado_laterais": 30.0,
             "comprimento_alambrado_fundos": 18.0,
             "galvanizacao": "fogo",
+            "cor_tela_malha_alambrado": "verde",
             "travamento": ["travamento_superior", "travamento_inferior"],
             "quantidade_projetores": 8,
             "potencia_projetores": 200,
@@ -388,7 +389,7 @@ class TestPlaceholdersDescricao:
         alambrado = next(t for t in textos if t.startswith("Alambrado"))
         assert "Sistema Gaiola" in alambrado
         assert "tubos galvanizados a fogo" in alambrado
-        assert "tela revestida em PVC" in alambrado
+        assert "tela revestida em PVC verde" in alambrado
         # travamento_descricao deve estar resolvido
         assert "travamento" in alambrado.lower()
         # nenhum placeholder remanescente
@@ -531,6 +532,35 @@ class TestQuadraTenisRenderizacao:
         table = _find_table(prs.slides[0])
         # piso é row 1; sua unidade está em col 2 e deve ser "M²" (literal do template antigo)
         assert table.cell(1, 2).text_frame.text == "M²"
+
+    def test_piso_asfaltico_cbt_em_paragrafo_separado_em_vermelho(self):
+        # "Piso oficial da CBT..." em parágrafo [1] da descrição do piso, em #ff0000.
+        prs = _open(_build_quadra_tenis_pptx("piso_asfaltico"))
+        table = _find_table(prs.slides[0])
+        paragraphs = table.cell(1, 0).text_frame.paragraphs
+        assert len(paragraphs) >= 2
+        assert "Base Asfáltica Playpiso" in paragraphs[0].text
+        assert paragraphs[1].text == "Piso oficial da CBT – Confederação Brasileira de Tênis"
+        run = paragraphs[1].runs[0]
+        assert run.font.color.rgb == RGBColor(0xFF, 0x00, 0x00)
+
+    def test_piso_saibro_cbt_em_paragrafo_separado_em_vermelho(self):
+        prs = _open(_build_quadra_tenis_pptx("saibro"))
+        table = _find_table(prs.slides[0])
+        paragraphs = table.cell(1, 0).text_frame.paragraphs
+        assert len(paragraphs) >= 2
+        assert "Saibro" in paragraphs[0].text
+        assert paragraphs[1].text == "Piso oficial da CBT – Confederação Brasileira de Tênis"
+        run = paragraphs[1].runs[0]
+        assert run.font.color.rgb == RGBColor(0xFF, 0x00, 0x00)
+
+    def test_piso_grama_natural_sem_selo_cbt(self):
+        # Grama natural não tem "Piso oficial..." — descrição em parágrafo único.
+        prs = _open(_build_quadra_tenis_pptx("grama_natural"))
+        table = _find_table(prs.slides[0])
+        paragraphs = table.cell(1, 0).text_frame.paragraphs
+        joined = "\n".join(p.text for p in paragraphs)
+        assert "Piso oficial da CBT" not in joined
 
     def test_saibro_unidade_acessorio_eh_conj_abreviado(self):
         values = {**QUADRA_TENIS_VALUES, "possui_playcushion": False}
@@ -782,6 +812,36 @@ class TestBeachTenisRenderizacao:
         assert "Beach Tennis" in desc
         assert "drenagem" in desc
         assert "areia de quartzo" in desc
+
+    def test_piso_areia_rio_quando_tipo_areia_rio(self):
+        # tipo_areia="rio" → "areia de rio Lavada"; sem "areia de quartzo".
+        values = {**BEACH_TENIS_VALUES, "tipo_areia": "rio"}
+        prs = _open(_build_beach_tenis_pptx(values=values))
+        table = _find_table(prs.slides[0])
+        primeiro = table.cell(1, 0).text_frame.paragraphs[0].text
+        assert "areia de rio Lavada" in primeiro
+        assert "areia de quartzo" not in primeiro
+
+    def test_piso_areia_quartzo_quando_tipo_areia_quartzo(self):
+        # tipo_areia="quartzo" → "areia de quartzo especial tratada"; sem "areia de rio".
+        values = {**BEACH_TENIS_VALUES, "tipo_areia": "quartzo"}
+        prs = _open(_build_beach_tenis_pptx(values=values))
+        table = _find_table(prs.slides[0])
+        primeiro = table.cell(1, 0).text_frame.paragraphs[0].text
+        assert "areia de quartzo especial tratada" in primeiro
+        assert "areia de rio" not in primeiro
+
+    def test_piso_cbt_em_paragrafo_separado_em_vermelho(self):
+        # "Piso oficial da CBT..." em parágrafo [1] em vermelho #ff0000, qualquer tipo_areia.
+        values = {**BEACH_TENIS_VALUES, "tipo_areia": "quartzo"}
+        prs = _open(_build_beach_tenis_pptx(values=values))
+        table = _find_table(prs.slides[0])
+        paragraphs = table.cell(1, 0).text_frame.paragraphs
+        assert len(paragraphs) >= 2
+        assert "Piso oficial da CBT" in paragraphs[1].text
+        assert "Confederação Brasileira de Tênis e Beach Tennis" in paragraphs[1].text
+        run = paragraphs[1].runs[0]
+        assert run.font.color.rgb == RGBColor(0xFF, 0x00, 0x00)
 
     def test_iluminacao_sem_prefixo_iluminacao(self):
         # No template antigo o item de iluminação NÃO começa com "Iluminação – "

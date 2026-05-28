@@ -145,8 +145,8 @@ public class ProposalsController(
         EmailCliente = dto.EmailCliente,
         EnderecoCliente = dto.EnderecoCliente,
         LocalObra = dto.LocalObra,
-        Cidade = dto.Cidade,
-        Estado = dto.Estado,
+        Cidade = dto.Cidade ?? "",
+        Estado = dto.Estado ?? "",
         TipoProjeto = dto.TipoProjeto,
         ProductGroups = (dto.ProductGroups ?? []).Select((g, i) => new ProposalProductGroup
         {
@@ -168,6 +168,7 @@ public class ProposalsController(
             PotenciaProjetores = g.PotenciaProjetores,
             EspecificarPotenciaProjetores = g.EspecificarPotenciaProjetores,
             QuantidadeCruzetas = g.QuantidadeCruzetas,
+            CorCruzetas = g.CorCruzetas,
             ResponsavelLigacaoEletrica = g.ResponsavelLigacaoEletrica ?? "cliente",
             TipoColigacao = g.TipoColigacao,
             PossuiAlambrado = g.PossuiAlambrado,
@@ -203,7 +204,7 @@ public class ProposalsController(
             g.PossuiIluminacao, g.IluminacaoFixadaAlambrado,
             g.QuantidadePostesIluminacao, g.AlturaPostesIluminacao,
             g.QuantidadeProjetores, g.PotenciaProjetores, g.EspecificarPotenciaProjetores,
-            g.QuantidadeCruzetas, g.ResponsavelLigacaoEletrica, g.TipoColigacao,
+            g.QuantidadeCruzetas, g.CorCruzetas, g.ResponsavelLigacaoEletrica, g.TipoColigacao,
             g.PossuiAlambrado, g.Galvanizacao, g.EspecificarGalvanizacao,
             g.PossuiTrelica, g.Travamento, g.QuantidadePortoes, g.AlturaPortoes, g.ComprimentoPortoes, g.PossuiTelaSuperior,
             g.PossuiTelaSombreamento, g.AlturaSombreamento, g.ComprimentoSombreamento,

@@ -113,6 +113,8 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
   possui_eva: { label: 'Proteção EVA', unit: 'bool' },
   tipo_areia: { label: 'Tipo de areia' },
   espessura_areia: { label: 'Espessura da areia', unit: 'cm' },
+  possui_acessorio_beach_tenis: { label: 'Acessório', unit: 'bool' },
+  tipo_acessorio_beach_tenis: { label: 'Regulagem' },
   // Pickleball
   possui_rede_pickleball: { label: 'Rede', unit: 'bool' },
   tipo_rede_pickleball: { label: 'Tipo da rede' },
@@ -157,6 +159,7 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
   tipo_coligacao: { label: 'Tipo de coligação' },
   responsavel_ligacao_eletrica: { label: 'Responsável elétrica' },
   quantidade_cruzetas: { label: 'Cruzetas' },
+  cor_cruzetas: { label: 'Cor das cruzetas' },
   // Outros
   responsavel_material_pedreira: { label: 'Responsável (material/pedreira)' },
 }
@@ -387,8 +390,10 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
       ilumEntries.push({ label: 'Projetores', value: String(g.quantidadeProjetores) })
     if (g.potenciaProjetores)
       ilumEntries.push({ label: 'Potência', value: formatSpecValue(g.potenciaProjetores) })
+    if (g.corCruzetas)
+      ilumEntries.push({ label: 'Cor das cruzetas', value: formatSpecValue(g.corCruzetas) })
     ilumEntries.push(...fromSpecs(['iluminacao_fixada_alambrado', 'especificar_potencia_projetores',
-      'quantidade_cruzetas', 'tipo_coligacao', 'responsavel_ligacao_eletrica']))
+      'quantidade_cruzetas', 'cor_cruzetas', 'tipo_coligacao', 'responsavel_ligacao_eletrica']))
     if (ilumEntries.length) sections.push({ title: 'Iluminação', entries: ilumEntries })
   }
 
@@ -414,6 +419,7 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     'possui_basquete_adulto', 'possui_basquete_juvenil', 'estrutura_basquete_adulto',
     // beach
     'possui_eva', 'tipo_areia', 'espessura_areia',
+    'possui_acessorio_beach_tenis', 'tipo_acessorio_beach_tenis',
   ])
   const extrasUnknown: SpecEntry[] = []
   for (const [key, val] of Object.entries(specsObj)) {

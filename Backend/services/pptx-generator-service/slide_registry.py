@@ -63,6 +63,7 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "specs_assoalho_quadra_poliesportiva":                "quadra_poli/specs_assoalho.pptx",
     "specs_poliuretano_quadra_poliesportiva":             "quadra_poli/specs_poliuretano.pptx",
     "detalhe_construtivo_assoalho_quadra_poliesportiva":  "quadra_poli/detalhe_construtivo_assoalho.pptx",
+    "detalhe_construtivo_piso_asfaltico_quadra_poliesportiva": "quadra_poli/detalhe_construtivo_piso_asfaltico.pptx",
     "detalhe_construtivo_poliuretano_quadra_poliesportiva":   "quadra_poli/detalhe_construtivo_poliuretano.pptx",
     "recomendacao_execucao_poliuretano_quadra_poliesportiva": "quadra_poli/recomendacao_execucao_poliuretano.pptx",
     # acessorios_quadra_poliesportiva: resolvido dinamicamente via compose_acessorios

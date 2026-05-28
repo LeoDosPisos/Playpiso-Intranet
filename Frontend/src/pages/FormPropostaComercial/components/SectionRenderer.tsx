@@ -347,7 +347,9 @@ function SectionRenderer({
   isCollapsible = false,
   onToggle,
 }: SectionRendererProps) {
-  const visibleFields = section.fields.filter((fieldId) => state.visibleFields.has(fieldId))
+  const visibleFields = section.fields.filter(
+    (fieldId) => state.visibleFields.has(fieldId) && !fieldRegistry[fieldId]?.hidden,
+  )
   const contentId = `${section.id}-content`
 
   if (visibleFields.length === 0) {

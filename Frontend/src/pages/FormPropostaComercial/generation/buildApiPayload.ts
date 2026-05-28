@@ -7,8 +7,8 @@ const NORMALIZED_KEYS = new Set([
   'tipo_terreno', 'dificuldade_acesso', 'responsavel_material_pedreira',
   'possui_iluminacao', 'iluminacao_fixada_alambrado', 'quantidade_postes_iluminacao',
   'altura_postes_iluminacao', 'quantidade_projetores', 'potencia_projetores',
-  'especificar_potencia_projetores', 'quantidade_cruzetas', 'responsavel_ligacao_eletrica',
-  'tipo_coligacao',
+  'especificar_potencia_projetores', 'quantidade_cruzetas', 'cor_cruzetas',
+  'responsavel_ligacao_eletrica', 'tipo_coligacao',
   'possui_alambrado',
   'galvanizacao', 'especificar_galvanizacao', 'travamento',
   'quantidade_portoes', 'altura_portoes', 'comprimento_portoes',
@@ -90,6 +90,7 @@ export function buildApiPayload(payload: ProposalBuilderPayload): object {
         potenciaProjetores: str(v.potencia_projetores),
         especificarPotenciaProjetores: str(v.especificar_potencia_projetores),
         quantidadeCruzetas: num(v.quantidade_cruzetas),
+        corCruzetas: str(v.cor_cruzetas),
         responsavelLigacaoEletrica: str(v.responsavel_ligacao_eletrica) ?? 'cliente',
         tipoColigacao: str(v.tipo_coligacao),
 

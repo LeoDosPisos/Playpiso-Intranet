@@ -136,7 +136,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         sections: quadraTenisSections,
         defaultValues: {
           variante_quadra_tenis: "piso_asfaltico",
-          cor_piso_asfaltico: "padrao",
+          cor_piso_asfaltico: "padrao",                                     
           quantidade_postes_iluminacao: 4,
           altura_postes_iluminacao: 8,
           quantidade_projetores: 16,
@@ -144,7 +144,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) de tênis de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta por piso de base asfáltica" +
+          "composta(s) por piso de base asfáltica" +
           "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}" +
           "{?possui_playcushion:, playcushion (opcional)}, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
@@ -162,7 +162,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) de tênis saibro coberta(s) de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta por piso em saibro" +
+          "composta(s) por piso em saibro" +
           "{?possui_alambrado:, alambrado}{?possui_kit_saibro:, acessórios}{?possui_iluminacao:, iluminação}, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
@@ -179,7 +179,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) de tênis em grama natural de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta por piso em grama natural" +
+          "composta(s) por piso em grama natural" +
           "{?possui_alambrado:, alambrado}{?possui_iluminacao:, iluminação}, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
       },
@@ -214,7 +214,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) poliesportiva(s) de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta por piso de base asfáltica" +
+          "composta(s) por piso de base asfáltica" +
           "{?possui_basquete_adulto:, acessório basquete adulto}" +
           "{?possui_basquete_juvenil:, basquete juvenil}" +
           "{?possui_volei:, vôlei}" +
@@ -237,7 +237,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) poliesportiva(s) em assoalho de madeira de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta por piso em madeira {tipo_madeira}" +
+          "composta(s) por piso em madeira {tipo_madeira}" +
           "{?anti_chama:, com tratamento anti-chama}" +
           "{?possui_basquete_adulto:, acessório basquete adulto}" +
           "{?possui_basquete_juvenil:, basquete juvenil}" +
@@ -273,7 +273,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) poliesportiva(s) em poliuretano {tipo_poliuretano} de {area_total}m² ({largura}m x {comprimento}m), " +
-          "aplicado sobre {tipo_terreno}" +
+          "aplicada(s) sobre {tipo_terreno}" +
           "{?anti_chama:, com tratamento anti-chama}" +
           "{?possui_basquete_adulto:, acessório basquete adulto}" +
           "{?possui_basquete_juvenil:, basquete juvenil}" +
@@ -316,7 +316,7 @@ const productCatalog: Record<string, ProductDefinition> = {
         },
         sumarioTemplate:
           "{quantity} quadra(s) de Beach Tennis de {area_total}m² ({largura}m x {comprimento}m), " +
-          "composta pelo sistema de drenagem, mureta e {tipo_areia}, " +
+          "composta(s) pelo sistema de drenagem, mureta e {tipo_areia}, " +
           "{?possui_eva:proteção EVA, }{?possui_alambrado:alambrado, }" +
           "{?possui_iluminacao:iluminação, }acessório, " +
           "com acesso {dificuldade_acesso} executada sobre {tipo_terreno}.",
