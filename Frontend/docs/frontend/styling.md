@@ -14,7 +14,7 @@ The goals of this guide are:
 
 ## Current Style Entry Point
 
-The application entry point is [src/main.tsx](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/vite-project/src/main.tsx:1).
+The application entry point is [src/main.tsx](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/Frontend/src/main.tsx:1).
 
 Global styles should be imported there so the whole app shares the same style foundation.
 
@@ -163,7 +163,7 @@ Purpose:
 
 Examples:
 
-- `src/route/Root.css`
+- `src/pages/Root.css`
 - `src/components/Button/Button.module.css`
 
 Use local CSS when:

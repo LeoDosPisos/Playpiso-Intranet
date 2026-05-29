@@ -1,5 +1,9 @@
 # Roadmap de Slides — pptx-generator-service
 
+> **Fonte de verdade:** `Frontend/src/pages/FormPropostaComercial/config/slideRegistry.ts` + templates `.pptx` em `Backend/services/pptx-generator-service/slides/`.
+> **Arquivos-chave:** `slideRegistry.ts`, `slide_registry.py`, `presentation_builder.py`
+> _Última verificação: 2026-05-29._
+
 Documento de rastreamento para o designer de slides. Lista o que já existe em disco, o que falta criar e como adicionar um novo produto.
 
 > **Como o sistema funciona:** o frontend (`slideRegistry.ts`) define quais slides fazem parte de cada proposta e calcula quais são condicionais. O backend lê o campo `slideIds` da request e monta o `.pptx` copiando um arquivo por slide. Cada `slideId` tem um arquivo `.pptx` correspondente mapeado em `SLIDE_FILE_MAP` (`slide_merger.py`).
@@ -55,7 +59,7 @@ Documento de rastreamento para o designer de slides. Lista o que já existe em d
 | `specs_saibro.pptx` | `specs_saibro` | variante | `saibro` | ✅ pronto |
 | `specs_grama.pptx` | `specs_grama` | variante | `grama` | ❌ falta criar |
 | `playcushion.pptx` | `playcushion_quadra_tenis` | condicional | `possui_playcushion` (só `piso_asfaltico`) | ✅ pronto |
-| `kit_saibro.pptx` | `kit_saibro_quadra_tenis` | condicional | `possui_kit_saibro` (só `saibro`) | ❌ falta criar |
+| `_comum/acessorios_base.pptx` (+ `secao_acessorio_rede_tenis`/`secao_acessorio_kit_saibro`) | `acessorios_quadra_tenis` | dinâmico | `incluir_rede_tenis` OU `possui_kit_saibro` (só `saibro`) | 🔄 componentes a criar |
 | `_comum/fechamentos_base.pptx` (+ `secao_alambrado`/`secao_iluminacao`) | `fechamentos_quadra_tenis` | dinâmico | `possui_alambrado` OU `possui_iluminacao` | ✅ dinâmico |
 | `cores_piso_asfaltico.pptx` | `cores_piso_asfaltico` | variante | `piso_asfaltico` | ✅ pronto |
 | `detalhe_construtivo.pptx` | `detalhe_construtivo_sem_playcushion` | variante | `piso_asfaltico` | ✅ pronto |
@@ -68,7 +72,6 @@ Documento de rastreamento para o designer de slides. Lista o que já existe em d
 
 | Arquivo | slideId sugerido | Tipo | Condição sugerida |
 |---|---|---|---|
-| `acessorio_piso_asfaltico.pptx` | `acessorio_piso_asfaltico_quadra_tenis` | condicional | a definir |
 | `acessorio_saibro.pptx` | `acessorio_saibro_quadra_tenis` | condicional | a definir |
 | `detalhe_construtivo_saibro.pptx` | `detalhe_construtivo_saibro_quadra_tenis` | variante | `saibro` |
 
@@ -179,7 +182,7 @@ Slides sugeridos com base no padrão beach_tenis e quadra_tenis:
 
 1. **Criar a pasta** em `pptx-generator-service/slides/{productId}/` e adicionar os arquivos `.pptx`
 
-2. **Adicionar entradas no `slideRegistry.ts`** (`Frontend/src/route/FormPropostaComercial/config/slideRegistry.ts`) com `templateFile` apontando para os novos arquivos
+2. **Adicionar entradas no `slideRegistry.ts`** (`Frontend/src/pages/FormPropostaComercial/config/slideRegistry.ts`) com `templateFile` apontando para os novos arquivos
 
 3. **Adicionar entradas no `SLIDE_FILE_MAP`** em `pptx-generator-service/slide_merger.py`:
    ```python

@@ -24,10 +24,10 @@ Se o modo nao for informado, comece por `documentation_only`.
 
 Antes de propor ou editar qualquer coisa, leia as fontes nesta ordem:
 
-1. `vite-project/src/route/FormPropostaComercial/types/proposalForm.ts`
-2. Todos os arquivos em `vite-project/src/route/FormPropostaComercial/config`
+1. `Frontend/src/pages/FormPropostaComercial/types/proposalForm.ts`
+2. Todos os arquivos em `Frontend/src/pages/FormPropostaComercial/config`
 3. Documentacao existente do produto `quadra_tenis`
-4. `CONTEXT/estrutura_formulario_comercial_orcamento.md`
+4. `docs/formulario_proposta_comercial/estrutura_formulario_comercial_orcamento.md`
 5. Input de negocio informado pelo usuario na conversa
 
 Regra de prioridade:
@@ -158,19 +158,19 @@ especificacoes_softplay
 
 Arquivos principais:
 
-1. `vite-project/src/route/FormPropostaComercial/config/fieldRegistry.ts`
-2. `vite-project/src/route/FormPropostaComercial/config/fieldOptionsRegistry.ts`
-3. `vite-project/src/route/FormPropostaComercial/config/sectionRegistry.ts`
-4. `vite-project/src/route/FormPropostaComercial/config/productCatalog.ts`
-5. `vite-project/src/route/FormPropostaComercial/config/conditionalRules.ts`
-6. `vite-project/src/route/FormPropostaComercial/config/exportMappings.ts`
+1. `Frontend/src/pages/FormPropostaComercial/config/fieldRegistry.ts`
+2. `Frontend/src/pages/FormPropostaComercial/config/fieldOptionsRegistry.ts`
+3. `Frontend/src/pages/FormPropostaComercial/config/sectionRegistry.ts`
+4. `Frontend/src/pages/FormPropostaComercial/config/productCatalog.ts`
+5. `Frontend/src/pages/FormPropostaComercial/config/conditionalRules.ts`
+6. `Frontend/src/pages/FormPropostaComercial/config/exportMappings.ts`
 
 Arquivos de suporte, somente se necessario:
 
 ```txt
-vite-project/src/route/FormPropostaComercial/formEngine.ts
-vite-project/src/route/FormPropostaComercial/components/FormRenderer.tsx
-vite-project/src/route/FormPropostaComercial/types/proposalForm.ts
+Frontend/src/pages/FormPropostaComercial/formEngine.ts
+Frontend/src/pages/FormPropostaComercial/components/FormRenderer.tsx
+Frontend/src/pages/FormPropostaComercial/types/proposalForm.ts
 ```
 
 Nao altere componentes React se a tarefa puder ser resolvida apenas por registries/config.

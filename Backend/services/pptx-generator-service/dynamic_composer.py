@@ -32,6 +32,14 @@ def _get_active_acessorios_sections(product_id: str, values: dict) -> list[str]:
     if product_id == "pickleball":
         return ["pickleball"] if _is_truthy(values.get("possui_rede_pickleball")) else []
 
+    if product_id == "quadra_tenis":
+        sections: list[str] = []
+        if _is_truthy(values.get("incluir_rede_tenis")):
+            sections.append("rede_tenis")
+        if _is_truthy(values.get("possui_kit_saibro")):
+            sections.append("kit_saibro")
+        return sections
+
     sections: list[str] = []
 
     if _is_truthy(values.get("possui_basquete_adulto")):

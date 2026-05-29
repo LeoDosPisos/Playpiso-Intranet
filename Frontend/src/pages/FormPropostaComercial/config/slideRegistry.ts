@@ -247,13 +247,18 @@ const slideRegistry: SlideRegistry = [
   },
   {
     category: "conditional",
-    slideId: "kit_saibro_quadra_tenis",
-    label: "Kit Saibro",
+    slideId: "acessorios_quadra_tenis",
+    label: "Acessórios",
     productId: "quadra_tenis",
-    variantIds: ["saibro"],
-    condition: { field: "possui_kit_saibro", operator: "truthy" },
+    condition: {
+      any: [
+        { field: "incluir_rede_tenis", operator: "truthy" },
+        { field: "possui_kit_saibro", operator: "truthy" },
+      ],
+    },
     orderWithinProduct: 35,
-    templateFile: "slides/quadra_tenis/kit_saibro.pptx",
+    templateFile: "slides/quadra_tenis/acessorios_base.pptx",
+    dynamic: "acessorios",
   },
   {
     category: "conditional",

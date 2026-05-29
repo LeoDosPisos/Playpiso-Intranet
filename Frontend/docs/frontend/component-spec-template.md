@@ -186,5 +186,5 @@ Add any component-specific criteria below:
 
 ## Related Documentation
 
-- [Component Checklist](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/vite-project/docs/frontend/component-checklist.md:1)
-- [Styling Guide](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/vite-project/docs/frontend/styling.md:1)
+- [Component Checklist](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/Frontend/docs/frontend/component-checklist.md:1)
+- [Styling Guide](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/Frontend/docs/frontend/styling.md:1)

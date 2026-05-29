@@ -483,11 +483,13 @@ function FormRenderer() {
 
       <div className={styles.actionBar}>
         <button
+          aria-busy={isGenerating}
+          aria-label={isGenerating ? 'Gerando proposta' : undefined}
           data-testid="btn-gerar-proposta"
           disabled={isGenerating || (enforcePptxAvailability && availabilityStatus !== 'ready')}
           type="submit"
         >
-          {isGenerating ? 'Gerando...' : 'Gerar proposta'}
+          {isGenerating ? <span aria-hidden="true" className={styles.spinner} /> : 'Gerar proposta'}
         </button>
       </div>
 

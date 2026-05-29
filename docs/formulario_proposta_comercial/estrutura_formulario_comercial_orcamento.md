@@ -1,11 +1,15 @@
 # Estrutura do Formulário Comercial e Orçamento
 
+> **Fonte de verdade:** `Frontend/src/pages/FormPropostaComercial/config/*.ts` (a doc descreve; o código decide).
+> **Arquivos-chave:** `fieldRegistry.ts`, `fieldOptionsRegistry.ts`, `sectionRegistry.ts`, `productCatalog.ts`, `exportMappings.ts`
+> _Última verificação: 2026-05-29._
+
 Este documento descreve a estrutura consolidada do formulário `FormPropostaComercial`, responsável por coletar dados comerciais, parametrizar produtos selecionados e preparar as informações necessárias para geração de proposta comercial em `.pptx` e arquivo de orçamento em `.xlsx`.
 
 A fonte de verdade deste documento é o conjunto de registries declarativos em:
 
 ```txt
-vite-project/src/route/FormPropostaComercial/config
+Frontend/src/pages/FormPropostaComercial/config
 ```
 
 Quando houver divergência entre anotações antigas e os registries, prevalece o que estiver em `config`.
