@@ -71,6 +71,7 @@ public record ProductGroupResponse(
     string? PotenciaProjetores,
     string? EspecificarPotenciaProjetores,
     int? QuantidadeCruzetas,
+    string? CorCruzetas,
     string? ResponsavelLigacaoEletrica,
     string? TipoColigacao,
     bool PossuiAlambrado,

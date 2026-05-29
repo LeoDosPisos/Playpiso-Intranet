@@ -8,7 +8,7 @@ from pptx.dml.color import RGBColor
 from pptx.util import Inches, Pt
 
 from context_builder import _build_base_context, _build_group_context, _build_context, _is_truthy
-from dynamic_composer import compose_fechamentos, compose_acessorios
+from dynamic_composer import compose_fechamentos, compose_acessorios, compose_projetos
 from investimento import compose_investimento
 from placeholder_engine import _replace_placeholders
 from slide_copier import _copy_slide
@@ -128,6 +128,13 @@ def build_presentation(req) -> bytes:
                 base_rel  = slide_entry.templateFile.removeprefix("slides/")
                 base_path = _resolve_slide_path(base_rel)
                 compose_acessorios(merged, base_path, product_id, values, ctx, img_counter)
+            elif dynamic == "projetos":
+                # productId/variantId vêm do grupo apontado por groupIndex —
+                # mais robusto que parsear o slideId.
+                group = groups_by_index.get(group_idx or 0)
+                if group is None:
+                    continue
+                compose_projetos(merged, group.productId, group.variantId, ctx, img_counter)
             elif dynamic == "investimento":
                 group  = groups_by_index.get(group_idx or 0)
                 if group is None:

@@ -117,6 +117,7 @@ const exportMappings: ExportMappings = {
         columnName: "Especificar potência dos projetores",
       },
       { fieldId: "quantidade_cruzetas", columnName: "Quantidade de cruzetas" },
+      { fieldId: "cor_cruzetas", columnName: "Cor das cruzetas" },
       {
         fieldId: "responsavel_ligacao_eletrica",
         columnName: "Responsável pela ligação elétrica",
@@ -124,6 +125,12 @@ const exportMappings: ExportMappings = {
       { fieldId: "tipo_coligacao", columnName: "Tipo de coligação" },
       { fieldId: "possui_alambrado", columnName: "Alambrado" },
       { fieldId: "sistema_alambrado", columnName: "Sistema do alambrado" },
+      { fieldId: "cor_tela_alambrado", columnName: "Cor da tela do alambrado" },
+      { fieldId: "cor_tubo_alambrado", columnName: "Cor do tubo do alambrado" },
+      {
+        fieldId: "cor_tela_malha_alambrado",
+        columnName: "Cor da tela malha do alambrado",
+      },
       {
         fieldId: "comprimento_alambrado_laterais",
         columnName: "Comprimento — Laterais",

@@ -11,7 +11,14 @@ _PLACEHOLDER_RE = re.compile(r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}")
 
 
 def _replace_placeholders(slide, context: dict) -> None:
-    for shape in slide.shapes:
+    _process_shapes(slide.shapes, context)
+
+
+def _process_shapes(shapes, context: dict) -> None:
+    for shape in shapes:
+        if shape.shape_type == 6:  # GROUP — recurse; placeholders dentro do grupo (ex.: padel)
+            _process_shapes(shape.shapes, context)
+            continue
         if shape.has_text_frame:
             for paragraph in shape.text_frame.paragraphs:
                 _replace_in_paragraph(paragraph, context)

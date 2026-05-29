@@ -50,7 +50,8 @@ SLIDE_FILE_MAP: dict[str, str] = {
     # fechamentos_quadra_tenis: resolvido dinamicamente via compose_fechamentos
     "cores_piso_asfaltico":               "quadra_tenis/cores_piso_asfaltico.pptx",
     "detalhe_construtivo_sem_playcushion":"quadra_tenis/detalhe_construtivo_sem_playcushion.pptx",
-    "detalhe_construtivo_com_playcushion":"quadra_tenis/detalhe_construtivo.pptx",
+    "detalhe_construtivo_com_playcushion":"quadra_tenis/detalhe_construtivo_com_playcushion.pptx",
+    "detalhe_construtivo_saibro":         "quadra_tenis/detalhe_construtivo_saibro.pptx",
     "detalhe_construtivo_grama_natural":  "quadra_tenis/detalhe_construtivo_grama_natural.pptx",
     "investimento_piso_asfaltico_quadra_tenis":  "quadra_tenis/investimento_piso_asfaltico.pptx",
     "investimento_saibro_quadra_tenis":          "quadra_tenis/investimento_saibro.pptx",
@@ -63,6 +64,7 @@ SLIDE_FILE_MAP: dict[str, str] = {
     "specs_assoalho_quadra_poliesportiva":                "quadra_poli/specs_assoalho.pptx",
     "specs_poliuretano_quadra_poliesportiva":             "quadra_poli/specs_poliuretano.pptx",
     "detalhe_construtivo_assoalho_quadra_poliesportiva":  "quadra_poli/detalhe_construtivo_assoalho.pptx",
+    "detalhe_construtivo_piso_asfaltico_quadra_poliesportiva": "quadra_poli/detalhe_construtivo_piso_asfaltico.pptx",
     "detalhe_construtivo_poliuretano_quadra_poliesportiva":   "quadra_poli/detalhe_construtivo_poliuretano.pptx",
     "recomendacao_execucao_poliuretano_quadra_poliesportiva": "quadra_poli/recomendacao_execucao_poliuretano.pptx",
     # acessorios_quadra_poliesportiva: resolvido dinamicamente via compose_acessorios

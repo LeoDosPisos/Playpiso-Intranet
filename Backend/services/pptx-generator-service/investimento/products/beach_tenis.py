@@ -6,10 +6,16 @@ Textos literais dos templates atuais (slides/beach_tenis/investimento.pptx).
 Observação: o item de iluminação no template antigo NÃO começa com 'Iluminação –'
 (começa direto com '{{quantidade_projetores}} projetores ...'). Mantido literal.
 """
+from pptx.dml.color import RGBColor
+
 from context_builder import _is_truthy
 
 from ..catalog import InvestItem, TextRun
 from . import _common
+
+
+# Vermelho do "Piso oficial da CBT..." na descrição do piso de beach tênis.
+_VERMELHO = RGBColor(0xFF, 0x00, 0x00)
 
 
 def _qtde_eva_perimetro(values: dict) -> float:
@@ -22,19 +28,39 @@ def _qtde_eva_perimetro(values: dict) -> float:
         return 0.0
 
 
+def _descricao_piso_beach_tenis(values: dict) -> list[TextRun]:
+    """Descrição do piso de beach tênis (slide investimento).
+
+    A linha da areia varia conforme `tipo_areia`:
+      - 'rio'     → "areia de rio Lavada"
+      - 'quartzo' → "areia de quartzo especial tratada"
+      - outro/ausente → texto antigo (ambas variantes ligadas por "ou"), preservando
+        o comportamento atual para entradas inesperadas.
+
+    "Piso oficial da CBT..." sai sempre em parágrafo separado e em vermelho (#ff0000).
+    """
+    tipo = str(values.get("tipo_areia") or "").lower()
+    if tipo == "rio":
+        meio = "areia de rio Lavada"
+    elif tipo == "quartzo":
+        meio = "areia de quartzo especial tratada"
+    else:
+        meio = "areia de quartzo especial tratada ou areia de rio Lavada"
+    primeiro = f"Quadra de Beach Tennis – Sistema de drenagem, mureta e {meio}"
+    segundo = "Piso oficial da CBT – Confederação Brasileira de Tênis e Beach Tennis"
+    # O "\n" no início do segundo TextRun faz o builder iniciar um novo parágrafo
+    # (investimento/builder.py:266); a cor vermelha é preservada por _with_default_size.
+    return [
+        TextRun(text=primeiro),
+        TextRun(text=f"\n{segundo}", color=_VERMELHO),
+    ]
+
+
 ITEMS: list[InvestItem] = [
     InvestItem(
         id="piso_beach_tenis",
-        descricao_runs=[
-            TextRun(
-                text=(
-                    "Quadra de Beach Tennis – Sistema de drenagem, mureta e "
-                    "areia de quartzo especial tratada ou areia de rio Lavada "
-                    "Piso oficial da CBT – Confederação Brasileira de Tênis e "
-                    "Beach Tennis"
-                ),
-            ),
-        ],
+        descricao_runs=[],  # gerado dinamicamente — ver _descricao_piso_beach_tenis
+        descricao_resolver=_descricao_piso_beach_tenis,
         unidade="m²",
         qtde_resolver=_common._area_total,
     ),

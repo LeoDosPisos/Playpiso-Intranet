@@ -32,6 +32,8 @@ type FieldDefinition = {
   customFieldId?: string
   rows?: number
   readOnly?: boolean
+  /** Mantém o campo no estado/payload (e auto-preenchimento), mas não o renderiza no formulário. */
+  hidden?: boolean
   xlsxKey?: string
   pptxKey?: string
 }
@@ -230,9 +232,26 @@ type ConditionalSlide = {
   dynamic?: 'fechamentos' | 'acessorios'
 }
 
-type SlideEntry = GlobalSlide | ProductSlide | VariantSlide | ConditionalSlide
+/**
+ * Bloco opcional de "projetos realizados" por (produto, variante), sintetizado em
+ * resolveSlideList (não declarado em slideRegistry). Posicionado entre
+ * consideracoes_gerais e encerramento. O backend procura primeiro
+ * slides/<product>/projetos/<variantId>/*.pptx e, se vazio/ausente, cai para
+ * slides/<product>/projetos/*.pptx (nível produto). Sem nenhum dos dois → omitido.
+ */
+type ProjectsSlide = {
+  category: 'projetos'
+  slideId: string          // "projetos_<productId>__<variantId>"
+  productId: string
+  variantId: string        // string vazia tolerada; backend resolve via groupIndex
+  templateFile: string     // '' — não usado pelo backend
+  dynamic: 'projetos'
+}
 
-type SlideRegistry = readonly SlideEntry[]
+type SlideEntry = GlobalSlide | ProductSlide | VariantSlide | ConditionalSlide | ProjectsSlide
+
+// ProjectsSlide é sintetizado em runtime (resolveSlideList) e não pertence ao registry estático.
+type SlideRegistry = readonly Exclude<SlideEntry, ProjectsSlide>[]
 
 export type {
   ConditionalEffect,
@@ -253,6 +272,7 @@ export type {
   ProductSelectionConfig,
   ProductSlide,
   ProductVariantDefinition,
+  ProjectsSlide,
   ProposalBuilderPayload,
   ProposalBuilderState,
   ProposalProductGroup,

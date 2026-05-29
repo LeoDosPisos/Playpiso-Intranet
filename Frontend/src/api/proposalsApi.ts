@@ -78,6 +78,7 @@ type ProductGroupDetail = {
   potenciaProjetores: string | null
   especificarPotenciaProjetores: string | null
   quantidadeCruzetas: number | null
+  corCruzetas: string | null
   responsavelLigacaoEletrica: string | null
   tipoColigacao: string | null
   possuiAlambrado: boolean

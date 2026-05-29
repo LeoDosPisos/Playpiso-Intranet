@@ -4,6 +4,7 @@ These tests use the real .pptx template files on disk (no mocking).
 Run with: pytest tests/ -v
 """
 from io import BytesIO
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -11,6 +12,9 @@ from pptx import Presentation
 
 from slide_merger import build_presentation
 from context_builder import _build_base_context, _build_group_context
+from placeholder_engine import _replace_placeholders
+
+_SLIDES_DIR = Path(__file__).resolve().parent.parent / "slides"
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -19,6 +23,7 @@ GLOBAL_VALUES = {
     "nome_razao_social": "Condomínio Teste",
     "nome_contato": "João Silva",
     "endereco_cliente": "Rua Teste, 123",
+    "nome_da_obra": "Reforma Quadra Centro",
     "local_obra": "São Paulo, SP",
     "telefone": "(11) 99999-0000",
     "email": "joao@teste.com",
@@ -88,10 +93,14 @@ def _open_pptx(pptx_bytes: bytes) -> Presentation:
 
 
 def _unsubstituted_placeholders(prs: Presentation) -> list[str]:
-    """Return list of text snippets that still contain {{ }}."""
+    """Return list of text snippets that still contain {{ }} (recurse em GROUP shapes)."""
     found = []
-    for slide in prs.slides:
-        for shape in slide.shapes:
+
+    def _scan(shapes):
+        for shape in shapes:
+            if shape.shape_type == 6:  # GROUP
+                _scan(shape.shapes)
+                continue
             if shape.has_text_frame:
                 txt = shape.text_frame.text
                 if "{{" in txt:
@@ -102,6 +111,9 @@ def _unsubstituted_placeholders(prs: Presentation) -> list[str]:
                         txt = cell.text_frame.text
                         if "{{" in txt:
                             found.append(txt.strip()[:80])
+
+    for slide in prs.slides:
+        _scan(slide.shapes)
     return found
 
 
@@ -144,7 +156,86 @@ class TestBuildGroupContext:
     def test_alambrado_gaiola(self):
         group = _make_group("quadra_tenis", QUADRA_TENIS_VALUES)
         ctx = _build_group_context(group)
-        assert "gaiola" in ctx["alambrado_descricao"].lower()
+        assert (
+            "Fundos e laterais com 4,00m de altura de tela em sistema gaiola"
+            in ctx["alambrado_descricao"]
+        )
+
+    def test_alambrado_trapezio(self):
+        values = {
+            **QUADRA_TENIS_VALUES,
+            "sistema_alambrado": "trapezio",
+            "altura_alambrado_fundos": 4.0,
+            "altura_alambrado_laterais": 4.0,
+        }
+        ctx = _build_group_context(_make_group("quadra_tenis", values))
+        assert (
+            "Fundos com 4,00m de altura de tela e laterais de 4,00m"
+            " em sistema trapézio com corrimão de 1,00m de altura"
+            in ctx["alambrado_descricao"]
+        )
+
+    def test_tela_malha_por_produto(self):
+        # Poliesportiva e campo usam 3" fio 12; os demais (e fallback) usam 2" fio 14.
+        # (espaço entre "fio" e o número é NBSP,  )
+        for pid in ("quadra_poliesportiva", "campo"):
+            ctx = _build_group_context(_make_group(pid, QUADRA_TENIS_VALUES))
+            assert ctx["tela_malha"] == "3” x 3” fio 12"
+        for pid in ("quadra_tenis", "pickleball", "beach_tenis", "padel"):
+            ctx = _build_group_context(_make_group(pid, QUADRA_TENIS_VALUES))
+            assert ctx["tela_malha"] == "2” x 2” fio 14"
+
+    def test_altura_postes_iluminacao_fmt(self):
+        # Altura dos postes (slide secao_iluminacao) formatada "X,XXm" a partir do valor do form.
+        ctx = _build_group_context(_make_group("quadra_tenis", {"altura_postes_iluminacao": 8}))
+        assert ctx["altura_postes_iluminacao_fmt"] == "8,00m"
+        ctx = _build_group_context(_make_group("campo", {"altura_postes_iluminacao": 6}))
+        assert ctx["altura_postes_iluminacao_fmt"] == "6,00m"
+        ctx = _build_group_context(_make_group("quadra_tenis", {"altura_postes_iluminacao": 7.5}))
+        assert ctx["altura_postes_iluminacao_fmt"] == "7,50m"   # vírgula, 2 casas
+        ctx = _build_group_context(_make_group("quadra_tenis", {}))
+        assert ctx["altura_postes_iluminacao_fmt"] == "—"        # ausente
+
+    def test_placeholders_dentro_de_group_shape(self):
+        # O slide padel/secao_iluminacao.pptx tem o texto dentro de um GROUP shape;
+        # o motor deve recursar e substituir os placeholders aninhados.
+        ctx = _build_group_context(_make_group(
+            "padel",
+            {"quantidade_postes_iluminacao": 4, "quantidade_projetores": 16, "potencia_projetores": 400},
+            variant_id="grama_sintetica",
+        ))
+        prs = Presentation(str(_SLIDES_DIR / "padel" / "secao_iluminacao.pptx"))
+        for slide in prs.slides:
+            _replace_placeholders(slide, ctx)
+        assert _unsubstituted_placeholders(prs) == []
+
+        def _group_text(shapes):
+            for shp in shapes:
+                if shp.shape_type == 6:
+                    yield from _group_text(shp.shapes)
+                elif shp.has_text_frame:
+                    yield shp.text_frame.text
+
+        joined = "\n".join(t for slide in prs.slides for t in _group_text(slide.shapes))
+        assert "4 postes de iluminação semicirculares" in joined
+
+    def test_alambrado_cores_formatadas(self):
+        values = {
+            **QUADRA_TENIS_VALUES,
+            "cor_tubo_alambrado": "branco",
+            "cor_tela_malha_alambrado": "preto",
+            "cor_tela_alambrado": "verde",
+        }
+        ctx = _build_group_context(_make_group("quadra_tenis", values))
+        assert ctx["cor_tubo"] == "branca"        # "pintados na cor branca" (fem.)
+        assert ctx["cor_tela_malha"] == "preto"   # "PVC preto" (masc.)
+        assert "com tela na cor verde" in ctx["alambrado_descricao"]
+
+    def test_alambrado_cores_fallback(self):
+        ctx = _build_group_context(_make_group("quadra_tenis", QUADRA_TENIS_VALUES))
+        assert ctx["cor_tubo"] == "—"
+        assert ctx["cor_tela_malha"] == "—"
+        assert "com tela na cor" not in ctx["alambrado_descricao"]
 
     def test_galvanizacao_mapped(self):
         group = _make_group("quadra_tenis", QUADRA_TENIS_VALUES)
@@ -323,3 +414,118 @@ class TestBuildPresentation:
         bytes2 = build_presentation(req)
         # Ambas devem gerar arquivos válidos com o mesmo número de slides
         assert len(_open_pptx(bytes1).slides) == len(_open_pptx(bytes2).slides)
+
+
+# ── Bloco opcional de "projetos realizados" por produto ──────────────────────
+class TestComposeProjetos:
+    """compose_projetos: lê slides/<product_subdir>/projetos/*.pptx; pasta ausente/vazia = no-op."""
+
+    @staticmethod
+    def _make_minimal_pptx(path):
+        p = Presentation()
+        p.slides.add_slide(p.slide_layouts[6])  # layout em branco
+        p.save(str(path))
+
+    @staticmethod
+    def _fresh_merged():
+        from slide_registry import SLIDE_H, SLIDE_W
+        merged = Presentation()
+        merged.slide_width = SLIDE_W
+        merged.slide_height = SLIDE_H
+        return merged
+
+    def test_sem_nada_no_op(self, monkeypatch, tmp_path):
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        merged = self._fresh_merged()
+        compose_projetos(merged, "quadra_tenis", "piso_asfaltico", {}, [0])
+        assert len(merged.slides) == 0
+
+    def test_variante_especifica_tem_precedencia(self, monkeypatch, tmp_path):
+        """Variante com .pptx é usada; nível produto NÃO entra (sem concatenação)."""
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        base = tmp_path / "quadra_tenis" / "projetos"
+        base.mkdir(parents=True)
+        self._make_minimal_pptx(base / "comum.pptx")               # nível produto
+        (base / "piso_asfaltico").mkdir()
+        self._make_minimal_pptx(base / "piso_asfaltico" / "v1.pptx")
+        self._make_minimal_pptx(base / "piso_asfaltico" / "v2.pptx")
+        merged = self._fresh_merged()
+        compose_projetos(merged, "quadra_tenis", "piso_asfaltico", {}, [0])
+        assert len(merged.slides) == 2  # só a variante; nível produto NÃO concatena
+
+    def test_fallback_para_nivel_produto_quando_variante_vazia(self, monkeypatch, tmp_path):
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        base = tmp_path / "quadra_tenis" / "projetos"
+        base.mkdir(parents=True)
+        (base / "saibro").mkdir()  # variante existe mas sem .pptx
+        self._make_minimal_pptx(base / "padrao.pptx")
+        merged = self._fresh_merged()
+        compose_projetos(merged, "quadra_tenis", "saibro", {}, [0])
+        assert len(merged.slides) == 1  # cai p/ nível produto
+
+    def test_fallback_para_nivel_produto_quando_variante_ausente(self, monkeypatch, tmp_path):
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        base = tmp_path / "padel" / "projetos"
+        base.mkdir(parents=True)
+        self._make_minimal_pptx(base / "comum.pptx")
+        merged = self._fresh_merged()
+        # Sem subpasta 'grama_sintetica/' → cai p/ slides/padel/projetos/.
+        compose_projetos(merged, "padel", "grama_sintetica", {}, [0])
+        assert len(merged.slides) == 1
+
+    def test_arquivos_adicionados_em_ordem_alfabetica(self, monkeypatch, tmp_path):
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        variant_dir = tmp_path / "quadra_tenis" / "projetos" / "piso_asfaltico"
+        variant_dir.mkdir(parents=True)
+        self._make_minimal_pptx(variant_dir / "02_projeto.pptx")
+        self._make_minimal_pptx(variant_dir / "01_projeto.pptx")
+        merged = self._fresh_merged()
+        compose_projetos(merged, "quadra_tenis", "piso_asfaltico", {}, [0])
+        assert len(merged.slides) == 2  # 2 arquivos, 1 slide cada
+
+    def test_usa_subdir_mapeado_quadra_poli(self, monkeypatch, tmp_path):
+        """quadra_poliesportiva → 'quadra_poli' via _PRODUCT_SLIDES_DIR."""
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        variant_dir = tmp_path / "quadra_poli" / "projetos" / "assoalho"
+        variant_dir.mkdir(parents=True)
+        self._make_minimal_pptx(variant_dir / "01.pptx")
+        merged = self._fresh_merged()
+        compose_projetos(merged, "quadra_poliesportiva", "assoalho", {}, [0])
+        assert len(merged.slides) == 1
+
+    def test_variant_id_vazio_pula_para_nivel_produto(self, monkeypatch, tmp_path):
+        """Sem variantId definido, vai direto ao nível produto."""
+        from dynamic_composer import compose_projetos
+        monkeypatch.setattr("slide_registry.SLIDES_DIR", str(tmp_path))
+        base = tmp_path / "softplay" / "projetos"
+        base.mkdir(parents=True)
+        self._make_minimal_pptx(base / "01.pptx")
+        merged = self._fresh_merged()
+        compose_projetos(merged, "softplay", None, {}, [0])
+        assert len(merged.slides) == 1
+
+    def test_build_presentation_aceita_dynamic_projetos(self):
+        """Smoke: build_presentation aceita slide com dynamic='projetos' sem crashar.
+
+        Robusto: a real `slides/quadra_tenis/projetos/<variant>/` pode existir e
+        adicionar N slides; o que importa é que o branch não quebra e o deck
+        contém pelo menos capa + encerramento.
+        """
+        group = _make_group("quadra_tenis", QUADRA_TENIS_VALUES, "Quadra de Tênis")
+        slides = [
+            _make_slide("capa", "slides/global/capa.pptx"),
+            _make_slide(
+                "projetos_quadra_tenis__piso_asfaltico",
+                "", dynamic="projetos", group_index=0,
+            ),
+            _make_slide("encerramento", "slides/global/encerramento.pptx"),
+        ]
+        req = _make_req(slides, product_groups=[group])
+        prs = _open_pptx(build_presentation(req))
+        assert len(prs.slides) >= 2

@@ -38,7 +38,7 @@ Documento de rastreamento para o designer de slides. Lista o que já existe em d
 | `areia_rio.pptx` | `areia_rio_beach_tenis` | condicional | `tipo_areia = "rio"` |
 | `areia_quartzo.pptx` | `areia_quartzo_beach_tenis` | condicional | `tipo_areia = "quartzo"` |
 | `protecao_eva.pptx` | `protecao_eva_beach_tenis` | condicional | `possui_eva = true` |
-| `alambrado_iluminacao.pptx` | `alambrado_iluminacao_beach_tenis` | condicional | `possui_alambrado` OU `possui_iluminacao` |
+| `_comum/fechamentos_base.pptx` (+ `secao_alambrado`/`secao_iluminacao`) | `fechamentos_beach_tenis` | dinâmico | `possui_alambrado` OU `possui_iluminacao` |
 | `acessorio.pptx` | `acessorio_beach_tenis` | produto | sempre |
 | `investimento.pptx` | `investimento_beach_tenis` | dinâmico | sempre |
 
@@ -56,7 +56,7 @@ Documento de rastreamento para o designer de slides. Lista o que já existe em d
 | `specs_grama.pptx` | `specs_grama` | variante | `grama` | ❌ falta criar |
 | `playcushion.pptx` | `playcushion_quadra_tenis` | condicional | `possui_playcushion` (só `piso_asfaltico`) | ✅ pronto |
 | `kit_saibro.pptx` | `kit_saibro_quadra_tenis` | condicional | `possui_kit_saibro` (só `saibro`) | ❌ falta criar |
-| `alambrado_iluminacao.pptx` | `alambrado_iluminacao_quadra_tenis` | condicional | `possui_alambrado` OU `possui_iluminacao` | ⚠️ renomear¹ |
+| `_comum/fechamentos_base.pptx` (+ `secao_alambrado`/`secao_iluminacao`) | `fechamentos_quadra_tenis` | dinâmico | `possui_alambrado` OU `possui_iluminacao` | ✅ dinâmico |
 | `cores_piso_asfaltico.pptx` | `cores_piso_asfaltico` | variante | `piso_asfaltico` | ✅ pronto |
 | `detalhe_construtivo.pptx` | `detalhe_construtivo_sem_playcushion` | variante | `piso_asfaltico` | ✅ pronto |
 | `detalhe_construtivo_playcushion.pptx` | `detalhe_construtivo_com_playcushion` | condicional | `possui_playcushion` | ❌ falta criar |
@@ -91,7 +91,7 @@ Slides sugeridos com base no padrão beach_tenis e quadra_tenis:
 | `specs_assoalho.pptx` | variante | `assoalho` |
 | `specs_epoxi.pptx` | variante | `epoxi` |
 | `specs_pu_200_b.pptx` | variante | `pu_200_b` |
-| `alambrado_iluminacao.pptx` | condicional | `possui_alambrado` OU `possui_iluminacao` |
+| _(fechamentos dinâmico — `_comum/secao_alambrado`/`secao_iluminacao`)_ | dinâmico | `possui_alambrado` OU `possui_iluminacao` |
 | `investimento.pptx` | dinâmico | todas |
 
 ---
@@ -103,7 +103,7 @@ Slides sugeridos com base no padrão beach_tenis e quadra_tenis:
 | `hero.pptx` | produto | todas |
 | `specs_natural.pptx` | variante | `natural` |
 | `specs_sintetico.pptx` | variante | `sintetico` |
-| `alambrado_iluminacao.pptx` | condicional | `possui_alambrado` OU `possui_iluminacao` |
+| _(fechamentos dinâmico — `_comum/secao_alambrado`/`secao_iluminacao`)_ | dinâmico | `possui_alambrado` OU `possui_iluminacao` |
 | `investimento.pptx` | dinâmico | todas |
 
 > Existem arquivos legados em `slides/products/campo/` (`campo_grama_sintetica.pptx` e `tail_campo_grama_sintetica.pptx`) que podem ser aproveitados como base.
@@ -128,7 +128,7 @@ Slides sugeridos com base no padrão beach_tenis e quadra_tenis:
 |---|---|---|
 | `hero.pptx` | produto | todas |
 | `specs.pptx` | produto | todas |
-| `alambrado_iluminacao.pptx` | condicional | `possui_alambrado` OU `possui_iluminacao` |
+| _(fechamentos dinâmico — `_comum/secao_alambrado`/`secao_iluminacao`)_ | dinâmico | `possui_alambrado` OU `possui_iluminacao` |
 | `investimento.pptx` | dinâmico | todas |
 
 ---

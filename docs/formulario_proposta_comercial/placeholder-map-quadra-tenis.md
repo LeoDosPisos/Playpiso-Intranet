@@ -2,6 +2,8 @@
 
 Auditoria de todas as strings `{{ chave }}` encontradas nos arquivos `.pptx` do produto **Quadra de Tênis** e slides globais, com mapeamento para campos do formulário e registro de gaps.
 
+> **Nota:** auditoria histórica, anterior à composição dinâmica de `fechamentos`. O antigo slide per-produto de alambrado/iluminação foi removido; esses placeholders hoje vivem nos slides compartilhados `_comum/secao_alambrado.pptx` e `_comum/secao_iluminacao.pptx`, compostos sobre `_comum/fechamentos_base.pptx`. Citações a `slide_merger.py` referem-se ao módulo antigo (atual: `presentation_builder.py` / `slide_registry.py`), e alguns gaps abaixo já foram resolvidos.
+
 ---
 
 ## Slides globais (afetam todos os produtos)
@@ -42,7 +44,7 @@ Auditoria de todas as strings `{{ chave }}` encontradas nos arquivos `.pptx` do 
 
 ## Slides de quadra_tenis/
 
-### `alambrado_iluminacao_quadra_tenis.pptx` — único com placeholders
+### Alambrado + Iluminação — placeholders (hoje em `_comum/secao_alambrado.pptx` + `secao_iluminacao.pptx`)
 
 | Placeholder (conforme no arquivo) | Campo do formulário | Injetado? | Observação |
 |---|---|---|---|
@@ -98,7 +100,7 @@ A tabela (7 linhas × 4 colunas: Descrição, Qtde., Unid., Valor) não tem plac
 
 ### Gap 1 — `slide_merger.py` não injeta valores do produto
 
-`_build_context()` em `slide_merger.py:180-192` só lê `globalValues`. Os 7 placeholders de `alambrado_iluminacao_quadra_tenis.pptx` vêm de `productGroups[].values` e nunca são substituídos.
+`_build_context()` em `slide_merger.py:180-192` só lê `globalValues`. Os 7 placeholders de alambrado/iluminação (hoje em `_comum/secao_alambrado.pptx` + `secao_iluminacao.pptx`) vêm de `productGroups[].values` e, à época, nunca eram substituídos. _(resolvido: o contexto atual é montado por grupo em `_build_group_context`.)_
 
 **Solução necessária:** expandir o contexto com os valores do grupo de produto ao processar slides específicos de produto.
 
@@ -117,7 +119,6 @@ O placeholder `{{ quantidade_portoes }}` está no slide mas não aparece em:
 |---|---|---|
 | `dados_cliente.pptx` | `{{  nome_razao_social}}` | `{{ nome_razao_social }}` |
 | `dados_cliente.pptx` | `{{\xa0email }}` | `{{ email }}` |
-| `alambrado_iluminacao_quadra_tenis.pptx` | `{{ quantidade_postes_ilumincao }}` | `{{ quantidade_postes_iluminacao }}` |
 
 **Ação:** corrigir diretamente no PowerPoint e re-exportar o `.pptx`.
 

@@ -29,6 +29,7 @@ public class ProposalProductGroup
     public string? PotenciaProjetores { get; set; }
     public string? EspecificarPotenciaProjetores { get; set; }
     public int? QuantidadeCruzetas { get; set; }
+    public string? CorCruzetas { get; set; }
     public string? ResponsavelLigacaoEletrica { get; set; } = "cliente";
     public string? TipoColigacao { get; set; }
 

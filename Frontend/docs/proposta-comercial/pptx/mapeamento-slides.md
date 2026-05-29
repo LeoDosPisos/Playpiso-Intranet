@@ -25,7 +25,7 @@ A fonte de verdade para os registries de implementação é `slideRegistry.ts` (
 | 9 | `areia_rio_beach_tenis` | "Sistema de drenagem, mureta e areia de rio lavada" | Condicional (`tipo_areia = rio`) |
 | 10 | `areia_quartzo_beach_tenis` | "Sistema de drenagem, mureta e areia de quartzo especial tratada" | Condicional (`tipo_areia = quartzo`) |
 | 11 | `protecao_eva_beach_tenis` | "Proteção EVA" | Condicional (`possui_eva = true`) |
-| 12 | `alambrado_iluminacao_beach_tenis` | "Alambrado" + "Iluminação" (mesma página, duas seções) | Condicional (`possui_alambrado` ou `possui_iluminacao`) |
+| 12 | `fechamentos_beach_tenis` | "Alambrado" + "Iluminação" (composição dinâmica de seções sobre `fechamentos_base`) | Condicional (`possui_alambrado` ou `possui_iluminacao`) |
 | 13 | `acessorio_beach_tenis` | "Acessório — Sem regulagem / Com regulagem" | Por produto |
 | 14 | `investimento_beach_tenis` | "2. Investimento" (tabela: quadra, alambrado, iluminação, acessórios, EVA opcional) | Por produto (dinâmico — linhas por componente) |
 | 15 | `condicoes_pagamento` | "3. Condições de pagamento" (Faturamento direto + Faturamento Playpiso) | Global pós-produto |
@@ -125,7 +125,7 @@ Aparecem somente quando o campo de controle satisfaz a condição.
 | `areia_rio_beach_tenis` | `beach_tenis` | `tipo_areia = rio` | Drenagem + areia de rio | Campo `tipo_areia` ainda não existe no formulário |
 | `areia_quartzo_beach_tenis` | `beach_tenis` | `tipo_areia = quartzo` | Drenagem + areia de quartzo | Campo `tipo_areia` ainda não existe no formulário |
 | `protecao_eva_beach_tenis` | `beach_tenis` | `possui_eva = true` | Proteção EVA | Campo `possui_eva` ainda não existe no formulário |
-| `alambrado_iluminacao_beach_tenis` | `beach_tenis` | `possui_alambrado = true` ou `possui_iluminacao = true` | Alambrado + Iluminação | Campos já existem |
+| `fechamentos_beach_tenis` | `beach_tenis` | `possui_alambrado = true` ou `possui_iluminacao = true` | Alambrado + Iluminação (composição dinâmica) | Campos já existem |
 | `playcushion_alambrado_quadra_tenis` | `quadra_tenis` | `possui_playcushion = true` ou `possui_alambrado = true` | Playcushion + Alambrado | Campos já existem |
 | `iluminacao_acessorio_quadra_tenis` | `quadra_tenis` | `possui_iluminacao = true` | Iluminação + Acessório | Campo já existe |
 | `detalhe_construtivo_com_playcushion` | `quadra_tenis` | `possui_playcushion = true` | Detalhe construtivo c/ Playcushion | Campo já existe |

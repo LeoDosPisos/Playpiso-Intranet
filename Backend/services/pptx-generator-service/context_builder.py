@@ -21,10 +21,16 @@ _SOMBREAMENTO_LADOS = (
 
 _COR_SOMBREAMENTO_LABELS = {'verde': 'verde', 'preta': 'preta'}
 
+# Cores do alambrado, com concordância de gênero conforme o contexto da frase:
+#   masculino → "PVC {cor}"            (tela malha)
+#   feminino  → "(pintados) na cor {cor}" / "com tela na cor {cor}" (tubo, tela)
+_COR_ALAMBRADO_M = {'galvanizado': 'galvanizado', 'branco': 'branco', 'preto': 'preto', 'verde': 'verde'}
+_COR_ALAMBRADO_F = {'galvanizado': 'galvanizada', 'branco': 'branca', 'preto': 'preta', 'verde': 'verde'}
+
 _ILUMINACAO_FALLBACK_KEYS = (
     'quantidade_projetores', 'potencia_projetores',
     'quantidade_postes_iluminacao', 'altura_postes_iluminacao',
-    'quantidade_cruzetas',
+    'quantidade_cruzetas', 'cor_cruzetas',
 )
 
 _ESTRUTURA_BASQUETE_LABELS = {'metalica': 'Metálica', 'hidraulica': 'Hidráulica', 'comum': 'Comum'}
@@ -92,13 +98,13 @@ def _fmt_alambrado_descricao(values: dict) -> str:
     h_fun = values.get('altura_alambrado_fundos')
     h_lat = values.get('altura_alambrado_laterais')
     if sistema == 'trapezio' and h_fun is not None and h_lat is not None:
-        return (
-            f"Sistema trapézio: alambrado com fundo de {_fmt_dimension(h_fun)}m"
-            f" e corrimão (altura de 1,00m) conectando as laterais de {_fmt_dimension(h_lat)}m;"
+        core = (
+            f"Fundos com {_fmt_dimension(h_fun)} de altura de tela"
+            f" e laterais de {_fmt_dimension(h_lat)} em sistema trapézio com corrimão de 1,00m de altura"
         )
-    if sistema == 'gaiola' and h_fun is not None:
-        return f"Sistema gaiola: alambrado com fundo e laterais de {_fmt_dimension(h_fun)}m;"
-    if sistema == 'especial':
+    elif sistema == 'gaiola' and h_fun is not None:
+        core = f"Fundos e laterais com {_fmt_dimension(h_fun)} de altura de tela em sistema gaiola"
+    elif sistema == 'especial':
         partes = []
         for key, label in _ALAMBRADO_LADOS:
             altura = values.get(f'altura_alambrado_{key}')
@@ -109,9 +115,16 @@ def _fmt_alambrado_descricao(values: dict) -> str:
                 f"{label} de {_fmt_dimension(comprimento)} x {_fmt_dimension(altura)}"
             )
         if partes:
-            return f"Sistema especial: alambrado com {'; '.join(partes)};"
-        return 'Sistema especial: alambrado com dimensões individuais por lado;'
-    return '—'
+            core = f"Sistema especial: alambrado com {'; '.join(partes)}"
+        else:
+            core = 'Sistema especial: alambrado com dimensões individuais por lado'
+    else:
+        return '—'
+
+    cor_raw = str(values.get('cor_tela_alambrado') or '').lower()
+    cor = _COR_ALAMBRADO_F.get(cor_raw, cor_raw)
+    tela_txt = f', com tela na cor {cor}' if cor else ''
+    return f'{core}{tela_txt};'
 
 
 def _fmt_tela_sombreamento_descricao(values: dict) -> str:
@@ -170,6 +183,7 @@ def _build_base_context(global_values: dict, product_groups: list) -> dict:
         "nome_razao_social": global_values.get("nome_razao_social", ""),
         "nome_contato":      global_values.get("nome_contato", ""),
         "endereco_cliente":     global_values.get("endereco_cliente", ""),
+        "nome_da_obra":      global_values.get("nome_da_obra", ""),
         "local_obra":        global_values.get("local_obra", ""),
         "telefone":          global_values.get("telefone", ""),
         "email":             global_values.get("email", ""),
@@ -224,6 +238,13 @@ def _build_group_context(group) -> dict:
     else:
         ctx['dimensoes_portoes'] = "—"
 
+    # Concordância do substantivo: 1 → "portão", caso contrário → "portões".
+    try:
+        _qtd_portoes = int(float(qtd))
+    except (TypeError, ValueError):
+        _qtd_portoes = 0
+    ctx['portoes_palavra'] = 'portão' if _qtd_portoes == 1 else 'portões'
+
     ctx['travamento_descricao'] = _fmt_travamento(values.get('travamento'))
     ctx['alambrado_descricao'] = _fmt_alambrado_descricao(values)
     ctx['descricao_alambrado'] = ctx['alambrado_descricao']
@@ -232,6 +253,24 @@ def _build_group_context(group) -> dict:
     ctx['tela_sombreamento_descricao'] = ctx['descricao_tela_sombreamento']
     _cor_somb = str(values.get('cor_tela_sombreamento') or '').lower()
     ctx['cor_tela_sombreamento'] = _COR_SOMBREAMENTO_LABELS.get(_cor_somb, _cor_somb) or '—'
+
+    # Cores do alambrado (aliases curtos usados no slide secao_alambrado e no orçamento).
+    _cor_tubo = str(values.get('cor_tubo_alambrado') or '').lower()
+    ctx['cor_tubo'] = _COR_ALAMBRADO_F.get(_cor_tubo, _cor_tubo) or '—'          # "pintados na cor {cor}"
+    _cor_malha = str(values.get('cor_tela_malha_alambrado') or '').lower()
+    ctx['cor_tela_malha'] = _COR_ALAMBRADO_M.get(_cor_malha, _cor_malha) or '—'  # "PVC {cor}"
+
+    # Especificação da tela malha (slide secao_alambrado): quadra poliesportiva e campo
+    # usam malha mais aberta (3" fio 12); os demais (tênis, pickleball, beach) usam 2" fio 14.
+    #   = NBSP entre "fio" e o número para não quebrar linha.
+    ctx['tela_malha'] = (
+        '3” x 3” fio 12'
+        if group.productId in ('quadra_poliesportiva', 'campo')
+        else '2” x 2” fio 14'
+    )
+
+    # Altura dos postes (slide secao_iluminacao): formatada "8,00m" a partir do número do formulário.
+    ctx['altura_postes_iluminacao_fmt'] = _fmt_dimension(values.get('altura_postes_iluminacao'))
 
     ctx['quantity']       = _fmt_numero(group.quantity)
     ctx['area_total_fmt'] = _fmt_numero(values.get('area_total'))
