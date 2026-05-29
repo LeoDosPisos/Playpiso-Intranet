@@ -1,5 +1,9 @@
 # Mapa de Placeholders — slides/quadra_tenis/
 
+> **Fonte de verdade:** templates em `Backend/services/pptx-generator-service/slides/` + `Frontend/src/pages/FormPropostaComercial/config/slideRegistry.ts`.
+> **Arquivos-chave:** `placeholder_engine.py`, `slide_registry.py`, `slideRegistry.ts`
+> _Última verificação: 2026-05-29._
+
 Auditoria de todas as strings `{{ chave }}` encontradas nos arquivos `.pptx` do produto **Quadra de Tênis** e slides globais, com mapeamento para campos do formulário e registro de gaps.
 
 > **Nota:** auditoria histórica, anterior à composição dinâmica de `fechamentos`. O antigo slide per-produto de alambrado/iluminação foi removido; esses placeholders hoje vivem nos slides compartilhados `_comum/secao_alambrado.pptx` e `_comum/secao_iluminacao.pptx`, compostos sobre `_comum/fechamentos_base.pptx`. Citações a `slide_merger.py` referem-se ao módulo antigo (atual: `presentation_builder.py` / `slide_registry.py`), e alguns gaps abaixo já foram resolvidos.
@@ -130,5 +134,5 @@ O placeholder `{{ quantidade_portoes }}` está no slide mas não aparece em:
 |---|---|
 | `pptx-generator-service/slide_merger.py:180-192` | `_build_context()` — onde o contexto de substituição é montado |
 | `pptx-generator-service/slide_merger.py:195-221` | `_replace_placeholders()` e `_replace_in_paragraph()` |
-| `Frontend/src/route/FormPropostaComercial/config/exportMappings.ts` | Mapeamento campo → placeholder para PPTX |
-| `Frontend/src/route/FormPropostaComercial/config/fieldRegistry.ts` | Definições de todos os campos do formulário |
+| `Frontend/src/pages/FormPropostaComercial/config/exportMappings.ts` | Mapeamento campo → placeholder para PPTX |
+| `Frontend/src/pages/FormPropostaComercial/config/fieldRegistry.ts` | Definições de todos os campos do formulário |

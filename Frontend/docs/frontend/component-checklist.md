@@ -139,5 +139,5 @@ If those conditions are not met, the team should refine the request before imple
 
 ## Related Documentation
 
-- [Styling Guide](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/vite-project/docs/frontend/styling.md:1)
-- [Styles Directory README](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/vite-project/src/styles/README.md:1)
+- [Styling Guide](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/Frontend/docs/frontend/styling.md:1)
+- [Styles Directory README](/home/inteli/Documentos/Playpiso/kanban/00_Iniciativas/Proposta_Comercial_e_Orçamento_Automartizado/Frontend/src/styles/README.md:1)

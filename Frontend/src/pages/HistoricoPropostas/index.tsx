@@ -354,6 +354,8 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
   }
   if (g.tipoTerreno) dimEntries.push({ label: 'Tipo de terreno', value: formatSpecValue(g.tipoTerreno) })
   if (g.dificuldadeAcesso) dimEntries.push({ label: 'Acesso', value: formatSpecValue(g.dificuldadeAcesso) })
+  if (g.responsavelMaterialPedreira)
+    dimEntries.push({ label: 'Responsável (material/pedreira)', value: formatSpecValue(g.responsavelMaterialPedreira) })
   if (dimEntries.length) sections.push({ title: 'Dimensões & Local', entries: dimEntries })
 
   // Parse JSONB specs uma vez
@@ -466,7 +468,7 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
   // Piso & Extras — campos JSONB restantes (conhecidos ou desconhecidos, exceto variante_*)
   const extrasKnown = fromSpecs([
     'cor_piso_asfaltico', 'incluir_rede_tenis', 'possui_playcushion', 'possui_kit_saibro',
-    'possui_rede', 'altura_rede', 'responsavel_material_pedreira',
+    'possui_rede', 'altura_rede',
     // poliesportiva
     'tipo_futsal', 'possui_tenis', 'possui_volei', 'possui_futebol_futsal',
     'possui_basquete_adulto', 'possui_basquete_juvenil', 'estrutura_basquete_adulto',
