@@ -26,7 +26,7 @@ const sectionRegistry: Record<string, SectionDefinition> = {
     id: "dados_obra",
     title: "Dados da obra",
     required: true,
-    fields: ["endereco_cliente", "local_obra", "cidade", "estado", "tipo_projeto"],
+    fields: ["endereco_cliente", "nome_da_obra", "local_obra", "cidade", "estado", "tipo_projeto"],
   },
   produto_variante: {
     id: "produto_variante",

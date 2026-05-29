@@ -74,6 +74,15 @@ const fieldRegistry: Record<string, FieldDefinition> = {
     xlsxKey: "endereco_cliente",
     pptxKey: "endereco_cliente",
   },
+  nome_da_obra: {
+    id: "nome_da_obra",
+    label: "Nome da obra",
+    type: "text",
+    placeholder: "Ex: Reforma da quadra principal",
+    required: true,
+    xlsxKey: "nome_da_obra",
+    pptxKey: "nome_da_obra",
+  },
   local_obra: {
     id: "local_obra",
     label: "Local da obra",

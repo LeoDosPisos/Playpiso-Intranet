@@ -23,6 +23,7 @@ GLOBAL_VALUES = {
     "nome_razao_social": "Condomínio Teste",
     "nome_contato": "João Silva",
     "endereco_cliente": "Rua Teste, 123",
+    "nome_da_obra": "Reforma Quadra Centro",
     "local_obra": "São Paulo, SP",
     "telefone": "(11) 99999-0000",
     "email": "joao@teste.com",

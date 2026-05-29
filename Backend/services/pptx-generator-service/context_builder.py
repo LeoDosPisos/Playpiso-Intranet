@@ -183,6 +183,7 @@ def _build_base_context(global_values: dict, product_groups: list) -> dict:
         "nome_razao_social": global_values.get("nome_razao_social", ""),
         "nome_contato":      global_values.get("nome_contato", ""),
         "endereco_cliente":     global_values.get("endereco_cliente", ""),
+        "nome_da_obra":      global_values.get("nome_da_obra", ""),
         "local_obra":        global_values.get("local_obra", ""),
         "telefone":          global_values.get("telefone", ""),
         "email":             global_values.get("email", ""),
