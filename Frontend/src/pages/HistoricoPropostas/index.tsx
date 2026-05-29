@@ -39,6 +39,7 @@ const VARIANT_LABELS: Record<string, string> = {
   grama: 'Grama',
   assoalho: 'Assoalho',
   epoxi: 'Epóxi',
+  poliuretano: 'Poliuretano',
   pu_200_b: 'P.U. 200 B',
   padrao: 'Padrão',
   natural: 'Natural',
@@ -69,6 +70,26 @@ const JSONB_LABELS: Record<string, { label: string; unit?: string }> = {
   comprimentoPortoes: { label: 'Comprimento dos portões', unit: 'm' },
   // Cobertura
   cor_tela_superior: { label: 'Cor da tela superior' },
+  cor_tela_sombreamento: { label: 'Cor da tela de sombreamento' },
+  // Sombreamento detalhado (quadra poliesportiva)
+  possui_sombreamento_lateral_1: { label: 'Possui sombreamento', unit: 'bool' },
+  altura_sombreamento_lateral_1: { label: 'Altura', unit: 'm' },
+  comprimento_sombreamento_lateral_1: { label: 'Comprimento', unit: 'm' },
+  possui_sombreamento_lateral_2: { label: 'Possui sombreamento', unit: 'bool' },
+  altura_sombreamento_lateral_2: { label: 'Altura', unit: 'm' },
+  comprimento_sombreamento_lateral_2: { label: 'Comprimento', unit: 'm' },
+  possui_sombreamento_fundo_1: { label: 'Possui sombreamento', unit: 'bool' },
+  altura_sombreamento_fundo_1: { label: 'Altura', unit: 'm' },
+  comprimento_sombreamento_fundo_1: { label: 'Comprimento', unit: 'm' },
+  possui_sombreamento_fundo_2: { label: 'Possui sombreamento', unit: 'bool' },
+  altura_sombreamento_fundo_2: { label: 'Altura', unit: 'm' },
+  comprimento_sombreamento_fundo_2: { label: 'Comprimento', unit: 'm' },
+  // Cores de alambrado (quadra poliesportiva)
+  cor_tela_alambrado: { label: 'Cor da tela do alambrado' },
+  cor_tubo_alambrado: { label: 'Cor do tubo do alambrado' },
+  cor_tela_malha_alambrado: { label: 'Cor da tela malha do alambrado' },
+  // Portões (flag)
+  possui_portoes: { label: 'Possui portões', unit: 'bool' },
   // Piso & cores
   cor_piso_asfaltico: { label: 'Cor do piso' },
   especificar_cor: { label: 'Especificar cor' },
@@ -252,10 +273,13 @@ const VALUE_LABELS: Record<string, string> = {
   gradil: 'Gradil',
   elastica: 'Elástica',
   trapezio: 'Trapézio',
+  especial: 'Especial',
   // Cores
   branca: 'Branca',
+  branco: 'Branco',
   amarelo: 'Amarela',
   preta: 'Preta',
+  preto: 'Preto',
   verde: 'Verde',
   azul: 'Azul',
   vermelha: 'Vermelha',
@@ -314,7 +338,8 @@ function inferProductAndVariant(specs: string): { productId: string; variantId: 
 // ─── Agrupamento semântico de specs ──────────────────────────────────────────
 
 type SpecEntry = { label: string; value: string }
-type SpecSection = { title: string; entries: SpecEntry[] }
+type SpecSubSection = { title: string; entries: SpecEntry[] }
+type SpecSection = { title: string; entries: SpecEntry[]; subSections?: SpecSubSection[] }
 
 function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
   const sections: SpecSection[] = []
@@ -354,7 +379,8 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
   // Alambrado — mostra se coluna = true OU se há dados de alambrado no JSONB
   const alambradoJsonbKeys = ['sistema_alambrado', 'altura_alambrado_fundos', 'altura_alambrado_laterais',
     'comprimento_alambrado_fundos', 'comprimento_alambrado_laterais',
-    'espacamento_postes_tubos_fundos', 'espacamento_postes_tubos_laterais']
+    'espacamento_postes_tubos_fundos', 'espacamento_postes_tubos_laterais',
+    'cor_tela_alambrado', 'cor_tubo_alambrado', 'cor_tela_malha_alambrado']
   const hasAlambradoData = g.possuiAlambrado
     || alambradoJsonbKeys.some(k => specsObj[k] != null && specsObj[k] !== '')
   if (hasAlambradoData) {
@@ -377,6 +403,8 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     portEntries.push({ label: 'Comprimento dos portões', value: `${formatDec(g.comprimentoPortoes)}m` })
   if (portEntries.length === 0)
     portEntries.push(...fromSpecs(['quantidadePortoes', 'alturaPortoes', 'comprimentoPortoes']))
+  // possui_portoes é flag redundante quando há contagem; consume sempre pra não vazar pra Extras
+  consumed.add('possui_portoes')
   if (portEntries.length) sections.push({ title: 'Portões', entries: portEntries })
 
   // Iluminação
@@ -407,8 +435,33 @@ function buildGroupedSpecs(g: ProductGroupDetail): SpecSection[] {
     coberturaEntries.push({ label: 'Altura sombreamento', value: `${formatDec(g.alturaSombreamento)}m` })
   if (g.comprimentoSombreamento !== null)
     coberturaEntries.push({ label: 'Comprimento sombreamento', value: `${formatDec(g.comprimentoSombreamento)}m` })
-  coberturaEntries.push(...fromSpecs(['cor_tela_superior']))
-  if (coberturaEntries.length) sections.push({ title: 'Cobertura', entries: coberturaEntries })
+  coberturaEntries.push(...fromSpecs(['cor_tela_superior', 'cor_tela_sombreamento']))
+
+  // Sub-seções de sombreamento detalhado (quadra poliesportiva)
+  const sombreamentoSides: { suffix: string; title: string }[] = [
+    { suffix: 'lateral_1', title: 'Sombreamento lateral 1' },
+    { suffix: 'lateral_2', title: 'Sombreamento lateral 2' },
+    { suffix: 'fundo_1',   title: 'Sombreamento fundo 1'   },
+    { suffix: 'fundo_2',   title: 'Sombreamento fundo 2'   },
+  ]
+  const coberturaSubSections: SpecSubSection[] = []
+  for (const { suffix, title } of sombreamentoSides) {
+    const keys = [
+      `possui_sombreamento_${suffix}`,
+      `altura_sombreamento_${suffix}`,
+      `comprimento_sombreamento_${suffix}`,
+    ]
+    const entries = fromSpecs(keys)
+    if (entries.length) coberturaSubSections.push({ title, entries })
+  }
+
+  if (coberturaEntries.length || coberturaSubSections.length) {
+    sections.push({
+      title: 'Cobertura',
+      entries: coberturaEntries,
+      subSections: coberturaSubSections.length ? coberturaSubSections : undefined,
+    })
+  }
 
   // Piso & Extras — campos JSONB restantes (conhecidos ou desconhecidos, exceto variante_*)
   const extrasKnown = fromSpecs([
@@ -467,14 +520,29 @@ function ProductGroupCard({ group }: { group: ProductGroupDetail }) {
           {section.title !== 'Observações' ? (
             <>
               <div className={styles.specSectionTitle}>{section.title}</div>
-              <div className={styles.specGrid}>
-                {section.entries.map((e) => (
-                  <div key={e.label} className={styles.specItem}>
-                    <span className={styles.specLabel}>{e.label}</span>
-                    <span className={styles.specValue}>{e.value}</span>
+              {section.entries.length > 0 && (
+                <div className={styles.specGrid}>
+                  {section.entries.map((e) => (
+                    <div key={e.label} className={styles.specItem}>
+                      <span className={styles.specLabel}>{e.label}</span>
+                      <span className={styles.specValue}>{e.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {section.subSections?.map((sub) => (
+                <div key={sub.title}>
+                  <div className={styles.specSubSectionTitle}>{sub.title}</div>
+                  <div className={styles.specGrid}>
+                    {sub.entries.map((e) => (
+                      <div key={e.label} className={styles.specItem}>
+                        <span className={styles.specLabel}>{e.label}</span>
+                        <span className={styles.specValue}>{e.value}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </>
           ) : (
             <div className={styles.observacoes}>
